@@ -161,9 +161,7 @@ public class Model extends Observable {
                     continue;
                 } else if (b.tile(i,j).value() == MAX_PIECE) {
                     return true;
-
                 }
-
             }
         }
         return false;
@@ -177,6 +175,12 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        // check if at least one empty space exists on the board and that MAXPIECE isn't on the board
+        if (emptySpaceExists(b)){
+            return true;
+        } else if (maxTileExists(b)) {
+            return false;
+        }
         return false;
     }
 
