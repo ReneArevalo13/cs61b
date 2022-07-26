@@ -179,10 +179,78 @@ public class Model extends Observable {
         if (emptySpaceExists(b)){
             return true;
         } else if (maxTileExists(b)) {
-            return false;
+            return true;
         }
+        // *2 check adjacent values
+        for (int i = 0; i < b.size(); i++){
+            for (int j = 0; j < b.size(); j++){
+
+                if (compareAdjacent(b, i, j)){
+                    return true;
+                }
+            }
+        }
+//
         return false;
-    }
+        }
+
+   public static boolean compareAdjacent(Board b, int i, int j){
+        // compare adjacent tiles on the game board
+
+
+//        if (i == 0 && j == 0){
+//            // look at tile (0,0) and adjacent tiles (1,0) and (0, 1)
+//            // return true if either are equal to tile (0,0
+//            return (b.tile(i,j).value() == b.tile(i,j+1).value() || b.tile(i,j).value() == b.tile(i+1,j).value());
+//        }else if (i == 3 && j == 0){
+//           // look at tile (3,0) and adjacent tiles (2,0) and (3, 1)
+//           // return true if either are equal to tile (3,0)
+//           return b.tile(i, j).value() == b.tile(i - 1, j).value() || b.tile(i, j).value() == b.tile(i, j + 1).value();
+//       }else if (i == 0 && j == 3){
+//            // look at tile (0,3) and adjacent tiles (0,2) and (1, 3)
+//            // return true if either are equal to tile (3,0)
+//            return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i+1, j).value();
+//        }else if (i == 3 && j == 3){
+//            // look at tile (3,3) and adjacent tiles (2,3) and (3,2)
+//            // return true if either are equal to tile (3,0)
+//            return b.tile(i, j).value() == b.tile(i-1, j).value() || b.tile(i, j).value() == b.tile(i, j-1).value();
+//            }
+        if (i == 0){
+            if (j == 0) {
+                return (b.tile(i,j).value() == b.tile(i,j+1).value() || b.tile(i,j).value() == b.tile(i+1,j).value());
+            }else if (j == 3) {
+                return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i+1, j).value();
+            }
+            else{
+                return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i+1, j).value()
+                        || b.tile(i, j).value() == b.tile(i, j+1).value();
+            }
+        } else if (i == 3) {
+            if (j == 0){
+                return b.tile(i, j).value() == b.tile(i - 1, j).value() || b.tile(i, j).value() == b.tile(i, j + 1).value();
+            }
+            else if (j == 3){
+                return b.tile(i, j).value() == b.tile(i-1, j).value() || b.tile(i, j).value() == b.tile(i, j-1).value();
+            }
+            else{
+                return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i-1, j).value()
+                        || b.tile(i, j).value() == b.tile(i, j+1).value();
+            }
+        } else if (j == 0){
+            return b.tile(i, j).value() == b.tile(i-1, j).value() || b.tile(i, j).value() == b.tile(i+1, j).value()
+                    || b.tile(i, j).value() == b.tile(i, j+1).value();
+        } else if (j == 3){
+            return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i-1, j).value()
+                    || b.tile(i, j).value() == b.tile(i+1, j).value();
+        }else{
+            return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i-1, j).value()
+                    || b.tile(i, j).value() == b.tile(i, j+1).value() || b.tile(i, j).value() == b.tile(i+1, j).value();
+        }
+
+
+   }
+
+
 
 
     @Override
