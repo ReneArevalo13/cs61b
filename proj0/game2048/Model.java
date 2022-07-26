@@ -196,58 +196,52 @@ public class Model extends Observable {
 
    public static boolean compareAdjacent(Board b, int i, int j){
         // compare adjacent tiles on the game board
-
-
-//        if (i == 0 && j == 0){
-//            // look at tile (0,0) and adjacent tiles (1,0) and (0, 1)
-//            // return true if either are equal to tile (0,0
-//            return (b.tile(i,j).value() == b.tile(i,j+1).value() || b.tile(i,j).value() == b.tile(i+1,j).value());
-//        }else if (i == 3 && j == 0){
-//           // look at tile (3,0) and adjacent tiles (2,0) and (3, 1)
-//           // return true if either are equal to tile (3,0)
-//           return b.tile(i, j).value() == b.tile(i - 1, j).value() || b.tile(i, j).value() == b.tile(i, j + 1).value();
-//       }else if (i == 0 && j == 3){
-//            // look at tile (0,3) and adjacent tiles (0,2) and (1, 3)
-//            // return true if either are equal to tile (3,0)
-//            return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i+1, j).value();
-//        }else if (i == 3 && j == 3){
-//            // look at tile (3,3) and adjacent tiles (2,3) and (3,2)
-//            // return true if either are equal to tile (3,0)
-//            return b.tile(i, j).value() == b.tile(i-1, j).value() || b.tile(i, j).value() == b.tile(i, j-1).value();
-//            }
+       // would be cleaner if I made a function that did the comparison of tiles
         if (i == 0){
             if (j == 0) {
-                return (b.tile(i,j).value() == b.tile(i,j+1).value() || b.tile(i,j).value() == b.tile(i+1,j).value());
+                return tileComparison(b, i, j, "North") || tileComparison(b, i, j, "East");
             }else if (j == 3) {
-                return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i+1, j).value();
+                return tileComparison(b, i, j, "South") || tileComparison(b, i, j, "East");
             }
             else{
-                return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i+1, j).value()
-                        || b.tile(i, j).value() == b.tile(i, j+1).value();
+                return tileComparison(b, i, j, "South") ||tileComparison(b, i, j, "East")
+                        || tileComparison(b, i, j, "North");
             }
         } else if (i == 3) {
             if (j == 0){
-                return b.tile(i, j).value() == b.tile(i - 1, j).value() || b.tile(i, j).value() == b.tile(i, j + 1).value();
+                return tileComparison(b, i, j, "West") || tileComparison(b, i, j, "North");
             }
             else if (j == 3){
-                return b.tile(i, j).value() == b.tile(i-1, j).value() || b.tile(i, j).value() == b.tile(i, j-1).value();
+                return tileComparison(b, i, j, "West") ||tileComparison(b, i, j, "South");
             }
             else{
-                return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i-1, j).value()
-                        || b.tile(i, j).value() == b.tile(i, j+1).value();
+                return tileComparison(b, i, j, "South") || tileComparison(b, i, j, "West")
+                        || tileComparison(b, i, j, "North");
             }
         } else if (j == 0){
-            return b.tile(i, j).value() == b.tile(i-1, j).value() || b.tile(i, j).value() == b.tile(i+1, j).value()
-                    || b.tile(i, j).value() == b.tile(i, j+1).value();
+            return tileComparison(b, i, j, "West") || tileComparison(b, i, j, "East")
+                    || tileComparison(b, i, j, "North");
         } else if (j == 3){
-            return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i-1, j).value()
-                    || b.tile(i, j).value() == b.tile(i+1, j).value();
+            return tileComparison(b, i, j, "South")|| tileComparison(b, i, j, "West")
+                    || tileComparison(b, i, j, "East");
         }else{
-            return b.tile(i, j).value() == b.tile(i, j-1).value() || b.tile(i, j).value() == b.tile(i-1, j).value()
-                    || b.tile(i, j).value() == b.tile(i, j+1).value() || b.tile(i, j).value() == b.tile(i+1, j).value();
+            return tileComparison(b, i, j, "North") || tileComparison(b, i, j, "East")
+                    || tileComparison(b, i, j, "South") || tileComparison(b, i, j, "West");
         }
 
 
+   }
+   public static boolean tileComparison(Board b, int i, int j, String direction){
+        if (direction == "North"){
+            return b.tile(i, j).value() == b.tile(i, j+1).value();
+        } else if (direction == "East") {
+            return b.tile(i, j).value() == b.tile(i+1, j).value();
+        } else if (direction == "South") {
+            return b.tile(i, j).value() == b.tile(i, j-1).value();
+        } else if (direction == "West") {
+            return b.tile(i, j).value() == b.tile(i-1, j).value();
+        }
+        return false;
    }
 
 
