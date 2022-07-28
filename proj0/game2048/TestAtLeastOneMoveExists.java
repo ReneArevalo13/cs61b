@@ -15,6 +15,7 @@ public class TestAtLeastOneMoveExists {
     /** The Board that we'll be testing on. */
     static Board b;
 
+
     @Test
     /** Tests a board with some empty space.
      *

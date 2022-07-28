@@ -232,17 +232,73 @@ public class Model extends Observable {
 
    }
    public static boolean tileComparison(Board b, int i, int j, String direction){
-        if (direction == "North"){
+        // helper function to check if tile in given direction is equal to tile at (i, j)
+        if (direction.equals("North")){
             return b.tile(i, j).value() == b.tile(i, j+1).value();
-        } else if (direction == "East") {
+        } else if (direction.equals("East")) {
             return b.tile(i, j).value() == b.tile(i+1, j).value();
-        } else if (direction == "South") {
+        } else if (direction.equals("South")) {
             return b.tile(i, j).value() == b.tile(i, j-1).value();
-        } else if (direction == "West") {
+        } else if (direction.equals("West")) {
             return b.tile(i, j).value() == b.tile(i-1, j).value();
         }
         return false;
    }
+
+   public static boolean emptyAbove(Board b, int i, int j) {
+       // check to see if tiles above tile (i,j) are null
+       if (j+1 > b.size() - 1){
+//           System.out.println("j + 1 greater than size of board");
+           return false;
+       }
+       return b.tile(i, j + 1) == null;
+   }
+   public static int howManyAbove(Board b, int i, int j){
+        //recursively check how many empty tiles are above a given tile (i,j)
+       if (j > b.size()){
+           System.out.println("j has exceeded the bounds");
+           return 0;
+       }else if (emptyAbove(b, i, j)){
+//           System.out.println("one iteration");
+           return 1 + howManyAbove(b, i, j+1);
+       }else{
+           return 0;
+           }
+       }
+//    public static int howManyAbove(Board b, int i, int j){
+//        //recursively check how many empty tiles are above a given tile (i,j)
+//        int count = 0;
+//        if (j > b.size()){
+//            return 0;
+//        }else if (emptyAbove(b, i, j)){
+//            try{
+//                count += 1;
+////                System.out.println("j is " + j);
+////                System.out.println("one iteration");
+//                return count + howManyAbove(b,i,j+1);
+//            }catch (Exception e){
+//                System.out.println("index out of bounds");
+//            }
+//        }else{
+//            return 0;
+//        }
+//        return count;
+//    }
+
+//   public static boolean checkColumn(Board b, int i){
+//        for (int k = 0; k < b.size(); k++){
+//            if (b.tile(i, k) == null){
+//                continue;
+//            } else {
+//                return tileComparison(b, i, k, "North") || emptyAbove(b, i, k);
+//            }
+//        }
+//
+//   }
+
+
+
+
 
 
 
