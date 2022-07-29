@@ -265,25 +265,16 @@ public class Model extends Observable {
            return 0;
            }
        }
-//    public static int howManyAbove(Board b, int i, int j){
-//        //recursively check how many empty tiles are above a given tile (i,j)
-//        int count = 0;
-//        if (j > b.size()){
-//            return 0;
-//        }else if (emptyAbove(b, i, j)){
-//            try{
-//                count += 1;
-////                System.out.println("j is " + j);
-////                System.out.println("one iteration");
-//                return count + howManyAbove(b,i,j+1);
-//            }catch (Exception e){
-//                System.out.println("index out of bounds");
-//            }
-//        }else{
-//            return 0;
-//        }
-//        return count;
-//    }
+//
+    public static void executeMergeUp(Board b, int i, int j){
+        if (j >= b.size()-1){
+            return;
+        }
+        if (tileComparison(b, i, j,"North")){
+            Tile t = b.tile(i,j);
+            b.move(i,j+1,t);
+        }
+    }
 
 //   public static boolean checkColumn(Board b, int i){
 //        for (int k = 0; k < b.size(); k++){
