@@ -143,24 +143,40 @@ public class myTests {
                 {0, 2, 0, 0},
                 {0, 0, 2, 0},
                 {0, 32, 2, 0},
-                {0, 32, 0, 0},
+                {0, 32, 2, 0},
         };
 
         b = new Board(before, 0);
-        Model.checkColumn(b,1);
+        Model.checkColumn(b,2);
         System.out.println(b);
     }
     @Test
     public void checkColumntest5(){
         int[][] before = new int[][] {
-                {2, 2, 2, 0},
+                {2, 0, 2, 0},
                 {4, 4, 2, 2},
                 {0, 4, 0, 0},
-                {2, 4, 2, 8},
+                {2, 4, 4, 8},
         };
 
         b = new Board(before, 0);
-        Model.checkColumn(b,1);
+        Model.checkColumn(b,2);
+        System.out.println(b);
+    }
+    @Test
+    public void checkColumntestFullLoop(){
+        int[][] before = new int[][] {
+                {2, 0, 2, 0},
+                {4, 4, 2, 2},
+                {0, 4, 0, 0},
+                {2, 4, 4, 8},
+        };
+
+        b = new Board(before, 0);
+        for (int i = 0; i < b.size(); i++){
+            Model.checkColumn(b,i);
+        }
+
         System.out.println(b);
     }
 }

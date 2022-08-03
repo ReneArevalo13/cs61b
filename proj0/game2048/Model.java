@@ -262,34 +262,61 @@ public class Model extends Observable {
            }
        }
 //
-    public static void executeMergeUp(Board b, int i, int j){
+    public static boolean executeMergeUp(Board b, int i, int j){
         if (j >= b.size()-1){
-            return;
+            return false;
         }
         if (tileEqualAbove(b, i, j,"North")){
             Tile t = b.tile(i,j);
-            b.move(i,j+1,t);
-
+            return b.move(i,j+1,t);
         }
-
+        return false;
     }
 
    public static void checkColumn(Board b, int i){
         // method to check the moves of a given column, i
+       boolean merged= false;
+
        for (int j = b.size()-2; j >= 0; j--){
            Tile t = b.tile(i,j);
+//           System.out.println("j is " + j);
 
            if (t == null){
                continue;
            }else if (emptyAbove(b, i, j)){
+//               System.out.println("Move and merge clause");
                int move = howManyAbove(b, i, j);
-               b.move(i,j+move,t);
                j = j+move;//reassign j so we follow the tile to the new position
-               executeMergeUp(b,i,j);
+               b.move(i,j,t);
+//               System.out.println("pre merge " + merged);
+               if (!merged){
+                   if(executeMergeUp(b,i,j)){
+                       merged = true;
+                   }
+
+//                   System.out.println("MERGE EXECUTED, post merge is " + merged);
+//                   System.out.println(b);
+
+               }
+
+
+           }else if(tileEqualAbove(b,i,j,"North")){
+//               System.out.println("tile equal above clause");
+//               System.out.println(merged);
+               if (!merged){
+                   if(executeMergeUp(b,i,j)){
+                       merged = true;
+                   }
+//                   System.out.println("MERGE EXECUTED, post merge is " + merged);
+//                   System.out.println(b);
+
+               }
+
 
            }else{
-               return;
+               continue;
            }
+//           System.out.println(b);
        }
 
    }
