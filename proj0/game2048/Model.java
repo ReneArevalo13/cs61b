@@ -273,42 +273,47 @@ public class Model extends Observable {
         return false;
     }
 
-   public static void checkColumn(Board b, int i){
+   public static int checkColumn(Board b, int i){
         // method to check the moves of a given column, i
        boolean merged= false;
+       int score = 0;
 
        for (int j = b.size()-2; j >= 0; j--){
            Tile t = b.tile(i,j);
-//           System.out.println("j is " + j);
+           System.out.println("j is " + j);
 
            if (t == null){
                continue;
            }else if (emptyAbove(b, i, j)){
-//               System.out.println("Move and merge clause");
+               System.out.println("Move and merge clause");
                int move = howManyAbove(b, i, j);
                j = j+move;//reassign j so we follow the tile to the new position
                b.move(i,j,t);
-//               System.out.println("pre merge " + merged);
+               System.out.println("pre merge " + merged);
                if (!merged){
                    if(executeMergeUp(b,i,j)){
                        merged = true;
+                       System.out.println("MERGE EXECUTED, post merge is " + merged);
+                       System.out.println(b.tile(i,j+1));
+                       score += b.tile(i,j+1).value();
                    }
 
-//                   System.out.println("MERGE EXECUTED, post merge is " + merged);
-//                   System.out.println(b);
+//
 
                }
 
 
            }else if(tileEqualAbove(b,i,j,"North")){
-//               System.out.println("tile equal above clause");
-//               System.out.println(merged);
+               System.out.println("tile equal above clause");
+               System.out.println(merged);
                if (!merged){
                    if(executeMergeUp(b,i,j)){
                        merged = true;
+                       System.out.println("MERGE EXECUTED, post merge is " + merged);
+                       System.out.println(b);
+                       score += b.tile(i,j+1).value();
                    }
-//                   System.out.println("MERGE EXECUTED, post merge is " + merged);
-//                   System.out.println(b);
+
 
                }
 
@@ -316,8 +321,11 @@ public class Model extends Observable {
            }else{
                continue;
            }
+
 //           System.out.println(b);
        }
+       System.out.println("Score is "+score);
+       return score;
 
    }
 

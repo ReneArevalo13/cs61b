@@ -140,14 +140,14 @@ public class myTests {
     @Test
     public void checkColumntest4(){
         int[][] before = new int[][] {
-                {0, 2, 0, 0},
+                {0, 2, 2, 0},
                 {0, 0, 2, 0},
                 {0, 32, 2, 0},
                 {0, 32, 2, 0},
         };
 
         b = new Board(before, 0);
-        Model.checkColumn(b,2);
+        Model.checkColumn(b,1);
         System.out.println(b);
     }
     @Test
@@ -173,10 +173,13 @@ public class myTests {
         };
 
         b = new Board(before, 0);
+        int score = 0;
         for (int i = 0; i < b.size(); i++){
-            Model.checkColumn(b,i);
+            score += Model.checkColumn(b,i);
+
         }
 
         System.out.println(b);
+        System.out.println(score);
     }
 }
