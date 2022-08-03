@@ -97,4 +97,70 @@ public class myTests {
         Model.executeMergeUp(b,1,3);
         System.out.println(b);
     }
+
+    @Test
+    public void checkColumntest1(){
+        int[][] before = new int[][] {
+                {0, 0, 0, 0},
+                {0, 0, 2, 0},
+                {0, 4, 2, 0},
+                {0, 4, 0, 0},
+        };
+
+        b = new Board(before, 0);
+        Model.checkColumn(b,1);
+        System.out.println(b);
+    }
+    @Test
+    public void checkColumntest2(){
+        int[][] before = new int[][] {
+                {0, 0, 0, 0},
+                {0, 0, 2, 0},
+                {0, 4, 2, 0},
+                {0, 4, 0, 0},
+        };
+
+        b = new Board(before, 0);
+        Model.checkColumn(b,2);
+        System.out.println(b);
+    }
+    @Test
+    public void checkColumntest3(){
+        int[][] before = new int[][] {
+                {0, 2, 0, 0},
+                {0, 0, 2, 0},
+                {0, 4, 2, 0},
+                {0, 4, 0, 0},
+        };
+
+        b = new Board(before, 0);
+        Model.checkColumn(b,1);
+        System.out.println(b);
+    }
+    @Test
+    public void checkColumntest4(){
+        int[][] before = new int[][] {
+                {0, 2, 0, 0},
+                {0, 0, 2, 0},
+                {0, 32, 2, 0},
+                {0, 32, 0, 0},
+        };
+
+        b = new Board(before, 0);
+        Model.checkColumn(b,1);
+        System.out.println(b);
+    }
+    @Test
+    public void checkColumntest5(){
+        int[][] before = new int[][] {
+                {2, 2, 2, 0},
+                {4, 4, 2, 2},
+                {0, 4, 0, 0},
+                {2, 4, 2, 8},
+        };
+
+        b = new Board(before, 0);
+        Model.checkColumn(b,1);
+        System.out.println(b);
+    }
 }

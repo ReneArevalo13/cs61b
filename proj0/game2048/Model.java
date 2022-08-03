@@ -158,7 +158,6 @@ public class Model extends Observable {
         for (int i = 0; i < b.size(); i++){
             for (int j = 0; j < b.size(); j++){
                 if (b.tile(i,j) == null){
-                    continue;
                 } else if (b.tile(i,j).value() == MAX_PIECE) {
                     return true;
                 }
@@ -199,50 +198,47 @@ public class Model extends Observable {
        // would be cleaner if I made a function that did the comparison of tiles
         if (i == 0){
             if (j == 0) {
-                return tileComparison(b, i, j, "North") || tileComparison(b, i, j, "East");
+                return tileEqualAbove(b, i, j, "North") || tileEqualAbove(b, i, j, "East");
             }else if (j == 3) {
-                return tileComparison(b, i, j, "South") || tileComparison(b, i, j, "East");
+                return tileEqualAbove(b, i, j, "South") || tileEqualAbove(b, i, j, "East");
             }
             else{
-                return tileComparison(b, i, j, "South") ||tileComparison(b, i, j, "East")
-                        || tileComparison(b, i, j, "North");
+                return tileEqualAbove(b, i, j, "South") || tileEqualAbove(b, i, j, "East")
+                        || tileEqualAbove(b, i, j, "North");
             }
         } else if (i == 3) {
             if (j == 0){
-                return tileComparison(b, i, j, "West") || tileComparison(b, i, j, "North");
+                return tileEqualAbove(b, i, j, "West") || tileEqualAbove(b, i, j, "North");
             }
             else if (j == 3){
-                return tileComparison(b, i, j, "West") ||tileComparison(b, i, j, "South");
+                return tileEqualAbove(b, i, j, "West") || tileEqualAbove(b, i, j, "South");
             }
             else{
-                return tileComparison(b, i, j, "South") || tileComparison(b, i, j, "West")
-                        || tileComparison(b, i, j, "North");
+                return tileEqualAbove(b, i, j, "South") || tileEqualAbove(b, i, j, "West")
+                        || tileEqualAbove(b, i, j, "North");
             }
         } else if (j == 0){
-            return tileComparison(b, i, j, "West") || tileComparison(b, i, j, "East")
-                    || tileComparison(b, i, j, "North");
+            return tileEqualAbove(b, i, j, "West") || tileEqualAbove(b, i, j, "East")
+                    || tileEqualAbove(b, i, j, "North");
         } else if (j == 3){
-            return tileComparison(b, i, j, "South")|| tileComparison(b, i, j, "West")
-                    || tileComparison(b, i, j, "East");
+            return tileEqualAbove(b, i, j, "South")|| tileEqualAbove(b, i, j, "West")
+                    || tileEqualAbove(b, i, j, "East");
         }else{
-            return tileComparison(b, i, j, "North") || tileComparison(b, i, j, "East")
-                    || tileComparison(b, i, j, "South") || tileComparison(b, i, j, "West");
+            return tileEqualAbove(b, i, j, "North") || tileEqualAbove(b, i, j, "East")
+                    || tileEqualAbove(b, i, j, "South") || tileEqualAbove(b, i, j, "West");
         }
 
 
    }
-   public static boolean tileComparison(Board b, int i, int j, String direction){
+   public static boolean tileEqualAbove(Board b, int i, int j, String direction){
         // helper function to check if tile in given direction is equal to tile at (i, j)
-        if (direction.equals("North")){
-            return b.tile(i, j).value() == b.tile(i, j+1).value();
-        } else if (direction.equals("East")) {
-            return b.tile(i, j).value() == b.tile(i+1, j).value();
-        } else if (direction.equals("South")) {
-            return b.tile(i, j).value() == b.tile(i, j-1).value();
-        } else if (direction.equals("West")) {
-            return b.tile(i, j).value() == b.tile(i-1, j).value();
-        }
-        return false;
+       return switch (direction) {
+           case "North" -> b.tile(i, j).value() == b.tile(i, j + 1).value();
+           case "East" -> b.tile(i, j).value() == b.tile(i + 1, j).value();
+           case "South" -> b.tile(i, j).value() == b.tile(i, j - 1).value();
+           case "West" -> b.tile(i, j).value() == b.tile(i - 1, j).value();
+           default -> false;
+       };
    }
 
    public static boolean emptyAbove(Board b, int i, int j) {
@@ -270,22 +266,33 @@ public class Model extends Observable {
         if (j >= b.size()-1){
             return;
         }
-        if (tileComparison(b, i, j,"North")){
+        if (tileEqualAbove(b, i, j,"North")){
             Tile t = b.tile(i,j);
             b.move(i,j+1,t);
+
         }
+
     }
 
-//   public static boolean checkColumn(Board b, int i){
-//        for (int k = 0; k < b.size(); k++){
-//            if (b.tile(i, k) == null){
-//                continue;
-//            } else {
-//                return tileComparison(b, i, k, "North") || emptyAbove(b, i, k);
-//            }
-//        }
-//
-//   }
+   public static void checkColumn(Board b, int i){
+        // method to check the moves of a given column, i
+       for (int j = b.size()-2; j >= 0; j--){
+           Tile t = b.tile(i,j);
+
+           if (t == null){
+               continue;
+           }else if (emptyAbove(b, i, j)){
+               int move = howManyAbove(b, i, j);
+               b.move(i,j+move,t);
+               j = j+move;//reassign j so we follow the tile to the new position
+               executeMergeUp(b,i,j);
+
+           }else{
+               return;
+           }
+       }
+
+   }
 
 
 
