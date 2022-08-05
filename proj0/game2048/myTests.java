@@ -101,14 +101,14 @@ public class myTests {
     @Test
     public void checkColumntest1(){
         int[][] before = new int[][] {
-                {0, 0, 0, 0},
+                {0, 0, 2, 0},
                 {0, 0, 2, 0},
                 {0, 4, 2, 0},
-                {0, 4, 0, 0},
+                {0, 4, 2, 0},
         };
 
         b = new Board(before, 0);
-        Model.checkColumn(b,1);
+        Model.checkColumn(b,2);
         System.out.println(b);
     }
     @Test
@@ -164,12 +164,50 @@ public class myTests {
         System.out.println(b);
     }
     @Test
-    public void checkColumntestFullLoop(){
+    public void checkColumntest6(){
         int[][] before = new int[][] {
-                {2, 0, 2, 0},
-                {4, 4, 2, 2},
-                {0, 4, 0, 0},
-                {2, 4, 4, 8},
+                {2, 0, 0, 0},
+                {2, 0, 0, 0},
+                {2, 0, 0, 0},
+                {0, 0, 0, 0},
+        };
+
+        b = new Board(before, 0);
+        System.out.println(b);
+
+        b.setViewingPerspective(Side.SOUTH);
+        System.out.println(b);
+
+        Model.checkColumn(b,3);
+        b.setViewingPerspective(Side.NORTH);
+        System.out.println(b);
+    }
+    @Test
+    public void checkColumntest7(){
+        int[][] before = new int[][] {
+                {2, 0, 0, 0},
+                {2, 0, 0, 0},
+                {2, 0, 0, 0},
+                {0, 0, 0, 0},
+        };
+
+        b = new Board(before, 0);
+        System.out.println(b);
+
+        b.setViewingPerspective(Side.SOUTH);
+        System.out.println(b);
+
+        Model.checkColumn(b,3);
+        b.setViewingPerspective(Side.NORTH);
+        System.out.println(b);
+    }
+    @Test
+    public void checkColumnTestFullLoop1(){
+        int[][] before = new int[][] {
+                {0, 0, 4, 0},
+                {0, 0, 0, 2},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0},
         };
 
         b = new Board(before, 0);
@@ -179,6 +217,27 @@ public class myTests {
 
         }
 
+        System.out.println(b);
+        System.out.println(score);
+    }
+    @Test
+    public void checkColumnTestFullLoop2(){
+        int[][] before = new int[][] {
+                {2, 0, 0, 0},
+                {2, 0, 0, 0},
+                {2, 0, 0, 0},
+                {0, 0, 0, 0},
+        };
+
+
+        b = new Board(before, 0);
+        int score = 0;
+        System.out.println("South Executed");
+        b.setViewingPerspective(Side.SOUTH);
+        for (int i = 3; i >= 0; i--){
+            score += Model.checkColumn(b,i);
+        }
+        b.setViewingPerspective(Side.NORTH);
         System.out.println(b);
         System.out.println(score);
     }
