@@ -101,14 +101,14 @@ public class myTests {
     @Test
     public void checkColumntest1(){
         int[][] before = new int[][] {
-                {0, 0, 2, 0},
-                {0, 0, 2, 0},
-                {0, 4, 2, 0},
-                {0, 4, 2, 0},
+                {2, 4, 2, 0},
+                {2, 0, 2, 0},
+                {0, 2, 2, 0},
+                {4, 2, 2, 0},
         };
 
         b = new Board(before, 0);
-        Model.checkColumn(b,2);
+        Model.checkColumn(b,0);
         System.out.println(b);
     }
     @Test
