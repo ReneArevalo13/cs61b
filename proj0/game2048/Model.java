@@ -1,5 +1,6 @@
 package game2048;
 
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.Observable;
 
@@ -115,42 +116,51 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
         Board b = this.board;
+        Board bCopy = makeCopy(b);
+//        Board b2 = new
+//        System.out.println(b);
+
         if(side == Side.NORTH){
             for (int i = 0; i < b.size(); i++){
                 this.score += Model.checkColumn(b,i);
             }
             b.setViewingPerspective(Side.NORTH);
-            if(this.score < -4){
-                changed = false;
-            }else{
+
+            if(!equalsAfterMove(b,bCopy)){
                 changed = true;
             }
 
-        }
-        if(side == Side.EAST){
+        }else if(side == Side.EAST){
             b.setViewingPerspective(Side.EAST);
             for (int i = 3; i >= 0; i--){
                 this.score += Model.checkColumn(b,i);
             }
             b.setViewingPerspective(Side.NORTH);
-            changed = true;
-        }
-        if(side == Side.SOUTH){
+            if(!equalsAfterMove(b,bCopy)){
+                changed = true;
+            }
+        } else if (side == Side.SOUTH){
             b.setViewingPerspective(Side.SOUTH);
             for (int i = 3; i >= 0; i--){
                 this.score += Model.checkColumn(b,i);
             }
             b.setViewingPerspective(Side.NORTH);
-            changed = true;
-        }
-        if(side == Side.WEST){
+            if(!equalsAfterMove(b,bCopy)){
+                changed = true;
+            }
+        }else if(side == Side.WEST){
             b.setViewingPerspective(Side.WEST);
             for (int i = 3; i >= 0; i--){
                 this.score += Model.checkColumn(b,i);
             }
             b.setViewingPerspective(Side.NORTH);
-            changed = true;
+            if(!equalsAfterMove(b,bCopy)){
+                changed = true;
+            }
+        }else{
+            changed = false;
         }
+
 
 
         checkGameOver();
@@ -374,7 +384,46 @@ public class Model extends Observable {
         }
 //       System.out.println("Score is "+score);
         return score;
+    }
+    public static int[][] extractRawValues(Board b){
+        int[][] copy = new int[b.size()][b.size()];
 
+        for (int j = 3; j>=0; j--){
+            int k = 3 - j;
+            for (int i = 0; i < b.size(); i++){
+                int z =  i;
+                if (b.tile(i,j) == null){
+//                    System.out.println("i is " + i + " j is " + j);
+//                    System.out.println("Tile was null");
+
+                    copy[k][z] = 0;
+//                    System.out.println(copy[z][k]);
+                }else{
+//                    System.out.println("i is " + i + " j is " + j);
+                    copy[k][z] = b.tile(i,j).value();
+//                    System.out.println("Tile had a value");
+//                    System.out.println(copy[z][k]);
+                }
+//                System.out.println(copy[i][j]);
+
+
+            }
+        }
+//        System.out.println(Arrays.deepToString(copy));
+        return copy;
+
+    }
+    public static boolean equalsAfterMove(Board b1, Board b2){
+        String b1String = b1.toString();
+        String b2String = b2.toString();
+        return b1String.equals(b2String);
+
+    }
+
+    public static Board makeCopy(Board b){
+        int copyRaw[][];
+        copyRaw = Model.extractRawValues(b);
+        return new Board(copyRaw, 0);
     }
 
 

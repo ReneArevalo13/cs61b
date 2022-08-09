@@ -204,19 +204,21 @@ public class myTests {
     @Test
     public void checkColumnTestFullLoop1(){
         int[][] before = new int[][] {
-                {0, 0, 4, 0},
-                {0, 0, 0, 2},
+                {2, 0, 2, 2},
+                {0, 0, 0, 0},
                 {0, 0, 0, 0},
                 {0, 0, 0, 0},
         };
 
         b = new Board(before, 0);
+        Board b2 = new Board(before,0);
         int score = 0;
         for (int i = 0; i < b.size(); i++){
             score += Model.checkColumn(b,i);
 
         }
 
+        System.out.println(b2 == b);
         System.out.println(b);
         System.out.println(score);
     }
@@ -241,4 +243,74 @@ public class myTests {
         System.out.println(b);
         System.out.println(score);
     }
+    @Test
+    public void checkExtractRawValue1(){
+        int[][] before = new int[][] {
+                {2, 0, 2, 2},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0},
+        };
+
+
+        b = new Board(before, 0);
+        int copyRaw[][];
+        copyRaw = Model.extractRawValues(b);
+        Board b2 = new Board(copyRaw, 0);
+        System.out.println(b);
+        System.out.println(b2);
+        System.out.println(b == b2);
+        String bString = b.toString();
+        String b2String = b2.toString();
+        System.out.println(b2String.equals(bString));
+
+    }
+    @Test
+    public void checkChange1(){
+        int[][] before = new int[][] {
+                {2, 0, 0, 0},
+                {2, 0, 0, 0},
+                {2, 0, 0, 0},
+                {0, 0, 0, 0},
+        };
+
+
+        b = new Board(before, 0);
+        int score = 0;
+        Board bCopy = Model.makeCopy(b);
+        System.out.println(bCopy.toString());
+        System.out.println("South Executed");
+        b.setViewingPerspective(Side.SOUTH);
+        for (int i = 3; i >= 0; i--){
+            score += Model.checkColumn(b,i);
+        }
+        b.setViewingPerspective(Side.NORTH);
+        System.out.println(b);
+        System.out.println(Model.equalsAfterMove(b,bCopy));
+        System.out.println(score);
+    }
+    @Test
+    public void checkChange(){
+        int[][] before = new int[][] {
+                {2, 0, 2, 2},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0},
+        };
+
+        b = new Board(before, 0);
+        Board bCopy = Model.makeCopy(b);
+        Board b2 = new Board(before,0);
+        int score = 0;
+        for (int i = 0; i < b.size(); i++){
+            score += Model.checkColumn(b,i);
+
+        }
+
+//        System.out.println(b2 == b);
+        System.out.println(b);
+        System.out.println(score);
+        System.out.println(Model.equalsAfterMove(b,bCopy));
+    }
 }
+
