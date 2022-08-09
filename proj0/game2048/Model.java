@@ -117,8 +117,7 @@ public class Model extends Observable {
         // changed local variable to true.
         Board b = this.board;
         Board bCopy = makeCopy(b);
-//        Board b2 = new
-//        System.out.println(b);
+//
 
         if(side == Side.NORTH){
             for (int i = 0; i < b.size(); i++){
@@ -333,24 +332,15 @@ public class Model extends Observable {
             int j = k;
             Tile t = b.tile(i,j);
 
-//            System.out.println("Current number of merges are " + merges);
-
-//           System.out.println("j is " + j);
-//            System.out.println(b);
-
             if (t == null){
                 continue;
-
             }
             else if (emptyAbove(b, i, j)){
-//               System.out.println("Move and merge clause");
                 int move = howManyAbove(b, i, j);
                 j = j+move;//reassign j so we follow the tile to the new position
                 b.move(i,j,t);
                 moves += 1;
-//                System.out.println("TILE MOVED");
-//                System.out.println(b);
-//                System.out.println("pre merge " + merged);
+//
                 if(merges >= 1 && moves > 1){
                     merged = false;
                 }
@@ -358,14 +348,10 @@ public class Model extends Observable {
                     if(executeMergeUp(b,i,j)){
                         merged = true;
                         merges += 1;
-//                       System.out.println("MERGE EXECUTED, post merge is " + merged);
-//                       System.out.println(b.tile(i,j+1));
                         score += b.tile(i,j+1).value();
                     }
                 }
             }else if(tileEqualAbove(b,i,j,"North")){
-//               System.out.println("tile equal above clause");
-//               System.out.println(merged);
                 if(merges >= 1){
                     merged = true;
                 }
@@ -373,8 +359,6 @@ public class Model extends Observable {
                     if(executeMergeUp(b,i,j)){
                         merged = true;
                         merges += 1;
-//                       System.out.println("MERGE EXECUTED, post merge is " + merged);
-//                       System.out.println(b);
                         score += b.tile(i,j+1).value();
                     }
                 }
@@ -382,7 +366,6 @@ public class Model extends Observable {
                 continue;
             }
         }
-//       System.out.println("Score is "+score);
         return score;
     }
     public static int[][] extractRawValues(Board b){
@@ -393,46 +376,29 @@ public class Model extends Observable {
             for (int i = 0; i < b.size(); i++){
                 int z =  i;
                 if (b.tile(i,j) == null){
-//                    System.out.println("i is " + i + " j is " + j);
-//                    System.out.println("Tile was null");
-
+//
                     copy[k][z] = 0;
-//                    System.out.println(copy[z][k]);
                 }else{
-//                    System.out.println("i is " + i + " j is " + j);
                     copy[k][z] = b.tile(i,j).value();
-//                    System.out.println("Tile had a value");
-//                    System.out.println(copy[z][k]);
                 }
-//                System.out.println(copy[i][j]);
-
-
             }
         }
-//        System.out.println(Arrays.deepToString(copy));
         return copy;
 
     }
     public static boolean equalsAfterMove(Board b1, Board b2){
+        //compare the two boards via their string representation
         String b1String = b1.toString();
         String b2String = b2.toString();
         return b1String.equals(b2String);
-
     }
-
     public static Board makeCopy(Board b){
+        //make a copy of the values from an imported Board b
         int copyRaw[][];
         copyRaw = Model.extractRawValues(b);
         return new Board(copyRaw, 0);
     }
-
-
-
-
-
-
-
-
+    
     @Override
      /** Returns the model as a string, used for debugging. */
     public String toString() {
