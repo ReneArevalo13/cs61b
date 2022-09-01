@@ -23,7 +23,7 @@ public class TimeAList {
 
     public static void timeAListConstruction() {
         // TODO: YOUR CODE HERE
-        int[] elements = {1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000};
+        int[] elements = {1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 1000000};
         AList<Double> timeSeconds = new AList<Double>();
         AList<Integer> elementsN = new AList<Integer>();
         AList<Integer> opCount = new AList<Integer>();
