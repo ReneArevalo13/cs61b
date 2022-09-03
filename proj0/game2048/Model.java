@@ -398,7 +398,7 @@ public class Model extends Observable {
         copyRaw = Model.extractRawValues(b);
         return new Board(copyRaw, 0);
     }
-    
+
     @Override
      /** Returns the model as a string, used for debugging. */
     public String toString() {
