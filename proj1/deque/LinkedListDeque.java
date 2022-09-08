@@ -27,14 +27,19 @@ public class LinkedListDeque<Type> {
     public void addFirst(Type item){
         sentinel.next = new Node(item, sentinel.next, sentinel);
         sentinel.next.next.prev = sentinel.next;
-//        sentinel.prev = sentinel.next;
         size++;
     }
     public void addLast(Type item){
         sentinel.prev = new Node(item, sentinel, sentinel.prev);
         sentinel.prev.prev.next = sentinel.prev;
         size++;
+    }
 
+    public boolean isEmpty(){
+        return size == 0;
+    }
+    public int size(){
+        return size;
     }
 
     public static void main(String[] args){
