@@ -35,6 +35,26 @@ public class LinkedListDeque<Type> {
         size++;
     }
 
+    public Type removeFirst(){
+        Type firstRemoved = sentinel.next.item;
+        sentinel.next = sentinel.next.next;
+        sentinel.next.prev.prev = null;
+        sentinel.next.prev.next = null;
+        sentinel.next.prev = sentinel;
+        size--;
+        return firstRemoved;
+    }
+
+    public Type removeLast(){
+        Type lastRemoved = sentinel.prev.item;
+        sentinel.prev = sentinel.prev.prev;
+        sentinel.prev.next.prev = null;
+        sentinel.prev.next.next = null;
+        sentinel.prev.next = sentinel;
+        size--;
+        return lastRemoved;
+    }
+
     public boolean isEmpty(){
         return size == 0;
     }
@@ -48,6 +68,10 @@ public class LinkedListDeque<Type> {
         LLD.addLast(9);
         LLD.addFirst(3);
         LLD.addLast(8);
+        LLD.addLast(7);
+        LLD.addLast(55);
+        Integer removed = LLD.removeLast();
+        System.out.println(removed);
     }
 
 
