@@ -62,20 +62,25 @@ public class LinkedListDeque<Type> {
             return lastRemoved;
         }
     }
-
     public Type get(int index){
         // set current node as the first node
         Node current_Node = sentinel.next;
         int currentIndex = 0;
-
-        while (current_Node.next != sentinel){
+        if (current_Node == sentinel.prev){
+            return sentinel.prev.item;
+        }
+        while (current_Node != sentinel.prev){
             if (currentIndex == index){
                 return current_Node.item;
             } else {
               currentIndex++;
               current_Node = current_Node.next;
+                if (current_Node == sentinel.prev){
+                    return sentinel.prev.item;
+                }
             }
         }
+
         return null;
     }
 
@@ -90,6 +95,10 @@ public class LinkedListDeque<Type> {
         return size;
     }
 
+    public Type getLast(){
+        return sentinel.prev.item;
+    }
+
     public static void main(String[] args){
 
         LinkedListDeque<Integer> LLD = new LinkedListDeque();
@@ -98,7 +107,7 @@ public class LinkedListDeque<Type> {
         LLD.addLast(8);
         LLD.addLast(7);
         LLD.addLast(55);
-        int output = LLD.get(2);
+        int output = LLD.get(4);
 
 //        Integer removed = LLD.removeLast();
 //        System.out.println(removed);

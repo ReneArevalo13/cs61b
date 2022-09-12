@@ -1,11 +1,24 @@
 package deque;
 
+import edu.princeton.cs.algs4.Stopwatch;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 
 /** Performs some basic linked list tests. */
 public class LinkedListDequeTest {
+
+    private static void printTimingTable(LinkedListDeque<Integer> Ns, LinkedListDeque<Double> times, LinkedListDeque<Integer> opCounts) {
+        System.out.printf("%12s %12s %12s %12s\n", "N", "time (s)", "# ops", "microsec/op");
+        System.out.printf("------------------------------------------------------------\n");
+        for (int i = 0; i < Ns.size(); i += 1) {
+            int N = Ns.get(i);
+            double time = times.get(i);
+            int opCount = opCounts.get(i);
+            double timePerOp = time / opCount * 1e6;
+            System.out.printf("%12d %12.2f %12d %12.2f\n", N, time, opCount, timePerOp);
+        }
+    }
 
     @Test
     /** Adds a few things to the list, checking isEmpty() and size() are correct,
@@ -84,7 +97,7 @@ public class LinkedListDequeTest {
     /* Check if you can create LinkedListDeques with different parameterized types*/
     public void multipleParamTest() {
 
-        /*
+
         LinkedListDeque<String>  lld1 = new LinkedListDeque<String>();
         LinkedListDeque<Double>  lld2 = new LinkedListDeque<Double>();
         LinkedListDeque<Boolean> lld3 = new LinkedListDeque<Boolean>();
@@ -96,7 +109,7 @@ public class LinkedListDequeTest {
         String s = lld1.removeFirst();
         double d = lld2.removeFirst();
         boolean b = lld3.removeFirst();
-        */
+
     }
 
     @Test
@@ -104,7 +117,7 @@ public class LinkedListDequeTest {
     public void emptyNullReturnTest() {
 
         System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-        /*
+
         LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
 
         boolean passed1 = false;
@@ -112,7 +125,7 @@ public class LinkedListDequeTest {
         assertEquals("Should return null when removeFirst is called on an empty Deque,", null, lld1.removeFirst());
         assertEquals("Should return null when removeLast is called on an empty Deque,", null, lld1.removeLast());
 
-        */
+
     }
 
     @Test
@@ -120,7 +133,7 @@ public class LinkedListDequeTest {
     public void bigLLDequeTest() {
 
         System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-        /*
+
         LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
         for (int i = 0; i < 1000000; i++) {
             lld1.addLast(i);
@@ -133,7 +146,37 @@ public class LinkedListDequeTest {
         for (double i = 999999; i > 500000; i--) {
             assertEquals("Should have the same value", i, (double) lld1.removeLast(), 0.0);
         }
+    }
 
-        */
+    public static void timeGetLast() {
+        // TODO: YOUR CODE HERE
+        int[] elements = {1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000};
+        LinkedListDeque<Double> timeSeconds = new LinkedListDeque<Double>();
+        LinkedListDeque<Integer> elementsN = new LinkedListDeque<Integer>();
+        LinkedListDeque<Integer> opCount = new LinkedListDeque<Integer>();
+        for (int N: elements){
+            int count = 0;
+            LinkedListDeque<Integer> LLD = new LinkedListDeque<Integer>();
+            while (count < N){
+                LLD.addLast(count);
+                count += 1;
+            }
+
+            Stopwatch sw = new Stopwatch();
+            int M = 10000;
+            for(int i = 0; i < M; i++){
+                LLD.getLast();
+            }
+
+            double timeInSeconds = sw.elapsedTime();
+
+            timeSeconds.addLast(timeInSeconds);
+            elementsN.addLast(N);
+            opCount.addLast(M);
+        }
+        printTimingTable(elementsN, timeSeconds, opCount);
+    }
+    public static void main(String[] args) {
+        timeGetLast();
     }
 }
