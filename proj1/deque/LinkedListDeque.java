@@ -36,7 +36,7 @@ public class LinkedListDeque<Type> {
     }
 
     public Type removeFirst() {
-        if (sentinel.next == null) {
+        if (sentinel.next == sentinel || sentinel.prev == sentinel) {
             return null;
         } else {
             Type firstRemoved = sentinel.next.item;
@@ -50,7 +50,7 @@ public class LinkedListDeque<Type> {
     }
 
     public Type removeLast() {
-        if (sentinel.prev == null) {
+        if (sentinel.next == sentinel || sentinel.prev == sentinel) {
             return null;
         } else {
             Type lastRemoved = sentinel.prev.item;
@@ -79,6 +79,10 @@ public class LinkedListDeque<Type> {
         return null;
     }
 
+    public void printDeque(){
+
+    }
+
     public boolean isEmpty(){
         return size == 0;
     }
@@ -95,6 +99,7 @@ public class LinkedListDeque<Type> {
         LLD.addLast(7);
         LLD.addLast(55);
         int output = LLD.get(2);
+
 //        Integer removed = LLD.removeLast();
 //        System.out.println(removed);
 
