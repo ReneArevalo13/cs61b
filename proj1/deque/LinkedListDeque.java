@@ -63,26 +63,17 @@ public class LinkedListDeque<Type> {
         }
     }
     public Type get(int index){
-        // set current node as the first node
+        // set current node as the first nodesentinel
         Node current_Node = sentinel.next;
-        int currentIndex = 0;
-        if (current_Node == sentinel.prev){
-            return sentinel.prev.item;
-        }
-        while (current_Node != sentinel.prev){
-            if (currentIndex == index){
+        for (int i = 0; i <= index; i++){
+            if (i == index){
                 return current_Node.item;
-            } else {
-              currentIndex++;
-              current_Node = current_Node.next;
-                if (current_Node == sentinel.prev){
-                    return sentinel.prev.item;
-                }
+            }else{
+                current_Node = current_Node.next;
             }
         }
-
         return null;
-    }
+        }
 
     public void printDeque(){
 
