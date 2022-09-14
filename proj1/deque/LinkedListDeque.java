@@ -64,16 +64,30 @@ public class LinkedListDeque<Type> {
     }
     public Type get(int index){
         // set current node as the first nodesentinel
-        Node current_Node = sentinel.next;
+        Node currentNode = sentinel.next;
         for (int i = 0; i <= index; i++){
             if (i == index){
-                return current_Node.item;
+                return currentNode.item;
             }else{
-                current_Node = current_Node.next;
+                currentNode = currentNode.next;
             }
         }
         return null;
+    }
+    public Type getRecursive(int index){
+        if (index > size){
+            return null;
+        }else{
+            return recursiveHelper(sentinel.next, index);
         }
+    }
+    public Type recursiveHelper(Node n, int index){
+        if (index == 0){
+            return n.item;
+        }else{
+            return recursiveHelper(n.next, index - 1);
+        }
+    }
 
     public void printDeque(){
 
@@ -99,6 +113,7 @@ public class LinkedListDeque<Type> {
         LLD.addLast(7);
         LLD.addLast(55);
         int output = LLD.get(4);
+        int outputRecurse = LLD.getRecursive(4);
 
 //        Integer removed = LLD.removeLast();
 //        System.out.println(removed);

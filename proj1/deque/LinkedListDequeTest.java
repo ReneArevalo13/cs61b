@@ -1,5 +1,6 @@
 package deque;
 
+import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.Stopwatch;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -157,24 +158,67 @@ public class LinkedListDequeTest {
         for (int N: elements){
             int count = 0;
             LinkedListDeque<Integer> LLD = new LinkedListDeque<Integer>();
+            Stopwatch sw = new Stopwatch();
             while (count < N){
                 LLD.addLast(count);
                 count += 1;
             }
+            double timeInSeconds = sw.elapsedTime();
 
-            Stopwatch sw = new Stopwatch();
+//            Stopwatch sw = new Stopwatch();
             int M = 10000;
             for(int i = 0; i < M; i++){
                 LLD.getLast();
             }
 
-            double timeInSeconds = sw.elapsedTime();
+//            double timeInSeconds = sw.elapsedTime();
 
             timeSeconds.addLast(timeInSeconds);
             elementsN.addLast(N);
             opCount.addLast(M);
         }
         printTimingTable(elementsN, timeSeconds, opCount);
+    }
+
+    @Test
+    public void randomizedTest() {
+        LinkedListDeque<Integer> L = new LinkedListDeque<>();
+        LinkedListDeque<Integer> B = new LinkedListDeque<>();
+
+        int N = 5000;
+        for (int i = 0; i < N; i += 1) {
+            int operationNumber = StdRandom.uniform(0, 4);
+            if (operationNumber == 0) {
+                // addLast
+                int randVal = StdRandom.uniform(0, 100);
+                L.addLast(randVal);
+                B.addLast(randVal);
+            } else if (operationNumber == 1) {
+                // size
+                int sizeA = L.size();
+                int sizeB = B.size();
+
+                assertEquals(sizeA, sizeB);
+            } else if (operationNumber == 2) {
+                // getLast
+                if (L.size() == 0) {
+                    continue;
+                } else {
+                    int lastA = L.getLast();
+                    int lastB = B.getLast();
+                    assertEquals(lastA, lastB);
+                }
+            } else if (operationNumber == 3) {
+                // removeLast
+                if (L.size() == 0) {
+                    continue;
+                } else {
+                    L.removeLast();
+                    B.removeLast();
+                }
+
+            }
+        }
     }
     public static void main(String[] args) {
         timeGetLast();
