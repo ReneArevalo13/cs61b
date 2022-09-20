@@ -42,9 +42,46 @@ public class ArrayDeque<Type> {
         }
         items[rearIndex] = item;
         size++;
-
     }
-
+    public Type removeFirst(){
+        if (isEmpty()){
+            return null;
+        }
+        Type value = items[frontIndex];
+        // when only one item in array, front==rear
+        if (frontIndex == rearIndex){
+            frontIndex = -1;
+            rearIndex = -1;
+        /* when front points to last index in the array
+        need to change front back to 0.
+         */
+        } else if (frontIndex == length-1) {
+            frontIndex = 0;
+        } else{
+            rearIndex--;
+        }
+        size--;
+        return value;
+    }
+    public Type removeLast(){
+        if (isEmpty()){
+            return null;
+        }
+        Type value = items[rearIndex];
+        if (frontIndex == rearIndex){
+            frontIndex = -1;
+            rearIndex = -1;
+            /* if rear points at first element
+            change it to point at length-1 spot
+             */
+        } else if (rearIndex == 0) {
+            rearIndex = length -1;
+        } else{
+            rearIndex--;
+        }
+        size--;
+        return value;
+    }
         public int size(){
         return size;
     }
@@ -62,6 +99,10 @@ public class ArrayDeque<Type> {
         AD.addFirst(12);
         AD.addLast(33);
         AD.addFirst(14);
+        int rmvF = AD.removeFirst();
+        AD.addLast(11);
+        AD.addFirst(54);
+        int rmvL = AD.removeLast();
     }
 
 
