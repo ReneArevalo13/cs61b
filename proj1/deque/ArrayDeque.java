@@ -82,7 +82,13 @@ public class ArrayDeque<Type> {
         size--;
         return value;
     }
-        public int size(){
+    public Type get(int index){
+        if(isEmpty()){
+            return null;
+        }
+        return items[index];
+    }
+    public int size(){
         return size;
     }
 
@@ -91,6 +97,12 @@ public class ArrayDeque<Type> {
     }
     public boolean isFull(){
         return size == length;
+    }
+    public Type getLast(){
+        return items[rearIndex];
+    }
+    public Type getFirst(){
+        return items[frontIndex];
     }
 
     public static void main(String[] args){
@@ -103,6 +115,7 @@ public class ArrayDeque<Type> {
         AD.addLast(11);
         AD.addFirst(54);
         int rmvL = AD.removeLast();
+        int get1 = AD.get(0);
     }
 
 
