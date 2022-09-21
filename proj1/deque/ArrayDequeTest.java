@@ -166,4 +166,21 @@ public class ArrayDequeTest {
         }
     }
 
+    @Test
+    public void fillEmptyfill(){
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        for (int i = 0; i < 8; i++){
+            int randomNumber = StdRandom.uniform(0, 100);
+            ad1.addLast(randomNumber);
+        }
+        for (int i = 0; i < 8; i++){
+            int output = ad1.removeFirst();
+        }
+        for (int i = 0; i < 8; i++){
+            int randomNumber = StdRandom.uniform(0, 100);
+            ad1.addFirst(randomNumber);
+        }
+        assertEquals(ad1.size(), 8);
+    }
+
 }
