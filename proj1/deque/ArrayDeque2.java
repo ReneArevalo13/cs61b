@@ -1,6 +1,6 @@
 package deque;
 
-public class ArrayDeque<T> {
+public class ArrayDeque2<T> {
     /* construction of ArrayDeque data structure*/
     /* array of items*/
     private T[] items;
@@ -14,7 +14,7 @@ public class ArrayDeque<T> {
     private int length;
 
     /**create empty ArrayDeque.**/
-    public ArrayDeque() {
+    public ArrayDeque2() {
         items = (T[]) new Object[8];
         size = 0;
         frontIndex = 0;
@@ -113,15 +113,15 @@ public class ArrayDeque<T> {
 
     public static void main(String[] args) {
 
-        ArrayDeque<Integer> A = new ArrayDeque();
-        A.addFirst(12);
-        A.addLast(63);
-        A.addFirst(14);
-        int rmvF = A.removeFirst();
-        A.addLast(11);
-        A.addFirst(84);
-        int rmvL = A.removeLast();
-        int get1 = A.get(3);
+        ArrayDeque2<Integer> a = new ArrayDeque2();
+        a.addFirst(12);
+        a.addLast(63);
+        a.addFirst(14);
+        int rmvF = a.removeFirst();
+        a.addLast(11);
+        a.addFirst(84);
+        int rmvL = a.removeLast();
+        int get1 = a.get(3);
     }
 
 
