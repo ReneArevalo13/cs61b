@@ -86,7 +86,7 @@ public class ArrayDeque<T> {
         return value;
     }
     public T get(int index) {
-        if (isEmpty()) {
+        if (items[index] == null) {
             return null;
         }
         return items[index];
@@ -118,7 +118,7 @@ public class ArrayDeque<T> {
         A.addLast(11);
         A.addFirst(84);
         int rmvL = A.removeLast();
-        int get1 = A.get(0);
+        int get1 = A.get(3);
     }
 
 
