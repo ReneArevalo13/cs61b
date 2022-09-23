@@ -187,6 +187,7 @@ public class ArrayDequeTest {
     public void testGet(){
         ArrayDeque<Integer> ad1 = new ArrayDeque<>();
         ArrayDeque<Integer> ad2 = new ArrayDeque<>();
+        ad1.get(0);
 
         for (int i = 0; i < 8; i++) {
             int randomNumber = StdRandom.uniform(0, 100);
@@ -196,8 +197,10 @@ public class ArrayDequeTest {
             int output = ad1.get(i);
             ad2.addFirst(output);
         }
+    }
+    @Test
+    public void testGet2() {
+
 
     }
-
-
 }

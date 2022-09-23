@@ -89,9 +89,11 @@ public class ArrayDeque<T> {
         return value;
     }
     public T get(int index) {
-        if (index < 0 || index > size) {
+        if (index < 0 || index >= size) {
             return null;
         }
+        index = frontIndex + index;
+        index = index % items.length;
         return items[index];
     }
     public int size() {
@@ -115,13 +117,17 @@ public class ArrayDeque<T> {
 
         ArrayDeque<Integer> A = new ArrayDeque();
         A.addFirst(12);
-        A.addLast(63);
+        A.addLast(3);
         A.addFirst(14);
-        int rmvF = A.removeFirst();
+        //int rmvF = A.removeFirst();
+        A.addLast(91);
+        A.addFirst(8);
         A.addLast(11);
-        A.addFirst(84);
-        int rmvL = A.removeLast();
-        int get1 = A.get(3);
+        A.addFirst(4);
+        A.addLast(63);
+        //int rmvL = A.removeLast();
+        int get1 = A.get(1);
+
     }
 
 
