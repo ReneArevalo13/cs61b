@@ -200,6 +200,10 @@ public class ArrayDequeTest {
     }
     @Test
     public void testGet2() {
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        ad1.addLast(2);
+        int out = ad1.get(1);
+        System.out.println(out);
 
 
     }
