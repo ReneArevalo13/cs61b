@@ -17,78 +17,74 @@ public class ArrayDeque<T> {
     public ArrayDeque() {
         items = (T[]) new Object[8];
         size = 0;
-        frontIndex = 0;
-        rearIndex = -1;
+        frontIndex = -1;
+        rearIndex = 0;
         length = items.length;
     }
 
-    public void addLast(T item) {
-        /*Check to see if resize needed, will get back to this.*/
-
-        if (rearIndex == -1) {
-            rearIndex = 0;
-            frontIndex = 0;
-        } else if (rearIndex == 0) {
-            rearIndex = length - 1;
-        } else {
-            rearIndex--;
-        }
-        items[rearIndex] = item;
-        size++;
-    }
-
-    public void addFirst(T item) {
-        if (rearIndex == -1) {
+    public void addFirst(T item){
+        // check to see if resize needed, will get back to this
+        if (frontIndex == -1){
             frontIndex = 0;
             rearIndex = 0;
-        } else if (frontIndex == length - 1) {
-            frontIndex = 0;
-        } else {
-            frontIndex++;
+        } else if (frontIndex == 0) {
+            frontIndex = length - 1;
+        } else{
+            frontIndex--;
         }
         items[frontIndex] = item;
         size++;
     }
-    public T removeLast() {
-        if (isEmpty()) {
-            return null;
-        }
-        /* this might be the issue
-        T value = items[frontIndex];
-        items[frontIndex] = null;
-        changing from items[frontIndex] -> items[rearIndex]*/
-        T value = items[rearIndex];
-        items[rearIndex] = null;
-        /* When only one item in array.*/
-        if (frontIndex == rearIndex) {
-            frontIndex = -1;
-            rearIndex = -1;
-        /* When front points to last item in the array
-        need to change front back to 0. */
+
+    public void addLast(T item){
+        if (frontIndex == -1){
+            frontIndex = 0;
+            rearIndex = 0;
         } else if (rearIndex == length - 1) {
             rearIndex = 0;
-        } else {
+        } else{
             rearIndex++;
         }
-        size--;
-
-        return value;
+        items[rearIndex] = item;
+        size++;
     }
-    public T removeFirst() {
-        if (isEmpty()) {
+    public T removeFirst(){
+        if (isEmpty()){
             return null;
         }
         T value = items[frontIndex];
         items[frontIndex] = null;
-        if (frontIndex == rearIndex) {
+        // when only one item in array, front==rear
+        if (frontIndex == rearIndex){
             frontIndex = -1;
             rearIndex = -1;
-            /*If rear points at first element
-            change it to point at length-1 spot.*/
-        } else if (frontIndex == 0) {
-            frontIndex = length - 1;
-        } else {
-            frontIndex--;
+        /* when front points to last index in the array
+        need to change front back to 0.
+         */
+        } else if (frontIndex == length-1) {
+            frontIndex = 0;
+        } else{
+            frontIndex++;
+        }
+        size--;
+        return value;
+    }
+    public T removeLast(){
+        if (isEmpty()){
+            return null;
+        }
+        T value = items[rearIndex];
+        items[rearIndex] = null;
+        if (frontIndex == rearIndex){
+            frontIndex = -1;
+            rearIndex = -1;
+            /* if rear points at first element
+            change it to point at length-1 spot
+             */
+        } else if (rearIndex == 0) {
+            rearIndex = length -1;
+        } else{
+            rearIndex--;
         }
         size--;
         return value;
