@@ -24,6 +24,7 @@ public class ArrayDeque<T> {
 
     public void addLast(T item) {
         /*Check to see if resize needed, will get back to this.*/
+
         if (rearIndex == -1) {
             rearIndex = 0;
             frontIndex = 0;
@@ -52,8 +53,12 @@ public class ArrayDeque<T> {
         if (isEmpty()) {
             return null;
         }
+        /* this might be the issue
         T value = items[frontIndex];
         items[frontIndex] = null;
+        changing from items[frontIndex] -> items[rearIndex]*/
+        T value = items[rearIndex];
+        items[rearIndex] = null;
         /* When only one item in array.*/
         if (frontIndex == rearIndex) {
             frontIndex = -1;
@@ -89,9 +94,9 @@ public class ArrayDeque<T> {
         return value;
     }
     public T get(int index) {
-//        if (index < 0 || index >= size || isEmpty()) {
-//            return null;
-//        }
+        if (index < 0 || index >= size || isEmpty()) {
+            return null;
+        }
         index = frontIndex + index;
         index = index % items.length;
         return items[index];
@@ -99,7 +104,6 @@ public class ArrayDeque<T> {
     public int size() {
         return size;
     }
-
     public boolean isEmpty() {
         return size == 0;
     }
@@ -116,17 +120,17 @@ public class ArrayDeque<T> {
     public static void main(String[] args) {
 
         ArrayDeque<Integer> A = new ArrayDeque();
-        A.addFirst(12);
 
+        A.addFirst(12);
         A.addLast(3);
         A.addFirst(14);
-        //int rmvF = A.removeFirst();
+        int rmvF = A.removeFirst();
         A.addLast(91);
         A.addFirst(8);
         A.addLast(11);
         A.addFirst(4);
         A.addLast(63);
-        //int rmvL = A.removeLast();
+        int rmvL = A.removeLast();
         int get1 = A.get(1);
 
     }

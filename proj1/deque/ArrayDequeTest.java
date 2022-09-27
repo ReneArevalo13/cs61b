@@ -1,7 +1,6 @@
 package deque;
 
 import edu.princeton.cs.algs4.StdRandom;
-import edu.princeton.cs.algs4.Stopwatch;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -95,8 +94,8 @@ public class ArrayDequeTest {
     public void multipleParamTest() {
 
 
-        ArrayDeque<String>  lld1 = new ArrayDeque<String>();
-        ArrayDeque<Double>  lld2 = new ArrayDeque<Double>();
+        ArrayDeque<String> lld1 = new ArrayDeque<String>();
+        ArrayDeque<Double> lld2 = new ArrayDeque<Double>();
         ArrayDeque<Boolean> lld3 = new ArrayDeque<Boolean>();
 
         lld1.addFirst("string");
@@ -115,7 +114,7 @@ public class ArrayDequeTest {
 
         System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
 
-        ArrayDeque<Integer> lld1 = new  ArrayDeque<Integer>();
+        ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
 
         boolean passed1 = false;
         boolean passed2 = false;
@@ -200,11 +199,44 @@ public class ArrayDequeTest {
     }
     @Test
     public void testGet2() {
-        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
-        ad1.addLast(2);
-        int out = ad1.get(1);
-        System.out.println(out);
+        ArrayDeque<String> ad1 = new ArrayDeque<>();
+        ad1.addLast("a");
+        ad1.addLast("b");
+        ad1.addFirst("c");
+        ad1.addLast("d");
+        ad1.addLast("e");
+        ad1.addFirst("f");
+        ad1.addLast("g");
+        ad1.addLast("h");
 
+        String get1 = ad1.get(0);
+        String get2 = ad1.get(1);
+        String get3 = ad1.get(7);
+
+        String comp1 = "f";
+        String comp2 = "e";
+        String comp3 = "h";
+
+        assertEquals(comp1, get1);
+        assertEquals(comp2, get2);
+        assertEquals(comp3, get3);
+
+
+    }
+
+    @Test
+    public void testIndexing(){
+        int[] indices = new int[8];
+        for (int i = 0; i < 8; i++) {
+            int front = 2;
+            int rear = 3;
+            int index = (i + rear) % indices.length;
+            String indexString = Integer.toString(index);
+            String counterString = Integer.toString(i);
+            indices[i] = index;
+            System.out.println("get " + counterString + " gets index " + indexString);
+
+        }
 
     }
 }
