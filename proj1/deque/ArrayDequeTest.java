@@ -43,10 +43,10 @@ public class ArrayDequeTest {
 
         ad1.addLast("back");
         assertEquals(3, ad1.size());
-        /*
+
 		System.out.println("Printing out deque: ");
 		ad1.printDeque();
-		*/
+
     }
     @Test
     /** Adds an item, then removes an item, and ensures that ad is empty afterwards. */

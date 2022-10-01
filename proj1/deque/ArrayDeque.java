@@ -88,6 +88,12 @@ public class ArrayDeque<Type> {
         }
         return items[index];
     }
+    public void printDeque(){
+        for (int i = 0; i < size; i++){
+            System.out.print(get(i) + " ");
+        }
+        System.out.println();
+    }
     public int size(){
         return size;
     }
@@ -111,11 +117,12 @@ public class ArrayDeque<Type> {
         AD.addFirst(12);
         AD.addLast(33);
         AD.addFirst(14);
-        int rmvF = AD.removeFirst();
+//        int rmvF = AD.removeFirst();
         AD.addLast(11);
         AD.addFirst(54);
-        int rmvL = AD.removeLast();
-        int get1 = AD.get(0);
+//        int rmvL = AD.removeLast();
+//        int get1 = AD.get(0);
+        AD.printDeque();
     }
 
 

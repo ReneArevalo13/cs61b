@@ -81,7 +81,7 @@ public class LinkedListDeque<Type> {
             return recursiveHelper(sentinel.next, index);
         }
     }
-    public Type recursiveHelper(Node n, int index){
+    private Type recursiveHelper(Node n, int index){
         if (index == 0){
             return n.item;
         }else{
@@ -90,7 +90,10 @@ public class LinkedListDeque<Type> {
     }
 
     public void printDeque(){
-
+        for (Node p = sentinel.next; p != sentinel; p = p.next){
+            System.out.print(p.item + " ");
+        }
+        System.out.println();
     }
 
     public boolean isEmpty(){
@@ -114,6 +117,7 @@ public class LinkedListDeque<Type> {
         LLD.addLast(55);
         int output = LLD.get(4);
         int outputRecurse = LLD.getRecursive(4);
+        LLD.printDeque();
 
 //        Integer removed = LLD.removeLast();
 //        System.out.println(removed);
