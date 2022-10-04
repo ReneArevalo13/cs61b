@@ -1,23 +1,28 @@
 package deque;
 
-public class ArrayDeque<Type> {
-    private Type[] items;
+public class ArrayDeque<T> {
+    /* construction of ArrayDeque data structure*/
+    /* array of items*/
+    private T[] items;
+    /* integer of how many items in the array*/
     private int size;
+    /* integer pointing to the element that is at the front of the array*/
     private int frontIndex;
+    /* integer pointing to the element that is at the rear of the array*/
     private int rearIndex;
-    // length is how many spots are in the array
+    /* length is how many spots are in the array */
     private int length;
 
-    /**create empty ArrayDeque**/
-    public ArrayDeque(){
-        items = (Type[]) new Object[8];
+    /**create empty ArrayDeque.**/
+    public ArrayDeque() {
+        items = (T[]) new Object[8];
         size = 0;
         frontIndex = -1;
         rearIndex = 0;
         length = items.length;
     }
 
-    public void addFirst(Type item){
+    public void addFirst(T item){
         // check to see if resize needed, will get back to this
         if (frontIndex == -1){
             frontIndex = 0;
@@ -31,7 +36,7 @@ public class ArrayDeque<Type> {
         size++;
     }
 
-    public void addLast(Type item){
+    public void addLast(T item){
         if (frontIndex == -1){
             frontIndex = 0;
             rearIndex = 0;
@@ -43,11 +48,12 @@ public class ArrayDeque<Type> {
         items[rearIndex] = item;
         size++;
     }
-    public Type removeFirst(){
+    public T removeFirst(){
         if (isEmpty()){
             return null;
         }
-        Type value = items[frontIndex];
+        T value = items[frontIndex];
+        items[frontIndex] = null;
         // when only one item in array, front==rear
         if (frontIndex == rearIndex){
             frontIndex = -1;
@@ -58,16 +64,17 @@ public class ArrayDeque<Type> {
         } else if (frontIndex == length-1) {
             frontIndex = 0;
         } else{
-            rearIndex--;
+            frontIndex++;
         }
         size--;
         return value;
     }
-    public Type removeLast(){
+    public T removeLast(){
         if (isEmpty()){
             return null;
         }
-        Type value = items[rearIndex];
+        T value = items[rearIndex];
+        items[rearIndex] = null;
         if (frontIndex == rearIndex){
             frontIndex = -1;
             rearIndex = -1;
@@ -82,47 +89,46 @@ public class ArrayDeque<Type> {
         size--;
         return value;
     }
-    public Type get(int index){
-        if(isEmpty()){
+    public T get(int index) {
+        if (index < 0 || index >= size || isEmpty()) {
             return null;
         }
+        index = frontIndex + index;
+        index = index % items.length;
         return items[index];
     }
-    public void printDeque(){
-        for (int i = 0; i < size; i++){
-            System.out.print(get(i) + " ");
-        }
-        System.out.println();
-    }
-    public int size(){
+    public int size() {
         return size;
     }
-
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return size == 0;
     }
-    public boolean isFull(){
+    public boolean isFull() {
         return size == length;
     }
-    public Type getLast(){
+    public T getLast() {
         return items[rearIndex];
     }
-    public Type getFirst(){
+    public T getFirst() {
         return items[frontIndex];
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
-        ArrayDeque<Integer> AD = new ArrayDeque();
-        AD.addFirst(12);
-        AD.addLast(33);
-        AD.addFirst(14);
-//        int rmvF = AD.removeFirst();
-        AD.addLast(11);
-        AD.addFirst(54);
-//        int rmvL = AD.removeLast();
-//        int get1 = AD.get(0);
-        AD.printDeque();
+        ArrayDeque<Integer> A = new ArrayDeque();
+
+        A.addFirst(12);
+        A.addLast(3);
+        A.addFirst(14);
+        int rmvF = A.removeFirst();
+        A.addLast(91);
+        A.addFirst(8);
+        A.addLast(11);
+        A.addFirst(4);
+        A.addLast(63);
+        int rmvL = A.removeLast();
+        int get1 = A.get(1);
+
     }
 
 
