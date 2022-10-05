@@ -45,7 +45,7 @@ public class ArrayDequeTest {
         assertEquals(3, ad1.size());
 
 		System.out.println("Printing out deque: ");
-		ad1.printDeque();
+//		ad1.printDeque();
 
     }
     @Test
@@ -164,6 +164,21 @@ public class ArrayDequeTest {
 
             }
         }
+    }
+    @Test
+    public void resizeExplore(){
+        ArrayDeque<String> ad1 = new ArrayDeque<>();
+        ad1.addLast("a");
+        ad1.addLast("b");
+        ad1.addFirst("c");
+        ad1.addLast("d");
+        ad1.addLast("e");
+        ad1.addFirst("f");
+        ad1.addLast("g");
+        ad1.addLast("h");
+
+
+
     }
 
 }

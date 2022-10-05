@@ -13,22 +13,26 @@ public class ArrayDeque<T> {
     /* length is how many spots are in the array */
     private int length;
 
+
     /**create empty ArrayDeque.**/
     public ArrayDeque() {
         items = (T[]) new Object[8];
         size = 0;
         frontIndex = -1;
         rearIndex = 0;
-        length = items.length;
+        this.length = items.length;
     }
 
     public void addFirst(T item){
         // check to see if resize needed, will get back to this
+        if (isFull()){
+            resize(items.length * 2);
+        }
         if (frontIndex == -1){
             frontIndex = 0;
             rearIndex = 0;
         } else if (frontIndex == 0) {
-            frontIndex = length - 1;
+            frontIndex = items.length - 1;
         } else{
             frontIndex--;
         }
@@ -37,10 +41,13 @@ public class ArrayDeque<T> {
     }
 
     public void addLast(T item){
+        if (isFull()){
+            resize(items.length * 2);
+        }
         if (frontIndex == -1){
             frontIndex = 0;
             rearIndex = 0;
-        } else if (rearIndex == length - 1) {
+        } else if (rearIndex == items.length - 1) {
             rearIndex = 0;
         } else{
             rearIndex++;
@@ -52,6 +59,9 @@ public class ArrayDeque<T> {
         if (isEmpty()){
             return null;
         }
+        if (size < items.length / 4 && items.length > 8){
+            resize(items.length / 2);
+        }
         T value = items[frontIndex];
         items[frontIndex] = null;
         // when only one item in array, front==rear
@@ -61,7 +71,7 @@ public class ArrayDeque<T> {
         /* when front points to last index in the array
         need to change front back to 0.
          */
-        } else if (frontIndex == length-1) {
+        } else if (frontIndex == items.length - 1) {
             frontIndex = 0;
         } else{
             frontIndex++;
@@ -73,6 +83,9 @@ public class ArrayDeque<T> {
         if (isEmpty()){
             return null;
         }
+        if (size < items.length / 4 && items.length > 8){
+            resize(items.length / 2);
+        }
         T value = items[rearIndex];
         items[rearIndex] = null;
         if (frontIndex == rearIndex){
@@ -82,7 +95,7 @@ public class ArrayDeque<T> {
             change it to point at length-1 spot
              */
         } else if (rearIndex == 0) {
-            rearIndex = length -1;
+            rearIndex = items.length -1;
         } else{
             rearIndex--;
         }
@@ -112,6 +125,17 @@ public class ArrayDeque<T> {
     public T getFirst() {
         return items[frontIndex];
     }
+//    private boolean underUsageFactor(){
+//
+//    }
+    private void resize(int capactiy) {
+        T[] temp = (T[]) new Object[capactiy];
+        int endPos = temp.length / 4;
+        System.arraycopy(items, 0, temp, endPos, size);
+        items = temp;
+        frontIndex = -1;
+        rearIndex = 0;
+    }
 
     public static void main(String[] args) {
 
@@ -120,15 +144,24 @@ public class ArrayDeque<T> {
         A.addFirst(12);
         A.addLast(3);
         A.addFirst(14);
-        int rmvF = A.removeFirst();
+//        int rmvF = A.removeFirst();
         A.addLast(91);
         A.addFirst(8);
         A.addLast(11);
         A.addFirst(4);
         A.addLast(63);
-        int rmvL = A.removeLast();
-        int get1 = A.get(1);
-
+//        int rmvL = A.removeLast();
+//        int get1 = A.get(1);
+        A.resize(A.size * 2);
+        A.addLast(2);
+        A.addFirst(523);
+        A.addFirst(3);
+        A.addFirst(31);
+        A.addLast(78);
+        A.addLast(98);
+        A.addFirst(11);
+        A.addLast(37);
+        A.resize(A.size * 2);
     }
 
 
