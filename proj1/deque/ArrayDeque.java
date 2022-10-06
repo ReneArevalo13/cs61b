@@ -118,13 +118,13 @@ public class ArrayDeque<T> implements Iterable<T> {
     public boolean isEmpty() {
         return size == 0;
     }
-    public boolean isFull() {
+    private boolean isFull() {
         return size == items.length;
     }
     public T getLast() {
         return items[rearIndex];
     }
-    public T getFirst() {
+    private T getFirst() {
         return items[frontIndex];
     }
     public void printDeque(){
@@ -152,6 +152,24 @@ public class ArrayDeque<T> implements Iterable<T> {
         }
     }
 
+    @Override
+    public boolean equals(Object o){
+        if (o instanceof ArrayDeque ad ){
+            // check if the same size
+            if (ad.size != this.size){
+                return false;
+            }
+            // check if all the elements are the same
+            for (int i = 0; i < this.size; i++){
+                if (ad.get(i) != this.get(i)){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
 
     private void resize(int capacity) {
         T[] temp = (T[]) new Object[capacity];
@@ -177,7 +195,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         A.addLast(63);
 //        int rmvL = A.removeLast();
 //        int get1 = A.get(1);
-        for (int i: A){
+        for (int i : A){
             System.out.println(i);
         }
 

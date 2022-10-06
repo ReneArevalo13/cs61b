@@ -220,6 +220,35 @@ public class LinkedListDequeTest {
             }
         }
     }
+
+    @Test
+    public void testEquals1(){
+        LinkedListDeque<Integer> a = new LinkedListDeque<>();
+        LinkedListDeque<Integer> b = new LinkedListDeque<>();
+
+        a.addFirst(4);
+        a.addLast(2);
+        a.addFirst(6);
+        a.addLast(23);
+        a.addFirst(34);
+        a.addLast(22);
+        a.addFirst(40);
+        a.addLast(244);
+
+        b.addFirst(4);
+        b.addLast(2);
+        b.addFirst(6);
+        b.addLast(23);
+        b.addFirst(34);
+        b.addLast(22);
+        b.addFirst(40);
+        b.addLast(244);
+
+        if (a.equals(b)){
+            System.out.println("The LinkedListDeques are equal!");
+        }
+
+    }
     public static void main(String[] args) {
         timeGetLast();
     }

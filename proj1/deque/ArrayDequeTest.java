@@ -283,6 +283,33 @@ public class ArrayDequeTest {
             System.out.println("get " + counterString + " gets index " + indexString);
 
         }
+    }
+
+    @Test
+    public void testEquals1(){
+        ArrayDeque<String> ad1 = new ArrayDeque<>();
+        ArrayDeque<String> ad2 = new ArrayDeque<>();
+        ad1.addLast("a");
+        ad1.addLast("b");
+        ad1.addFirst("c");
+        ad1.addLast("d");
+        ad1.addLast("e");
+        ad1.addFirst("f");
+        ad1.addLast("g");
+        ad1.addLast("h");
+
+        ad2.addLast("a");
+        ad2.addLast("b");
+        ad2.addFirst("c");
+        ad2.addLast("d");
+        ad2.addLast("e");
+        ad2.addFirst("f");
+        ad2.addLast("g");
+        ad2.addLast("h");
+
+        if (ad1.equals(ad2)){
+            System.out.println("The arrayDeques are equal!");
+        }
 
     }
 }
