@@ -1,6 +1,8 @@
 package deque;
 
-public class ArrayDeque<T> {
+import java.util.Iterator;
+
+public class ArrayDeque<T> implements Iterable<T> {
     /* construction of ArrayDeque data structure*/
     /* array of items*/
     private T[] items;
@@ -125,9 +127,34 @@ public class ArrayDeque<T> {
     public T getFirst() {
         return items[frontIndex];
     }
+    public void printDeque(){
+        for (int i = 0; i < size; i++){
+            System.out.print(get(i) + " ");
+        }
+        System.out.println();
+    }
+    public Iterator<T> iterator() {
+        return new ArrayDequeIterator();
+    }
+    private class ArrayDequeIterator implements Iterator<T>{
+        private int wizPos;
+        public ArrayDequeIterator(){
+            wizPos = 0;
+        }
+        public boolean hasNext() {
+            return wizPos < size;
+        }
 
-    private void resize(int capactiy) {
-        T[] temp = (T[]) new Object[capactiy];
+        public T next() {
+            T returnItem = get(wizPos);
+            wizPos += 1;
+            return returnItem;
+        }
+    }
+
+
+    private void resize(int capacity) {
+        T[] temp = (T[]) new Object[capacity];
         int endPos = temp.length / 4;
         System.arraycopy(items, 0, temp, endPos, size);
         items = temp;
@@ -150,16 +177,10 @@ public class ArrayDeque<T> {
         A.addLast(63);
 //        int rmvL = A.removeLast();
 //        int get1 = A.get(1);
-        A.resize(A.size * 2);
-        A.addLast(2);
-        A.addFirst(523);
-        A.addFirst(3);
-        A.addFirst(31);
-        A.addLast(78);
-        A.addLast(98);
-        A.addFirst(11);
-        A.addLast(37);
-        A.resize(A.size * 2);
+        for (int i: A){
+            System.out.println(i);
+        }
+
     }
 
 

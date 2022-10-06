@@ -262,6 +262,10 @@ public class ArrayDequeTest {
         assertEquals(comp5, get5);
         assertEquals(comp6, get6);
         assertEquals(comp7, get7);
+        ad1.printDeque();
+        for (String i : ad1){
+            System.out.println(i);
+        }
 
 
     }
