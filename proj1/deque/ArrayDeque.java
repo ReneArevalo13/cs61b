@@ -117,7 +117,7 @@ public class ArrayDeque<T> {
         return size == 0;
     }
     public boolean isFull() {
-        return size == length;
+        return size == items.length;
     }
     public T getLast() {
         return items[rearIndex];
@@ -125,9 +125,7 @@ public class ArrayDeque<T> {
     public T getFirst() {
         return items[frontIndex];
     }
-//    private boolean underUsageFactor(){
-//
-//    }
+
     private void resize(int capactiy) {
         T[] temp = (T[]) new Object[capactiy];
         int endPos = temp.length / 4;
