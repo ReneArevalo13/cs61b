@@ -1,16 +1,16 @@
 package deque;
 
-import jh61b.junit.In;
+import java.util.Iterator;
 
-public class LinkedListDeque<Type> {
+public class LinkedListDeque<T> implements Iterable<T> {
     private Node sentinel;
     private int size;
     /* nested class that builds each node. Doubly linked */
     public class Node {
-        public Type item;
+        public T item;
         public Node next;
         public Node prev;
-        public Node(Type item, Node next, Node prev){
+        public Node(T item, Node next, Node prev){
             this.item = item;
             this.next = next;
             this.prev = prev;
@@ -24,22 +24,22 @@ public class LinkedListDeque<Type> {
         size = 0;
     }
 
-    public void addFirst(Type item){
+    public void addFirst(T item){
         sentinel.next = new Node(item, sentinel.next, sentinel);
         sentinel.next.next.prev = sentinel.next;
         size++;
     }
-    public void addLast(Type item){
+    public void addLast(T item){
         sentinel.prev = new Node(item, sentinel, sentinel.prev);
         sentinel.prev.prev.next = sentinel.prev;
         size++;
     }
 
-    public Type removeFirst() {
+    public T removeFirst() {
         if (sentinel.next == sentinel || sentinel.prev == sentinel) {
             return null;
         } else {
-            Type firstRemoved = sentinel.next.item;
+            T firstRemoved = sentinel.next.item;
             sentinel.next = sentinel.next.next;
             sentinel.next.prev.prev = null;
             sentinel.next.prev.next = null;
@@ -49,11 +49,11 @@ public class LinkedListDeque<Type> {
         }
     }
 
-    public Type removeLast() {
+    public T removeLast() {
         if (sentinel.next == sentinel || sentinel.prev == sentinel) {
             return null;
         } else {
-            Type lastRemoved = sentinel.prev.item;
+            T lastRemoved = sentinel.prev.item;
             sentinel.prev = sentinel.prev.prev;
             sentinel.prev.next.prev = null;
             sentinel.prev.next.next = null;
@@ -62,7 +62,7 @@ public class LinkedListDeque<Type> {
             return lastRemoved;
         }
     }
-    public Type get(int index){
+    public T get(int index){
         // set current node as the first nodesentinel
         Node currentNode = sentinel.next;
         for (int i = 0; i <= index; i++){
@@ -74,14 +74,14 @@ public class LinkedListDeque<Type> {
         }
         return null;
     }
-    public Type getRecursive(int index){
+    public T getRecursive(int index){
         if (index > size){
             return null;
         }else{
             return recursiveHelper(sentinel.next, index);
         }
     }
-    private Type recursiveHelper(Node n, int index){
+    private T recursiveHelper(Node n, int index){
         if (index == 0){
             return n.item;
         }else{
@@ -103,9 +103,34 @@ public class LinkedListDeque<Type> {
         return size;
     }
 
-    public Type getLast(){
+    public T getLast(){
         return sentinel.prev.item;
     }
+    public Iterator<T> iterator() {
+        return new LinkedListDequeIterator();
+    }
+    private class LinkedListDequeIterator implements Iterator<T> {
+        private int wizPos;
+
+        public LinkedListDequeIterator() {
+            wizPos = 0;
+        }
+
+        public boolean hasNext() {
+            return wizPos < size;
+        }
+
+        public T next() {
+            T returnItem = get(wizPos);
+            wizPos += 1;
+            return returnItem;
+        }
+    }
+
+
+
+
+
 
     public static void main(String[] args){
 
@@ -118,6 +143,9 @@ public class LinkedListDeque<Type> {
         int output = LLD.get(4);
         int outputRecurse = LLD.getRecursive(4);
         LLD.printDeque();
+        for (int i: LLD){
+            System.out.print(i + " ");
+        }
 
 //        Integer removed = LLD.removeLast();
 //        System.out.println(removed);
