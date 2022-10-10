@@ -1,7 +1,5 @@
 package deque;
 
-import edu.princeton.cs.algs4.In;
-
 import java.util.Comparator;
 
 
@@ -45,13 +43,21 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
         return maximum;
     }
 
-    private static class MaxComparator implements Comparator <Integer> {
+    private static class MaxIntComparator implements Comparator <Integer> {
         public int compare(Integer a, Integer b) {
             return a - b;
         }
     }
-    public static Comparator<Integer> getMaxComparator() {
-        return new MaxComparator();
+    private static class MaxStringComparator implements Comparator <String> {
+        public int compare(String  a, String  b) {
+            return a.length() - b.length();
+        }
+    }
+    public static Comparator<Integer> getMaxIntComparator() {
+        return new MaxIntComparator();
+    }
+    public static Comparator<String> getMaxStringComparator() {
+        return new MaxStringComparator();
     }
 
 
@@ -59,13 +65,14 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
 //
 
     public static void main(String[] args) {
-        Comparator<Integer> mc = getMaxComparator();
+        Comparator<Integer> mc = getMaxIntComparator();
         MaxArrayDeque<Integer> mad = new MaxArrayDeque(mc);
 
         mad.addFirst(2);
         mad.addLast(33);
         mad.addFirst(1);
         mad.addLast(44);
+        mad.addFirst(53);
         int maxNumber = mad.max();
         System.out.println(maxNumber);
 
