@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Iterable<T> {
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private Node sentinel;
     private int size;
     /* nested class that builds each node. Doubly linked */
@@ -23,18 +23,19 @@ public class LinkedListDeque<T> implements Iterable<T> {
         sentinel.prev = sentinel;
         size = 0;
     }
-
+    @Override
     public void addFirst(T item){
         sentinel.next = new Node(item, sentinel.next, sentinel);
         sentinel.next.next.prev = sentinel.next;
         size++;
     }
+    @Override
     public void addLast(T item){
         sentinel.prev = new Node(item, sentinel, sentinel.prev);
         sentinel.prev.prev.next = sentinel.prev;
         size++;
     }
-
+    @Override
     public T removeFirst() {
         if (sentinel.next == sentinel || sentinel.prev == sentinel) {
             return null;
@@ -48,7 +49,7 @@ public class LinkedListDeque<T> implements Iterable<T> {
             return firstRemoved;
         }
     }
-
+    @Override
     public T removeLast() {
         if (sentinel.next == sentinel || sentinel.prev == sentinel) {
             return null;
@@ -62,6 +63,7 @@ public class LinkedListDeque<T> implements Iterable<T> {
             return lastRemoved;
         }
     }
+    @Override
     public T get(int index){
         // set current node as the first nodesentinel
         Node currentNode = sentinel.next;
@@ -88,17 +90,18 @@ public class LinkedListDeque<T> implements Iterable<T> {
             return recursiveHelper(n.next, index - 1);
         }
     }
-
+    @Override
     public void printDeque(){
         for (Node p = sentinel.next; p != sentinel; p = p.next){
             System.out.print(p.item + " ");
         }
         System.out.println();
     }
-
-    public boolean isEmpty(){
-        return size == 0;
-    }
+//    @Override
+//    public boolean isEmpty(){
+//        return size == 0;
+//    }
+    @Override
     public int size(){
         return size;
     }

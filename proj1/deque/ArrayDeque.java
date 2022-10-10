@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Iterable<T> {
+public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
     /* construction of ArrayDeque data structure*/
     /* array of items*/
     public T[] items;
@@ -25,6 +25,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         this.length = items.length;
     }
 
+    @Override
     public void addFirst(T item){
         // check to see if resize needed, will get back to this
         if (isFull()){
@@ -41,7 +42,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         items[frontIndex] = item;
         size++;
     }
-
+    @Override
     public void addLast(T item){
         if (isFull()){
             resize(items.length * 2);
@@ -57,6 +58,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         items[rearIndex] = item;
         size++;
     }
+    @Override
     public T removeFirst(){
         if (isEmpty()){
             return null;
@@ -81,6 +83,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         size--;
         return value;
     }
+    @Override
     public T removeLast(){
         if (isEmpty()){
             return null;
@@ -104,6 +107,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         size--;
         return value;
     }
+    @Override
     public T get(int index) {
         if (index < 0 || index >= size || isEmpty()) {
             return null;
@@ -112,12 +116,14 @@ public class ArrayDeque<T> implements Iterable<T> {
         index = index % items.length;
         return items[index];
     }
+    @Override
     public int size() {
         return size;
     }
-    public boolean isEmpty() {
-        return size == 0;
-    }
+//    @Override
+//    public boolean isEmpty() {
+//        return size == 0;
+//    }
     private boolean isFull() {
         return size == items.length;
     }
@@ -127,6 +133,7 @@ public class ArrayDeque<T> implements Iterable<T> {
     private T getFirst() {
         return items[frontIndex];
     }
+    @Override
     public void printDeque(){
         for (int i = 0; i < size; i++){
             System.out.print(get(i) + " ");
