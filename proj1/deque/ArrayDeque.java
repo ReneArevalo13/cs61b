@@ -5,7 +5,7 @@ import java.util.Iterator;
 public class ArrayDeque<T> implements Iterable<T> {
     /* construction of ArrayDeque data structure*/
     /* array of items*/
-    private T[] items;
+    public T[] items;
     /* integer of how many items in the array*/
     private int size;
     /* integer pointing to the element that is at the front of the array*/
