@@ -20,7 +20,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
         }
         T maximum = get(0);
         for (T i : items) {
-            if (i == null){
+            if (i == null) {
                 continue;
             }
             if (comparison.compare(i, maximum) > 0) {
@@ -43,12 +43,12 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
         return maximum;
     }
 
-    private static class MaxIntComparator implements Comparator <Integer> {
+    private static class MaxIntComparator implements Comparator<Integer> {
         public int compare(Integer a, Integer b) {
             return a - b;
         }
     }
-    private static class MaxStringComparator implements Comparator <String> {
+    private static class MaxStringComparator implements Comparator<String> {
         public int compare(String  a, String  b) {
             return a.length() - b.length();
         }
