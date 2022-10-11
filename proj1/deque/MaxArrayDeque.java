@@ -5,12 +5,12 @@ import java.util.Comparator;
 
 public class MaxArrayDeque<T> extends ArrayDeque<T> {
     private Comparator<T> comparison;
-    ArrayDeque<T> maxItems;
 
+    private T[] maxItems;
 
     public MaxArrayDeque(Comparator<T> c) {
         super();
-//        maxItems = new ArrayDeque<T>();
+        maxItems = getItems();
         comparison = c;
     }
 
@@ -19,7 +19,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
             return null;
         }
         T maximum = get(0);
-        for (T i : items) {
+        for (T i : maxItems) {
             if (i == null) {
                 continue;
             }
@@ -35,7 +35,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
             return null;
         }
         T maximum = get(0);
-        for (T i : items) {
+        for (T i : maxItems) {
             if (c.compare(i, maximum) > 0) {
                 maximum = i;
             }
@@ -53,30 +53,30 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
             return a.length() - b.length();
         }
     }
-    public static Comparator<Integer> getMaxIntComparator() {
-        return new MaxIntComparator();
-    }
-    public static Comparator<String> getMaxStringComparator() {
-        return new MaxStringComparator();
-    }
+//    public static Comparator<Integer> getMaxIntComparator() {
+//        return new MaxIntComparator();
+//    }
+//    public static Comparator<String> getMaxStringComparator() {
+//        return new MaxStringComparator();
+//    }
 
 
 //
 //
 
-    public static void main(String[] args) {
-        Comparator<Integer> mc = getMaxIntComparator();
-        MaxArrayDeque<Integer> mad = new MaxArrayDeque(mc);
-
-        mad.addFirst(2);
-        mad.addLast(33);
-        mad.addFirst(1);
-        mad.addLast(44);
-        mad.addFirst(53);
-        int maxNumber = mad.max();
-        System.out.println(maxNumber);
-
-    }
+//    public static void main(String[] args) {
+//        Comparator<Integer> mc = getMaxIntComparator();
+//        MaxArrayDeque<Integer> mad = new MaxArrayDeque(mc);
+//
+//        mad.addFirst(2);
+//        mad.addLast(33);
+//        mad.addFirst(1);
+//        mad.addLast(44);
+//        mad.addFirst(53);
+//        int maxNumber = mad.max();
+//        System.out.println(maxNumber);
+//
+//    }
 
 
 }

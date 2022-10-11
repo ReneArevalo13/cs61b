@@ -7,7 +7,7 @@ import java.util.Iterator;
 public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
     /* construction of ArrayDeque data structure*/
     /* array of items*/
-    public T[] items;
+    private T[] items;
     /* integer of how many items in the array*/
     private int size;
     /* integer pointing to the element that is at the front of the array*/
@@ -28,50 +28,50 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
     }
 
     @Override
-    public void addFirst(T item){
+    public void addFirst(T item) {
         // check to see if resize needed, will get back to this
-        if (isFull()){
+        if (isFull()) {
             resize(items.length * 2);
         }
-        if (frontIndex == -1){
+        if (frontIndex == -1) {
             frontIndex = 0;
             rearIndex = 0;
         } else if (frontIndex == 0) {
             frontIndex = items.length - 1;
-        } else{
+        } else {
             frontIndex--;
         }
         items[frontIndex] = item;
         size++;
     }
     @Override
-    public void addLast(T item){
-        if (isFull()){
+    public void addLast(T item) {
+        if (isFull()) {
             resize(items.length * 2);
         }
-        if (frontIndex == -1){
+        if (frontIndex == -1) {
             frontIndex = 0;
             rearIndex = 0;
         } else if (rearIndex == items.length - 1) {
             rearIndex = 0;
-        } else{
+        } else {
             rearIndex++;
         }
         items[rearIndex] = item;
         size++;
     }
     @Override
-    public T removeFirst(){
-        if (isEmpty()){
+    public T removeFirst() {
+        if (isEmpty()) {
             return null;
         }
-        if (size < items.length / 4 && items.length > 8){
+        if (size < items.length / 4 && items.length > 8) {
             resize(items.length / 2);
         }
         T value = items[frontIndex];
         items[frontIndex] = null;
         // when only one item in array, front==rear
-        if (frontIndex == rearIndex){
+        if (frontIndex == rearIndex) {
             frontIndex = -1;
             rearIndex = -1;
         /* when front points to last index in the array
@@ -79,23 +79,23 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
          */
         } else if (frontIndex == items.length - 1) {
             frontIndex = 0;
-        } else{
+        } else  {
             frontIndex++;
         }
         size--;
         return value;
     }
     @Override
-    public T removeLast(){
-        if (isEmpty()){
+    public T removeLast() {
+        if (isEmpty()) {
             return null;
         }
-        if (size < items.length / 4 && items.length > 8){
+        if (size < items.length / 4 && items.length > 8) {
             resize(items.length / 2);
         }
         T value = items[rearIndex];
         items[rearIndex] = null;
-        if (frontIndex == rearIndex){
+        if (frontIndex == rearIndex) {
             frontIndex = -1;
             rearIndex = -1;
             /* if rear points at first element
@@ -103,7 +103,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
              */
         } else if (rearIndex == 0) {
             rearIndex = items.length -1;
-        } else{
+        } else {
             rearIndex--;
         }
         size--;
@@ -129,15 +129,15 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
     private boolean isFull() {
         return size == items.length;
     }
-    public T getLast() {
-        return items[rearIndex];
-    }
-    private T getFirst() {
-        return items[frontIndex];
+//    public T getLast() {
+//        return items[rearIndex];
+//    }
+    public T[] getItems() {
+        return items;
     }
     @Override
-    public void printDeque(){
-        for (int i = 0; i < size; i++){
+    public void printDeque() {
+        for (int i = 0; i < size; i++) {
             System.out.print(get(i) + " ");
         }
         System.out.println();
@@ -145,9 +145,9 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
     public Iterator<T> iterator() {
         return new ArrayDequeIterator();
     }
-    private class ArrayDequeIterator implements Iterator<T>{
+    private class ArrayDequeIterator implements Iterator<T> {
         private int wizPos;
-        public ArrayDequeIterator(){
+        ArrayDequeIterator() {
             wizPos = 0;
         }
         public boolean hasNext() {
@@ -160,6 +160,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
             return returnItem;
         }
     }
+
 
 //    @Override
 //    public boolean equals(Object o){
@@ -178,26 +179,26 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
 //        }
 //        return false;
 //    }
-public boolean equals(Object other) {
-    if (this == other) {
-        return true;
-    }
-    if (other == null) {
-        return false;
-    }
-    if (other.getClass() != this.getClass()) {
-        return false;
-    }
-    ArrayDeque<T> o = (ArrayDeque<T>) other;
-    if (o.size() != this.size()) {
-        return false;
-    }
-    for (int i = 0; i < this.size; i++){
-        if (o.get(i) != this.get(i)){
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null) {
             return false;
         }
-    }
-    return true;
+        if (other.getClass() != this.getClass()) {
+            return false;
+        }
+        ArrayDeque<T> o = (ArrayDeque<T>) other;
+        if (o.size() != this.size()) {
+            return false;
+        }
+        for (int i = 0; i < this.size; i++) {
+            if (o.get(i) != this.get(i)) {
+                return false;
+            }
+        }
+        return true;
 }
 
 
@@ -210,27 +211,27 @@ public boolean equals(Object other) {
         rearIndex = 0;
     }
 
-    public static void main(String[] args) {
-
-        ArrayDeque<Integer> A = new ArrayDeque();
-
-        A.addFirst(12);
-        A.addLast(3);
-        A.addFirst(14);
-//        int rmvF = A.removeFirst();
-        A.addLast(91);
-        A.addFirst(8);
-        A.addLast(11);
-        A.addFirst(4);
-        A.addLast(63);
-//        int rmvL = A.removeLast();
-//        int get1 = A.get(1);
-        for (int i = 0; i < 5; i++){
-            System.out.println(StdRandom.uniform(-0.5, 0.5));
-        }
-
-    }
-
+//    public static void main(String[] args) {
+//
+//        ArrayDeque<Integer> A = new ArrayDeque();
+//
+//        A.addFirst(12);
+//        A.addLast(3);
+//        A.addFirst(14);
+////        int rmvF = A.removeFirst();
+//        A.addLast(91);
+//        A.addFirst(8);
+//        A.addLast(11);
+//        A.addFirst(4);
+//        A.addLast(63);
+////        int rmvL = A.removeLast();
+////        int get1 = A.get(1);
+//        for (int i = 0; i < 5; i++) {
+//            System.out.println(StdRandom.uniform(-0.5, 0.5));
+//        }
+//
+//    }
+//
 
 
 
