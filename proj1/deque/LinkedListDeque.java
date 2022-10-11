@@ -191,6 +191,3 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 //        System.out.println(removed);
 
     }
-
-
-}

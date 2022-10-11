@@ -1,10 +1,10 @@
 package deque;
 
-import edu.princeton.cs.algs4.StdRandom;
+
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     /* construction of ArrayDeque data structure*/
     /* array of items*/
     private T[] items;
@@ -102,7 +102,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
             change it to point at length-1 spot
              */
         } else if (rearIndex == 0) {
-            rearIndex = items.length -1;
+            rearIndex = items.length - 1;
         } else {
             rearIndex--;
         }
@@ -199,7 +199,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>  {
             }
         }
         return true;
-}
+    }
 
 
     private void resize(int capacity) {
