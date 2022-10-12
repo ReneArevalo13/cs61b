@@ -168,7 +168,7 @@ public class LinkedListDequeTest {
 //            Stopwatch sw = new Stopwatch();
             int M = 10000;
             for(int i = 0; i < M; i++){
-                LLD.getLast();
+                LLD.get(M);
             }
 
 //            double timeInSeconds = sw.elapsedTime();
@@ -203,10 +203,6 @@ public class LinkedListDequeTest {
                 // getLast
                 if (L.size() == 0) {
                     continue;
-                } else {
-                    int lastA = L.getLast();
-                    int lastB = B.getLast();
-                    assertEquals(lastA, lastB);
                 }
             } else if (operationNumber == 3) {
                 // removeLast

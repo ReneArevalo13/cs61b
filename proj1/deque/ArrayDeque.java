@@ -205,10 +205,14 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private void resize(int capacity) {
         T[] temp = (T[]) new Object[capacity];
         int endPos = temp.length / 4;
+//        int endPos = frontIndex - rearIndex;
         System.arraycopy(items, 0, temp, endPos, size);
         items = temp;
+//        if (frontIndex == rearIndex) {
+//            rearIndex = Math.floorMod(rearIndex - 1, capacity);
+//        }
         frontIndex = -1;
-        rearIndex = 0;
+        rearIndex = temp.length  - 1;
     }
 
 //    public static void main(String[] args) {
