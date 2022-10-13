@@ -130,43 +130,43 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
-//    @Override
-//    public boolean equals(Object o){
-//        if (o instanceof LinkedListDeque ld){
-//            if (ld.size != this.size){
-//                return false;
-//            }
-//            for (int i = 0; i < this.size; i++){
-//                if (ld.get(i) != this.get(i)){
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
+    public boolean equals(Object o){
+        if (o instanceof LinkedListDeque ld){
+            if (ld.size != this.size){
+                return false;
+            }
+            for (int i = 0; i < this.size; i++){
+                if (ld.get(i) != this.get(i)){
+                    return false;
+                }
+            }
             return true;
         }
-        if (other == null) {
-            return false;
-        }
+        return false;
+    }
+//    @Override
+//    public boolean equals(Object other) {
+//        if (this == other) {
+//            return true;
+//        }
+//        if (other == null) {
+//            return false;
+//        }
 //        if (other.getClass() != this.getClass()) {
 //            return false;
 //        }
-        LinkedListDeque<T> o = (LinkedListDeque<T>) other;
-        if (o.size() != this.size()) {
-            return false;
-        }
-        for (int i = 0; i < this.size; i++) {
-            if (!o.get(i).equals(this.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
+//        LinkedListDeque<T> o = (LinkedListDeque<T>) other;
+//        if (o.size() != this.size()) {
+//            return false;
+//        }
+//        for (int i = 0; i < this.size; i++) {
+//            if (!o.get(i).equals(this.get(i))) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
 
 

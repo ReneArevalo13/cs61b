@@ -163,44 +163,44 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
 
-//    @Override
-//    public boolean equals(Object o){
-//        if (o instanceof ArrayDeque oas){
-//            // check if the same size
-//            if (oas.size != this.size){
-//                return false;
-//            }
-//            // check if all the elements are the same
-//            for (int i = 0; i < this.size; i++){
-//                if (oas.get(i) != this.get(i)){
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (other == null) {
-            return false;
-        }
-//        if (other.getClass() != this.getClass()) {
-//            return false;
-//        }
-        ArrayDeque<T> o = (ArrayDeque<T>) other;
-        if (o.size() != this.size()) {
-            return false;
-        }
-        for (int i = 0; i < this.size; i++) {
-            if (o.get(i) != this.get(i)) {
+    @Override
+    public boolean equals(Object o){
+        if (o instanceof ArrayDeque oas){
+            // check if the same size
+            if (oas.size != this.size){
                 return false;
             }
+            // check if all the elements are the same
+            for (int i = 0; i < this.size; i++){
+                if (oas.get(i) != this.get(i)){
+                    return false;
+                }
+            }
+            return true;
         }
-        return true;
+        return false;
     }
+//    public boolean equals(Object other) {
+//        if (this == other) {
+//            return true;
+//        }
+//        if (other == null) {
+//            return false;
+//        }
+////        if (other.getClass() != this.getClass()) {
+////            return false;
+////        }
+//        ArrayDeque<T> o = (ArrayDeque<T>) other;
+//        if (o.size() != this.size()) {
+//            return false;
+//        }
+//        for (int i = 0; i < this.size; i++) {
+//            if (o.get(i) != this.get(i)) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
 
 //    private void resize(int capacity) {
