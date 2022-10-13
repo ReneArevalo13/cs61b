@@ -324,4 +324,22 @@ public class ArrayDequeTest {
         }
         assertEquals(ad1.size(), 8);
     }
+
+    @Test
+    public void addFirstRemoveLastIsEmpty(){
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        ad1.addFirst(0);
+        ad1.addFirst(1);
+        ad1.addFirst(2);
+        ad1.addFirst(3);
+        ad1.addFirst(4);
+        ad1.addFirst(5);
+        ad1.addFirst(6);
+        ad1.addFirst(7);
+        ad1.addFirst(8);
+        ad1.addFirst(9);
+        int last = ad1.removeLast();
+        System.out.println(last);
+
+    }
 }
