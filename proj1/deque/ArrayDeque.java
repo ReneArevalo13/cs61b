@@ -164,43 +164,44 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
 
     @Override
-    public boolean equals(Object o){
-        if (o instanceof ArrayDeque oas){
-            // check if the same size
-            if (oas.size != this.size){
-                return false;
-            }
-            // check if all the elements are the same
-            for (int i = 0; i < this.size; i++){
-                if (oas.get(i) != this.get(i)){
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-//    public boolean equals(Object other) {
-//        if (this == other) {
-//            return true;
-//        }
-//        if (other == null) {
-//            return false;
-//        }
-////        if (other.getClass() != this.getClass()) {
-////            return false;
-////        }
-//        ArrayDeque<T> o = (ArrayDeque<T>) other;
-//        if (o.size() != this.size()) {
-//            return false;
-//        }
-//        for (int i = 0; i < this.size; i++) {
-//            if (o.get(i) != this.get(i)) {
+    // not working with autograder: instanceof
+//    public boolean equals(Object o){
+//        if (o instanceof ArrayDeque oas){
+//            // check if the same size
+//            if (oas.size != this.size){
 //                return false;
 //            }
+//            // check if all the elements are the same
+//            for (int i = 0; i < this.size; i++){
+//                if (oas.get(i) != this.get(i)){
+//                    return false;
+//                }
+//            }
+//            return true;
 //        }
-//        return true;
+//        return false;
 //    }
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+        if (other.getClass() != this.getClass()) {
+            return false;
+        }
+        ArrayDeque<T> o = (ArrayDeque<T>) other;
+        if (o.size() != this.size()) {
+            return false;
+        }
+        for (int i = 0; i < this.size; i++) {
+            if (o.get(i) != this.get(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 
 //    private void resize(int capacity) {
@@ -226,26 +227,27 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     }
 
-//    public static void main(String[] args) {
-//
-//        ArrayDeque<Integer> A = new ArrayDeque();
-//
-//        A.addFirst(12);
-//        A.addLast(3);
-//        A.addFirst(14);
-////        int rmvF = A.removeFirst();
-//        A.addLast(91);
-//        A.addFirst(8);
-//        A.addLast(11);
-//        A.addFirst(4);
-//        A.addLast(63);
-////        int rmvL = A.removeLast();
-////        int get1 = A.get(1);
+    public static void main(String[] args) {
+
+        ArrayDeque<Integer> A = new ArrayDeque();
+
+        A.addFirst(12);
+        A.addLast(3);
+        A.addFirst(14);
+//        int rmvF = A.removeFirst();
+        A.addLast(91);
+        A.addFirst(8);
+        A.addLast(11);
+        A.addFirst(4);
+        A.addLast(63);
+//        int rmvL = A.removeLast();
+//        int get1 = A.get(1);
 //        for (int i = 0; i < 5; i++) {
 //            System.out.println(StdRandom.uniform(-0.5, 0.5));
 //        }
-//
-//    }
+
+        System.out.println(A.getClass());
+    }
 //
 
 
