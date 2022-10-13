@@ -2,6 +2,8 @@ package deque;
 
 
 
+import afu.org.checkerframework.checker.oigj.qual.O;
+
 import java.util.Iterator;
 
 public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
@@ -163,7 +165,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
 
-    @Override
+
     // not working with autograder: instanceof
 //    public boolean equals(Object o){
 //        if (o instanceof ArrayDeque oas){
@@ -181,12 +183,26 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 //        }
 //        return false;
 //    }
+    @Override
     public boolean equals(Object other) {
+
         if (this == other) {
             return true;
         }
         if (other == null) {
             return false;
+        }
+        if (other.getClass() == LinkedListDeque.class) {
+            LinkedListDeque<T> g = (LinkedListDeque<T>) other;
+            if (g.size() != this.size()) {
+                return false;
+            }
+            for (int i = 0; i < this.size; i++) {
+                if (g.get(i) != this.get(i)) {
+                    return false;
+                }
+            }
+            return true;
         }
         if (other.getClass() != this.getClass()) {
             return false;

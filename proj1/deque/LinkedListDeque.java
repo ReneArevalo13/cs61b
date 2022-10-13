@@ -130,43 +130,56 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
+//    @Override
+//    public boolean equals(Object o){
+//        if (o instanceof LinkedListDeque ld){
+//            if (ld.size != this.size){
+//                return false;
+//            }
+//            for (int i = 0; i < this.size; i++){
+//                if (ld.get(i) != this.get(i)){
+//                    return false;
+//                }
+//            }
+//            return true;
+//        }
+//        return false;
+//    }
     @Override
-    public boolean equals(Object o){
-        if (o instanceof LinkedListDeque ld){
-            if (ld.size != this.size){
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+        if (other.getClass() == ArrayDeque.class) {
+            ArrayDeque<T> g = (ArrayDeque<T>) other;
+            if (g.size() != this.size()) {
                 return false;
             }
-            for (int i = 0; i < this.size; i++){
-                if (ld.get(i) != this.get(i)){
+            for (int i = 0; i < this.size; i++) {
+                if (g.get(i) != this.get(i)) {
                     return false;
                 }
             }
             return true;
         }
-        return false;
+
+        if (other.getClass() != this.getClass()) {
+            return false;
+        }
+        LinkedListDeque<T> o = (LinkedListDeque<T>) other;
+        if (o.size() != this.size()) {
+            return false;
+        }
+        for (int i = 0; i < this.size; i++) {
+            if (!o.get(i).equals(this.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
-//    @Override
-//    public boolean equals(Object other) {
-//        if (this == other) {
-//            return true;
-//        }
-//        if (other == null) {
-//            return false;
-//        }
-//        if (other.getClass() != this.getClass()) {
-//            return false;
-//        }
-//        LinkedListDeque<T> o = (LinkedListDeque<T>) other;
-//        if (o.size() != this.size()) {
-//            return false;
-//        }
-//        for (int i = 0; i < this.size; i++) {
-//            if (!o.get(i).equals(this.get(i))) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
 
 
 

@@ -373,4 +373,36 @@ public class ArrayDequeTest {
         System.out.println(last);
 
     }
+
+    @Test
+    public void adlldEquals() {
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+
+        ad1.addLast(8);
+        ad1.addLast(33);
+        ad1.addLast(3);
+        ad1.addLast(2);
+        ad1.addLast(0);
+        ad1.addLast(88);
+        ad1.addLast(83);
+        ad1.addLast(4);
+
+        lld1.addLast(8);
+        lld1.addLast(33);
+        lld1.addLast(3);
+        lld1.addLast(2);
+        lld1.addLast(0);
+        lld1.addLast(88);
+        lld1.addLast(83);
+        lld1.addLast(4);
+        System.out.println(lld1.getClass());
+        System.out.println(ad1.getClass());
+
+        ad1.equals(lld1);
+
+
+
+
+    }
 }
