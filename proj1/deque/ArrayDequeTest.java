@@ -163,7 +163,7 @@ public class ArrayDequeTest {
     @Test
     public void resizeRandom() {
         ArrayDeque<Integer> ad1 = new ArrayDeque<>();
-        int N = 32;
+        int N = 100;
         for (int i = 0; i < N; i++) {
             int operationNumber = StdRandom.uniform(0, 2);
             if (operationNumber == 0) {
@@ -328,7 +328,7 @@ public class ArrayDequeTest {
 
     @Test
     public void fillEmptyfill3() {
-        int N = 16;
+        int N = 32;
         ArrayDeque<Integer> ad1 = new ArrayDeque<>();
         for (int i = 0; i < N; i++) {
             int randomNumber = StdRandom.uniform(0, 100);
@@ -348,15 +348,27 @@ public class ArrayDequeTest {
     public void addFirstRemoveLastIsEmpty(){
         ArrayDeque<Integer> ad1 = new ArrayDeque<>();
         ad1.addFirst(0);
-        ad1.addFirst(1);
-        ad1.addFirst(2);
+        int get0 = ad1.get(0);
+        int rem0 = ad1.removeFirst();
         ad1.addFirst(3);
         ad1.addFirst(4);
-        ad1.addFirst(5);
+        int rem1 = ad1.removeFirst();
         ad1.addFirst(6);
-        ad1.addFirst(7);
+        int get1 = ad1.get(0);
         ad1.addFirst(8);
-        ad1.addFirst(9);
+        int get2 = ad1.get(0);
+        ad1.addLast(10);
+        int get3 = ad1.get(0);
+        ad1.addFirst(12);
+        int rem2 =ad1.removeFirst();
+        ad1.addLast(14);
+        int rem3 = ad1.removeLast();
+        ad1.addFirst(16);
+        ad1.addLast(17);
+        ad1.addLast(18);
+        ad1.addFirst(19);
+        ad1.addLast(20);
+        int rem4 = ad1.removeFirst();
         int last = ad1.removeLast();
         System.out.println(last);
 
