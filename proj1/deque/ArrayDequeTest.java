@@ -310,19 +310,38 @@ public class ArrayDequeTest {
     }
     @Test
     public void fillEmptyfill2() {
+        int N = 16;
         ArrayDeque<Integer> ad1 = new ArrayDeque<>();
-        for (int i = 0; i < 80; i++) {
+        for (int i = 0; i < N; i++) {
             int randomNumber = StdRandom.uniform(0, 100);
             ad1.addFirst(randomNumber);
         }
-        for (int i = 0; i < 80; i++) {
+        for (int i = 0; i < N; i++) {
             int output = ad1.removeFirst();
         }
-        for (int i = 0; i < 80; i++) {
+        for (int i = 0; i < N; i++) {
             int randomNumber = StdRandom.uniform(0, 100);
             ad1.addFirst(randomNumber);
         }
-        assertEquals(ad1.size(), 8);
+        assertEquals(ad1.size(), N);
+    }
+
+    @Test
+    public void fillEmptyfill3() {
+        int N = 16;
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        for (int i = 0; i < N; i++) {
+            int randomNumber = StdRandom.uniform(0, 100);
+            ad1.addLast(randomNumber);
+        }
+        for (int i = 0; i < N; i++) {
+            int output = ad1.removeLast();
+        }
+        for (int i = 0; i < N; i++) {
+            int randomNumber = StdRandom.uniform(0, 100);
+            ad1.addLast(randomNumber);
+        }
+        assertEquals(ad1.size(), N);
     }
 
     @Test

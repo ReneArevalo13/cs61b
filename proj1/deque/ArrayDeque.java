@@ -67,6 +67,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         if (size < items.length / 4 && items.length > 8) {
             resize(items.length / 2);
+            frontIndex = 0;
         }
         T value = items[frontIndex];
         items[frontIndex] = null;
@@ -91,7 +92,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             return null;
         }
         if (size < items.length / 4 && items.length > 8) {
-            resize(items.length / 2);
+            resize(items.length / 2);   
         }
         T value = items[rearIndex];
         items[rearIndex] = null;
@@ -220,7 +221,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             temp[i] = items[(frontIndex + i) % items.length];
         }
         items = temp;
-        frontIndex = temp.length ;
+        frontIndex = temp.length;
         rearIndex = size -1;
 
     }
