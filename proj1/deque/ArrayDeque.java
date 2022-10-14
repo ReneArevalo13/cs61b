@@ -167,6 +167,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
 
     // not working with autograder: instanceof
+//    @Override
 //    public boolean equals(Object o){
 //        if (o instanceof ArrayDeque oas){
 //            // check if the same size
@@ -185,6 +186,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 //    }
     @Override
     public boolean equals(Object other) {
+        /* Returns whether the parameter o is equal to the Deque.
+        o is considered equal if it is a Deque and if it contains the same contents
+        (as governed by the generic T’s equals method) in the same order
+         */
 
         if (this == other) {
             return true;
@@ -192,18 +197,18 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (other == null) {
             return false;
         }
-        if (other.getClass() == LinkedListDeque.class) {
-            LinkedListDeque<T> g = (LinkedListDeque<T>) other;
-            if (g.size() != this.size()) {
-                return false;
-            }
-            for (int i = 0; i < this.size; i++) {
-                if (g.get(i) != this.get(i)) {
-                    return false;
-                }
-            }
-            return true;
-        }
+//        if (other.getClass() == LinkedListDeque.class) {
+//            LinkedListDeque<T> g = (LinkedListDeque<T>) other;
+//            if (g.size() != this.size()) {
+//                return false;
+//            }
+//            for (int i = 0; i < this.size; i++) {
+//                if (g.get(i) != this.get(i)) {
+//                    return false;
+//                }
+//            }
+//            return true;
+//        }
         if (other.getClass() != this.getClass()) {
             return false;
         }
