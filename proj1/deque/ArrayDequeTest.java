@@ -399,7 +399,12 @@ public class ArrayDequeTest {
         System.out.println(lld1.getClass());
         System.out.println(ad1.getClass());
 
-        ad1.equals(lld1);
+        if (ad1.equals(lld1)) {
+            System.out.println("These are equal");
+        }
+        if (lld1.equals(ad1)) {
+            System.out.println("These are equal");
+        }
 
 
 

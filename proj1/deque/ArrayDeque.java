@@ -243,27 +243,27 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 
     }
 
-    public static void main(String[] args) {
-
-        ArrayDeque<Integer> A = new ArrayDeque();
-
-        A.addFirst(12);
-        A.addLast(3);
-        A.addFirst(14);
-//        int rmvF = A.removeFirst();
-        A.addLast(91);
-        A.addFirst(8);
-        A.addLast(11);
-        A.addFirst(4);
-        A.addLast(63);
-//        int rmvL = A.removeLast();
-//        int get1 = A.get(1);
-//        for (int i = 0; i < 5; i++) {
-//            System.out.println(StdRandom.uniform(-0.5, 0.5));
-//        }
-
-        System.out.println(A.getClass());
-    }
+//    public static void main(String[] args) {
+//
+//        ArrayDeque<Integer> A = new ArrayDeque();
+//
+//        A.addFirst(12);
+//        A.addLast(3);
+//        A.addFirst(14);
+////        int rmvF = A.removeFirst();
+//        A.addLast(91);
+//        A.addFirst(8);
+//        A.addLast(11);
+//        A.addFirst(4);
+//        A.addLast(63);
+////        int rmvL = A.removeLast();
+////        int get1 = A.get(1);
+////        for (int i = 0; i < 5; i++) {
+////            System.out.println(StdRandom.uniform(-0.5, 0.5));
+////        }
+//
+//        System.out.println(A.getClass());
+//    }
 //
 
 

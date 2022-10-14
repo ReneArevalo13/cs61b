@@ -65,7 +65,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     }
     @Override
     public T get(int index) {
-        // set current node as the first nodesentinel
+        // set current node as the first node sentinel
         Node currentNode = sentinel.next;
         for (int i = 0; i <= index; i++) {
             if (i == index) {
