@@ -397,7 +397,7 @@ public class ArrayDequeTest {
         lld1.addLast(83);
         lld1.addLast(4);
         System.out.println(lld1.getClass());
-        System.out.println(ad1.getClass());
+        System.out.println(ad1.getClass().getClass());
 
         if (ad1.equals(lld1)) {
             System.out.println("These are equal");
