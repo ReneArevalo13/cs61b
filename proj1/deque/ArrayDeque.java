@@ -2,7 +2,7 @@ package deque;
 
 
 
-import afu.org.checkerframework.checker.oigj.qual.O;
+
 
 import java.util.Iterator;
 
@@ -186,6 +186,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 //    }
     @Override
     public boolean equals(Object other) {
+
         /* Returns whether the parameter o is equal to the Deque.
         o is considered equal if it is a Deque and if it contains the same contents
         (as governed by the generic T’s equals method) in the same order
@@ -245,7 +246,6 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         items = temp;
         frontIndex = 0;
         rearIndex = size -1;
-
     }
 
 //    public static void main(String[] args) {
