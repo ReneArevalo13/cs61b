@@ -282,6 +282,39 @@ public class LinkedListDequeTest {
         }
 
     }
+    @Test
+    public void testEquals3(){
+        LinkedListDeque<Integer> a = new LinkedListDeque<>();
+        ArrayDeque<Integer> b = new ArrayDeque<>();
+
+        a.addFirst(4);
+        a.addLast(2);
+        a.addFirst(6);
+        a.addLast(21);
+        a.addFirst(31);
+        a.addLast(22);
+        a.addFirst(220);
+        a.addLast(214);
+
+        b.addFirst(4);
+        b.addLast(2);
+        b.addFirst(6);
+        b.addLast(21);
+        b.addFirst(31);
+        b.addLast(22);
+        b.addFirst(220);
+        b.addLast(214);
+//        System.out.println(a.get(7));
+//        System.out.println(b.get(7));
+
+        if (a.equals(b)){
+            System.out.println("The Deques are equal!");
+        }
+        if (b.equals(a)) {
+            System.out.println("These are equal backwards");
+        }
+
+    }
     public static void main(String[] args) {
         timeGetLast();
     }
