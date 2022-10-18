@@ -387,6 +387,8 @@ public class ArrayDequeTest {
         ad1.addLast(88);
         ad1.addLast(83);
         ad1.addLast(4);
+        int rmv1 = ad1.removeFirst();
+        int rmv2 = ad1.removeFirst();
 
         lld1.addLast(8);
         lld1.addLast(33);

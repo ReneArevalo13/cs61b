@@ -122,18 +122,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     public int size() {
         return size;
     }
-//    @Override
-//    public boolean isEmpty() {
-//        return size == 0;
-//    }
     private boolean isFull() {
         return size == items.length;
-    }
-//    public T getLast() {
-//        return items[rearIndex];
-//    }
-    T[] getItems() {
-        return items;
     }
     @Override
     public void printDeque() {
@@ -160,27 +150,6 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             return returnItem;
         }
     }
-
-
-
-    // not working with autograder: instanceof
-//    @Override
-//    public boolean equals(Object o){
-//        if (o instanceof ArrayDeque oas){
-//            // check if the same size
-//            if (oas.size != this.size){
-//                return false;
-//            }
-//            // check if all the elements are the same
-//            for (int i = 0; i < this.size; i++){
-//                if (oas.get(i) != this.get(i)){
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
     @Override
     public boolean equals(Object other) {
 
@@ -211,19 +180,6 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         return true;
     }
 
-
-//    private void resize(int capacity) {
-//        T[] temp = (T[]) new Object[capacity];
-//        int endPos = temp.length / 4;
-////        int endPos = frontIndex - rearIndex;
-//        System.arraycopy(items, 0, temp, endPos, size);
-//        items = temp;
-////        if (frontIndex == rearIndex) {
-////            rearIndex = Math.floorMod(rearIndex - 1, capacity);
-////        }
-//        frontIndex = temp.length - 1;
-//        rearIndex = endPos;
-//    }
     private void resize(int capacity) {
         T[] temp = (T[]) new Object[capacity];
         for (int i = 0; i < size; i++) {
@@ -231,32 +187,10 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         items = temp;
         frontIndex = 0;
-        rearIndex = size -1;
+        rearIndex = size - 1;
     }
 
-//    public static void main(String[] args) {
 //
-//        ArrayDeque<Integer> A = new ArrayDeque();
-//
-//        A.addFirst(12);
-//        A.addLast(3);
-//        A.addFirst(14);
-////        int rmvF = A.removeFirst();
-//        A.addLast(91);
-//        A.addFirst(8);
-//        A.addLast(11);
-//        A.addFirst(4);
-//        A.addLast(63);
-////        int rmvL = A.removeLast();
-////        int get1 = A.get(1);
-////        for (int i = 0; i < 5; i++) {
-////            System.out.println(StdRandom.uniform(-0.5, 0.5));
-////        }
-//
-//        System.out.println(A.getClass());
-//    }
-//
-
 
 
 
