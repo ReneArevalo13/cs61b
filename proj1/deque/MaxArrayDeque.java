@@ -12,7 +12,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
         super();
 
         comparison = c;
-    }git 
+    }
 
     public T max() {
         if (isEmpty()) {
