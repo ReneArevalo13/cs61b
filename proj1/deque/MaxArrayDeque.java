@@ -6,11 +6,11 @@ import java.util.Comparator;
 public class MaxArrayDeque<T> extends ArrayDeque<T> {
     private Comparator<T> comparison;
 
-    private T[] maxItems;
+
 
     public MaxArrayDeque(Comparator<T> c) {
         super();
-        maxItems = getItems();
+
         comparison = c;
     }
 
@@ -19,7 +19,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
             return null;
         }
         T maximum = get(0);
-        for (T i : maxItems) {
+        for (T i : this) {
             if (i == null) {
                 continue;
             }
@@ -35,16 +35,11 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
             return null;
         }
         T maximum = get(0);
-        for (T i : maxItems) {
+        for (T i : this) {
             if (i == null) {
                 continue;
             }
-
             if (c.compare(i, maximum) > 0) {
-                maximum = i;
-            } else if (c.compare(i, maximum) < 0) {
-                continue;
-            } else if (c.compare(i, maximum) == 0) {
                 maximum = i;
             }
         }
@@ -56,6 +51,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
             return a - b ;
         }
     }
+
     private static class MaxStringComparator implements Comparator<String> {
         public int compare(String  a, String  b) {
             return a.length() - b.length();

@@ -52,6 +52,24 @@ public class MaxArrayDequeTest {
     }
 
     @Test
+    public void integerMaxTest3() {
+        Comparator<Integer> mc = getMaxIntComparator();
+        MaxArrayDeque<Integer> mad = new MaxArrayDeque(mc);
+        mad.addFirst(2);
+        mad.addLast(33);
+        mad.addFirst(1);
+        mad.addLast(44);
+        mad.addFirst(53);
+        mad.addLast(42);
+        mad.addFirst(98);
+        mad.addFirst(1);
+        int maxNumber = mad.max(getMaxIntComparator());
+        int maxKnown = 98;
+        assertEquals(maxNumber, maxKnown);
+//        System.out.println(maxNumber);
+    }
+
+    @Test
     public void stringMaxTest1() {
         Comparator <String> mc = getMaxStringComparator();
         MaxArrayDeque<String> mad = new MaxArrayDeque(mc);

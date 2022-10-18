@@ -132,7 +132,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
 //    public T getLast() {
 //        return items[rearIndex];
 //    }
-    public T[] getItems() {
+    T[] getItems() {
         return items;
     }
     @Override
@@ -195,22 +195,11 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (other == null) {
             return false;
         }
-        if (other.getClass() == LinkedListDeque.class) {
-            LinkedListDeque<T> g = (LinkedListDeque<T>) other;
-            if (g.size() != this.size()) {
-                return false;
-            }
-            for (int i = 0; i < this.size; i++) {
-                if (!g.get(i).equals(this.get(i))) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        if (other.getClass() != this.getClass()) {
+
+        if (!(other instanceof Deque)) {
             return false;
         }
-        ArrayDeque<T> o = (ArrayDeque<T>) other;
+        Deque<T> o = (Deque<T>) other;
         if (o.size() != this.size()) {
             return false;
         }
