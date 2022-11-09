@@ -1,6 +1,7 @@
 package capers;
 
 import java.io.File;
+import java.util.Arrays;
 
 import static capers.Utils.*;
 
@@ -53,6 +54,8 @@ public class Main {
         case "dog":
             validateNumArgs("dog", args, 4);
             // TODO: make a dog
+            int age = Integer.parseInt(args[3]);
+            Dog d = new Dog(args[1], args[2], age);
             break;
         case "birthday":
             validateNumArgs("birthday", args, 2);
