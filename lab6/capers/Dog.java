@@ -3,13 +3,14 @@ package capers;
 import jdk.jshell.execution.Util;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import static capers.Utils.*;
 
 /** Represents a dog that can be serialized.
  * @author Rene
 */
-public class Dog {
+public class Dog implements Serializable{
 
     /** Folder that dogs live in. */
     static final File DOG_FOLDER = Utils.join(".capers", "dogs"); // TODO (hint: look at the `join`
@@ -44,14 +45,15 @@ public class Dog {
      */
     public static Dog fromFile(String name) {
         // TODO (hint: look at the Utils file)
-        return null;
+        File dogFile = Utils.join(".capers", "dogs", name);
+        return Utils.readObject(dogFile, Dog.class);
     }
 
     /**
      * Increases a dog's age and celebrates!
      */
     public void haveBirthday() {
-        age += 1;
+        this.age += 1;
         System.out.println(toString());
         System.out.println("Happy birthday! Woof! Woof!");
     }
@@ -59,8 +61,13 @@ public class Dog {
     /**
      * Saves a dog to a file for future use.
      */
-    public void saveDog() {
+    public void saveDog() throws IOException {
         // TODO (hint: don't forget dog names are unique)
+        Dog d = this;
+        File dogFile = Utils.join(".capers", "dogs", this.name);
+        dogFile.createNewFile();
+        writeObject(dogFile, d);
+
     }
 
     @Override
