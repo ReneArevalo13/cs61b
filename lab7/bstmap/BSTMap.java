@@ -25,11 +25,20 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
     }
     @Override
     public boolean containsKey(K key) {
-        if (key == null) throw new IllegalArgumentException("argument to containsKey() is null");
-//        if (get(key) == null){
-//            return true;
-//        }
-        return get(key) != null;
+        return containsKey(root, key);
+
+    }
+    private boolean containsKey(BSTNode node, K key) {
+        if (node == null) {
+            return false;
+        }
+        int cmp = key.compareTo(node.key);
+        if (cmp < 0) {
+            return containsKey(node.left, key);
+        } else if (cmp > 0) {
+            return containsKey(node.right, key);
+        }
+        return true;
     }
     @Override
     public int size(){
@@ -77,16 +86,30 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
         } else if (compare > 0) {
             x.right = put(x.right, key, value);
         } else {
-//            x.key = key;
+            x.key = key;
             x.value = value;
         }
         x.size = 1 + size(x.left) + size(x.right);
         return x;
     }
+    public void printInOrder() {
+        printInOrder(root);
+    }
+
+    private void printInOrder(BSTNode node) {
+        if (node == null) {
+            return;
+        }
+        printInOrder(node.left);
+        System.out.println(node.key.toString() + " -> " + node.value.toString());
+        printInOrder(node.right);
+    }
+
     @Override
     public V remove(K key) {
         throw new UnsupportedOperationException();
     }
+
 
     @Override
     public V remove(K key, V value) {

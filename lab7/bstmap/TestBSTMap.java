@@ -80,11 +80,11 @@ public class TestBSTMap {
     }
 
     //assumes put works
-//    @Test
-//    public void containsKeyNullTest() {
-//        BSTMap<String, Integer> b = new BSTMap<String, Integer>();
-//        b.put("hi", null);
-//        assertTrue(b.containsKey("hi"));
-//    }
+    @Test
+    public void containsKeyNullTest() {
+        BSTMap<String, Integer> b = new BSTMap<String, Integer>();
+        b.put("hi", null);
+        assertTrue(b.containsKey("hi"));
+    }
 
 }
