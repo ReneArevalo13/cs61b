@@ -13,6 +13,8 @@ public class Main {
         String firstArg = args[0];
         switch(firstArg) {
             case "init":
+                Repository.init();
+
                 // TODO: handle the `init` command
                 break;
             case "add":
