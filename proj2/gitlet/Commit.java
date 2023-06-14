@@ -29,7 +29,8 @@ public class Commit implements Serializable {
     /** The message of this Commit. */
     private String message;
     private Instant timestamp;
-
+    private String parent;
+    private String id;
 
 
 //    represents the current working directory of the user
@@ -43,14 +44,13 @@ public class Commit implements Serializable {
     public Instant getTimestamp() {
         return this.timestamp;
     }
+
     /**
      * Helper method to allow for the initial commit to have the Epoch time.
      */
     public void makeEpoch() {
         this.timestamp = EPOCH;
     }
-
-
 
     public Commit(String message) {
         this.message = message;
@@ -59,7 +59,7 @@ public class Commit implements Serializable {
 
     public static void main(String[] args) {
         Commit firstCommit = new Commit("First commit");
-        firstCommit.makeEpoch();
+//        firstCommit.makeEpoch();
         System.out.println(firstCommit.getMessage());
         System.out.println(firstCommit.getTimestamp());
 

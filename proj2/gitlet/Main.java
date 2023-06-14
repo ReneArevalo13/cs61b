@@ -14,11 +14,12 @@ public class Main {
         switch(firstArg) {
             case "init":
                 Repository.init();
-
                 // TODO: handle the `init` command
                 break;
             case "add":
                 // TODO: handle the `add [filename]` command
+                String fileArg = args[1];
+                Repository.add(fileArg);
                 break;
             // TODO: FILL THE REST IN
         }

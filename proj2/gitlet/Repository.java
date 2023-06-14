@@ -24,13 +24,16 @@ public class Repository {
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
+//    directory that will be used as the staging area
+    public static final File STAGING_DIR = join(CWD, ".gitlet", "staging");
 
     /* TODO: fill in the rest of this class. */
     /**
-     * TODO: make the initial commit
-     * TODO: make the timestamp be unix epoch
-     * TODO: make branch pointer point to master
-     * TODO: check for failure case
+     * TODO: make branch pointer point to MASTER and HEAD
+     * TODO: add SHA id
+     * TODO: create other directories that will be used inside of gitlet
+     * TODO: creat the rest of the infrastructure for
+
      * Creates a new Gitlet version-control system in the current directory. This system will automatically start with
      * one commit: a commit that contains no files and has the commit message initial commit (just like that, with
      * no punctuation). It will have a single branch: master, which initially points to this initial commit,
@@ -46,11 +49,23 @@ public class Repository {
             System.exit(0);
         }
         GITLET_DIR.mkdir();
+        STAGING_DIR.mkdir();
         Commit initialCommit = new Commit("initial commit");
         initialCommit.makeEpoch();
         File initialCommitFile = join(GITLET_DIR, "initialCommit");
         writeObject(initialCommitFile, initialCommit);
 
+    }
+    public static void add(String filename) {
+        File filenameCheck = join(CWD, filename);
+        if (!filenameCheck.isFile()) {
+            System.out.println("File does not exist.");
+            System.exit(0);
+        }
+        Blob addBlob = new Blob(filename);
+        String BlobID = addBlob.getID();
+        File blobFile = join(STAGING_DIR, BlobID);
+        writeObject(blobFile, addBlob);
     }
 
 }
