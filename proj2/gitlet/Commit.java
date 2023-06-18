@@ -4,7 +4,12 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.time.Instant;
+import java.util.ArrayList;
+
+import static gitlet.Utils.join;
+import static jdk.internal.org.jline.reader.impl.LineReaderImpl.CompletionType.List;
 
 
 /** Represents a gitlet commit object.
@@ -31,10 +36,12 @@ public class Commit implements Serializable {
     private Instant timestamp;
     private String parent;
     private String id;
+    private ArrayList<String> blobsTracked;
 
 
 //    represents the current working directory of the user
     public static final File CWD = new File(System.getProperty("user.dir"));
+    public static final File STAGING_DIR = join(CWD, ".gitlet", "staging");
     private static final Instant EPOCH = Instant.EPOCH;
     private final Instant now = Instant.now();
 
@@ -51,10 +58,18 @@ public class Commit implements Serializable {
     public void makeEpoch() {
         this.timestamp = EPOCH;
     }
+    /**
+     * Helper method to allow for the initial commit to have parents set to NULL.
+     */
+    public void firstParent(){this.parent = null;}
+    public void firstBlob(){this.blobsTracked = null;}
+
 
     public Commit(String message) {
         this.message = message;
         this.timestamp = now;
+        this.parent = setParent();
+        this.blobsTracked = Blob.BlobList;
     }
 
     public static void main(String[] args) {

@@ -24,8 +24,12 @@ public class Repository {
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
-//    directory that will be used as the staging area
+    /** The staging directory. Will hold all the blobs staged for a commit. */
     public static final File STAGING_DIR = join(CWD, ".gitlet", "staging");
+    /** The ref directory. Will hold the head and master refs */
+    public static final File REF_DIR = join(CWD, ".gitlet", "refs");
+    /** The object directory. Will hold the commit and blob objects. */
+    public static final File OBJECT_DIR = join(CWD, ".gitlet", "objects");
 
     /* TODO: fill in the rest of this class. */
     /**
@@ -50,22 +54,35 @@ public class Repository {
         }
         GITLET_DIR.mkdir();
         STAGING_DIR.mkdir();
+        REF_DIR.mkdir();
+        OBJECT_DIR.mkdir();
         Commit initialCommit = new Commit("initial commit");
         initialCommit.makeEpoch();
+        initialCommit.firstParent();
+        initialCommit.firstParent();
+        initialCommit.firstBlob();
+
         File initialCommitFile = join(GITLET_DIR, "initialCommit");
         writeObject(initialCommitFile, initialCommit);
 
     }
     public static void add(String filename) {
         File filenameCheck = join(CWD, filename);
+
         if (!filenameCheck.isFile()) {
             System.out.println("File does not exist.");
             System.exit(0);
         }
         Blob addBlob = new Blob(filename);
         String BlobID = addBlob.getID();
+        if (addBlob.blobCheck(BlobID)) {
+            //remove file from staging area
+        }
         File blobFile = join(STAGING_DIR, BlobID);
         writeObject(blobFile, addBlob);
+    }
+    public static void setHead() {
+
     }
 
 }
