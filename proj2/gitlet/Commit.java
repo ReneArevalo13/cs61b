@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static gitlet.Utils.join;
 import static jdk.internal.org.jline.reader.impl.LineReaderImpl.CompletionType.List;
@@ -36,7 +38,7 @@ public class Commit implements Serializable {
     private Instant timestamp;
     private String parent;
     private String id;
-    private ArrayList<String> blobsTracked;
+    private HashMap<String, String> blobsTracked;
 
 
 //    represents the current working directory of the user
@@ -69,7 +71,11 @@ public class Commit implements Serializable {
         this.message = message;
         this.timestamp = now;
         this.parent = setParent();
-        this.blobsTracked = Blob.BlobList;
+        this.blobsTracked = Repository.copyBlobMap();
+    }
+
+    public static void setHead() {
+
     }
 
     public static void main(String[] args) {

@@ -3,6 +3,8 @@ package gitlet;
 import java.io.File;
 import static gitlet.Utils.*;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 // TODO: any imports you need here
 
 /** Represents a gitlet repository.
@@ -27,9 +29,13 @@ public class Repository {
     /** The staging directory. Will hold all the blobs staged for a commit. */
     public static final File STAGING_DIR = join(CWD, ".gitlet", "staging");
     /** The ref directory. Will hold the head and master refs */
-    public static final File REF_DIR = join(CWD, ".gitlet", "refs");
+    public static final File REF_DIR = join(CWD, ".gitlet", "refs", "HEAD");
     /** The object directory. Will hold the commit and blob objects. */
     public static final File OBJECT_DIR = join(CWD, ".gitlet", "objects");
+    /**
+     Treat the BlobMap as the staging area. Hashmap of the blobs. {Key = SHA-1 id, Value = Filename}
+     */
+    private static HashMap<String, String> BlobMap = new HashMap<>();
 
     /* TODO: fill in the rest of this class. */
     /**
@@ -54,11 +60,10 @@ public class Repository {
         }
         GITLET_DIR.mkdir();
         STAGING_DIR.mkdir();
-        REF_DIR.mkdir();
+        REF_DIR.mkdirs();
         OBJECT_DIR.mkdir();
         Commit initialCommit = new Commit("initial commit");
         initialCommit.makeEpoch();
-        initialCommit.firstParent();
         initialCommit.firstParent();
         initialCommit.firstBlob();
 
@@ -74,15 +79,18 @@ public class Repository {
             System.exit(0);
         }
         Blob addBlob = new Blob(filename);
-        String BlobID = addBlob.getID();
-        if (addBlob.blobCheck(BlobID)) {
+        if (addBlob.blobCheck(addBlob.getID())) {
             //remove file from staging area
         }
-        File blobFile = join(STAGING_DIR, BlobID);
+        BlobMap.put(addBlob.getID(), addBlob.getFilename());
+        File blobFile = join(OBJECT_DIR, addBlob.getID());
         writeObject(blobFile, addBlob);
+        File blobHashMap = join(STAGING_DIR, "addstage");
+        writeObject(blobHashMap, BlobMap);
     }
-    public static void setHead() {
+    public static HashMap<String, String> copyBlobMap() {
+        return new HashMap<>(BlobMap);
+    }
 
-    }
 
 }
