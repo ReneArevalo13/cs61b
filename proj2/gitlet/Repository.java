@@ -54,6 +54,7 @@ public class Repository {
      * UID) and all commits in all repositories will trace back to it.
      */
     public static void init() {
+
         if (GITLET_DIR.isDirectory()) {
             System.out.println("A Gitlet version-control system already exists in the current directory.");
             System.exit(0);
@@ -62,6 +63,7 @@ public class Repository {
         STAGING_DIR.mkdir();
         REF_DIR.mkdirs();
         OBJECT_DIR.mkdir();
+
         Commit initialCommit = new Commit("initial commit");
         initialCommit.makeEpoch();
         initialCommit.firstParent();
@@ -71,6 +73,7 @@ public class Repository {
         writeObject(initialCommitFile, initialCommit);
 
     }
+
     public static void add(String filename) {
         File filenameCheck = join(CWD, filename);
 
@@ -78,18 +81,33 @@ public class Repository {
             System.out.println("File does not exist.");
             System.exit(0);
         }
+        //construct blob object of the given file
         Blob addBlob = new Blob(filename);
+        //verify that this blob is new and not already tracked
         if (addBlob.blobCheck(addBlob.getID())) {
-            //remove file from staging area
+            /*Remove file from staging area.
+            * Make sure that the commit tracks the blob
+            * just make sure that it isn't creating a new object
+            * on disk*/
         }
+        //add current blob to the blob hash map
         BlobMap.put(addBlob.getID(), addBlob.getFilename());
+        //write current blob object to disk
         File blobFile = join(OBJECT_DIR, addBlob.getID());
         writeObject(blobFile, addBlob);
+        //write the blob hashmap to disk to maintain persistence
         File blobHashMap = join(STAGING_DIR, "addstage");
         writeObject(blobHashMap, BlobMap);
     }
     public static HashMap<String, String> copyBlobMap() {
         return new HashMap<>(BlobMap);
+    }
+    /**
+     * Clears the staging area by removing the file that holds what blobs are going to be staged
+     * */
+    public static void clearStaging() {
+        File addstage = join(STAGING_DIR, "addstage");
+        Utils.restrictedDelete(addstage);
     }
 
 

@@ -2,16 +2,16 @@ package gitlet;
 
 // TODO: any imports you need here
 
+import org.slf4j.helpers.Util;
+
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import static gitlet.Utils.join;
-import static jdk.internal.org.jline.reader.impl.LineReaderImpl.CompletionType.List;
 
 
 /** Represents a gitlet commit object.
@@ -35,10 +35,17 @@ public class Commit implements Serializable {
 
     /** The message of this Commit. */
     private String message;
-    private Instant timestamp;
+    private String timestamp;
     private String parent;
     private String id;
     private HashMap<String, String> blobsTracked;
+    private HashMap<String, String> emptyHashMap = new HashMap<>();
+    private String pointerHEAD;
+    /**
+     HashMap that will map the parent child relationship of commits. {Key = SHA-1 id of current commit,
+     Value = SHA-1 id of the parent commit}
+     */
+    private HashMap<String, String> parentChildMap = new HashMap<>();
 
 
 //    represents the current working directory of the user
@@ -60,30 +67,63 @@ public class Commit implements Serializable {
     public void makeEpoch() {
         this.timestamp = EPOCH;
     }
+    public void setFirstParent() {
+        parentChildMap.put(this.id, "");
+    }
     /**
      * Helper method to allow for the initial commit to have parents set to NULL.
      */
-    public void firstParent(){this.parent = null;}
-    public void firstBlob(){this.blobsTracked = null;}
+    public void firstParent(){this.parent = "null";}
+    public void firstBlob(){this.blobsTracked = emptyHashMap;}
 
-
+    /**
+     * Commit constructor. Takes in commit message as input. Sets the the current commit time.
+     * Sets the parent of this commit, which is the previous HEAD pointer. Tracks the blobs that are
+     * being committed. Generates the SHA-1 id that is associated with the tracked information.
+     * */
     public Commit(String message) {
+        //metadata that must be tracked by SHA-1 ID
         this.message = message;
-        this.timestamp = now;
-        this.parent = setParent();
+        this.timestamp = now.toString();
+        this.parent = pointerHEAD;
         this.blobsTracked = Repository.copyBlobMap();
+        //generate sha id
+        this.id = generateSHA();
+    }
+    /**
+    * Method to set the HEAD pointer to the most recent commit. Will be held in the refs/HEAD folder.
+    * Should only have the most recent commit ID saved.
+    * */
+    private void setHead() {
+        //delete previous HEAD pointer file
+        File previousHeadFilePath = Utils.join(Repository.REF_DIR, pointerHEAD);
+        Utils.restrictedDelete(previousHeadFilePath);
+        //set new HEAD pointer file
+        File headFilePath = Utils.join(Repository.REF_DIR, pointerHEAD);
+        Utils.writeContents(headFilePath, pointerHEAD);
+    }
+    public static void makeCommit(String Message) {
+        //construct the commit object
+        Commit c = new Commit(Message);
+        //set the head pointer as the most current commit id
+        c.setHead();
+        //save commit object to disk
+        c.saveCommit();
+        //clear the staging area
+        Repository.clearStaging();
+
+    }
+    public void saveCommit()  {
+        Commit c = this;
+        File commitFile = Utils.join(Repository.OBJECT_DIR, this.id);
+        Utils.writeObject(commitFile, c);
     }
 
-    public static void setHead() {
 
+    private String generateSHA() {
+        return Utils.sha1(this.message, this.timestamp.toString(), this.parent, this.blobsTracked.toString());
     }
 
-    public static void main(String[] args) {
-        Commit firstCommit = new Commit("First commit");
-//        firstCommit.makeEpoch();
-        System.out.println(firstCommit.getMessage());
-        System.out.println(firstCommit.getTimestamp());
 
-    }
 
 }

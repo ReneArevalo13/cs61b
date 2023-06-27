@@ -31,7 +31,7 @@ public class Blob implements Serializable {
     /**
      Hashmap of the blobs. {Key = SHA-1 id, Value = Filename}
      */
-    private Map<String, String> BlobMap = new HashMap<>();
+//    private Map<String, String> BlobMap = new HashMap<>();
 
     /**
      * ArrayList of the blobIDs currently in the staging area. Will be used to know what blobs are currently
@@ -47,10 +47,9 @@ public class Blob implements Serializable {
      */
     public Blob(String filename) {
         this.filename = filename;
-        File filepath = join(CWD, filename);
+        File filepath = join(CWD, this.filename);
         this.contents = Utils.readContents(filepath);
         this.id = Utils.sha1(this.contents);
-        BlobList.add(this.id);
     }
     public String getID() {
         return this.id;
@@ -72,17 +71,14 @@ public class Blob implements Serializable {
 //        return Utils.readContents(filepath);
 //    }
 
-    // checks all the files in the staging area, and is looking for file identical to the current working
-    // version. If true return boolean true and will be added to other function. False if there are no matches.
+    /**
+     * Check the BlobMap via the key-value operations to make sure that the blob of interest isn't the same
+     * as what is being added. This is done by comparing SHA codes as we expect that there are all unique hash codes.
+     * Return True if there is already a blob of the same hash code, false otherwise.*/
     public boolean blobCheck (String blobID) {
+        //use hashmap.containsKey to check if key exists in hashmap
 
-        List<String> allFiles = Utils.plainFilenamesIn(STAGING_DIR);
-        for (String file : allFiles) {
-            if (blobID.equals(file)) {
-                return true;
-            }
-        }
-        return false;
+
     }
 
 
