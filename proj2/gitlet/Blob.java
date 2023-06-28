@@ -1,5 +1,6 @@
 package gitlet;
 
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -75,11 +76,16 @@ public class Blob implements Serializable {
      * Check the BlobMap via the key-value operations to make sure that the blob of interest isn't the same
      * as what is being added. This is done by comparing SHA codes as we expect that there are all unique hash codes.
      * Return True if there is already a blob of the same hash code, false otherwise.*/
-    public boolean blobCheck (String blobID) {
-        //use hashmap.containsKey to check if key exists in hashmap
+    /*public boolean blobCheck (String blobID) {
+        *//*use hashmap.containsKey to check if key exists in hashmap
+        read in the most current commit (known by the HEAD pointer)*//*
+        File headPath = Utils.join(Repository.REF_DIR, "head", "master");
+        String head = Utils.readContentsAsString(headPath);
+        Commit c = Commit.fromFile(head);
+        HashMap<String, String> h = c.getBlobMap();
 
 
-    }
+    }*/
 
 
 

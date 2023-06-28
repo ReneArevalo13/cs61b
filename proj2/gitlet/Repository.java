@@ -29,7 +29,7 @@ public class Repository {
     /** The staging directory. Will hold all the blobs staged for a commit. */
     public static final File STAGING_DIR = join(CWD, ".gitlet", "staging");
     /** The ref directory. Will hold the head and master refs */
-    public static final File REF_DIR = join(CWD, ".gitlet", "refs", "HEAD");
+    public static final File REF_DIR = join(CWD, ".gitlet", "refs", "head", "master");
     /** The object directory. Will hold the commit and blob objects. */
     public static final File OBJECT_DIR = join(CWD, ".gitlet", "objects");
     /**
@@ -63,14 +63,17 @@ public class Repository {
         STAGING_DIR.mkdir();
         REF_DIR.mkdirs();
         OBJECT_DIR.mkdir();
+        Commit initialCommit = new Commit(0);
 
-        Commit initialCommit = new Commit("initial commit");
-        initialCommit.makeEpoch();
-        initialCommit.firstParent();
-        initialCommit.firstBlob();
 
-        File initialCommitFile = join(GITLET_DIR, "initialCommit");
-        writeObject(initialCommitFile, initialCommit);
+
+
+//        initialCommit.makeEpoch();
+//        initialCommit.firstParent();
+//        initialCommit.firstBlob();
+
+//        File initialCommitFile = join(GITLET_DIR, "initialCommit");
+//        writeObject(initialCommitFile, initialCommit);
 
     }
 
@@ -83,13 +86,15 @@ public class Repository {
         }
         //construct blob object of the given file
         Blob addBlob = new Blob(filename);
-        //verify that this blob is new and not already tracked
-        if (addBlob.blobCheck(addBlob.getID())) {
-            /*Remove file from staging area.
+/*
+        verify that this blob is new and not already tracked
+*/
+        /*if () {
+            *//*Remove file from staging area.
             * Make sure that the commit tracks the blob
             * just make sure that it isn't creating a new object
-            * on disk*/
-        }
+            * on disk*//*
+        }*/
         //add current blob to the blob hash map
         BlobMap.put(addBlob.getID(), addBlob.getFilename());
         //write current blob object to disk
@@ -109,6 +114,9 @@ public class Repository {
         File addstage = join(STAGING_DIR, "addstage");
         Utils.restrictedDelete(addstage);
     }
+   /* public static String getHEAD() {
+        String HEAD  = Utils.readContentsAsString(REF_DIR, "")
+    }*/
 
 
 }

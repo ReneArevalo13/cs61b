@@ -2,7 +2,7 @@ package gitlet;
 
 // TODO: any imports you need here
 
-import org.slf4j.helpers.Util;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -57,15 +57,16 @@ public class Commit implements Serializable {
     public String getMessage() {
         return this.message;
     }
-    public Instant getTimestamp() {
+    public String getTimestamp() {
         return this.timestamp;
     }
+    public HashMap<String, String> getBlobMap() {return this.blobsTracked;}
 
     /**
      * Helper method to allow for the initial commit to have the Epoch time.
      */
     public void makeEpoch() {
-        this.timestamp = EPOCH;
+        this.timestamp = EPOCH.toString();
     }
     public void setFirstParent() {
         parentChildMap.put(this.id, "");
@@ -90,19 +91,34 @@ public class Commit implements Serializable {
         //generate sha id
         this.id = generateSHA();
     }
+    public Commit(Integer initialize) {
+        if (initialize == 0) {
+            this.message = "initial commit";
+            this.timestamp = EPOCH.toString();
+            this.parent = "null";
+            this.blobsTracked = emptyHashMap;
+            this.id = generateSHA();
+            setHead();
+            saveCommit();
+        } else {
+            System.exit(0);
+        }
+    }
     /**
     * Method to set the HEAD pointer to the most recent commit. Will be held in the refs/HEAD folder.
     * Should only have the most recent commit ID saved.
     * */
     private void setHead() {
         //delete previous HEAD pointer file
-        File previousHeadFilePath = Utils.join(Repository.REF_DIR, pointerHEAD);
-        Utils.restrictedDelete(previousHeadFilePath);
+        File previousHeadFilePath = Utils.join(Repository.REF_DIR);
+        //Utils.restrictedDelete(previousHeadFilePath);
+        previousHeadFilePath.delete();
+
         //set new HEAD pointer file
-        File headFilePath = Utils.join(Repository.REF_DIR, pointerHEAD);
-        Utils.writeContents(headFilePath, pointerHEAD);
+        File headFilePath = Utils.join(Repository.REF_DIR);
+        Utils.writeObject(headFilePath, this.id);
     }
-    public static void makeCommit(String Message) {
+    public static void makeCommit (String Message) {
         //construct the commit object
         Commit c = new Commit(Message);
         //set the head pointer as the most current commit id
@@ -121,7 +137,13 @@ public class Commit implements Serializable {
 
 
     private String generateSHA() {
-        return Utils.sha1(this.message, this.timestamp.toString(), this.parent, this.blobsTracked.toString());
+        return Utils.sha1(this.message, this.timestamp, this.parent, this.blobsTracked.toString());
+    }
+
+    public static Commit fromFile(String id) {
+        // TODO (hint: look at the Utils file)
+        File CommitFile = Utils.join(Repository.OBJECT_DIR, id);
+        return Utils.readObject(CommitFile, Commit.class);
     }
 
 
