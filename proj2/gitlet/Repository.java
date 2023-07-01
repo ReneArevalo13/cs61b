@@ -112,7 +112,7 @@ public class Repository {
      * */
     public static void clearStaging() {
         File addstage = join(STAGING_DIR, "addstage");
-        Utils.restrictedDelete(addstage);
+        addstage.delete();
     }
    /* public static String getHEAD() {
         String HEAD  = Utils.readContentsAsString(REF_DIR, "")

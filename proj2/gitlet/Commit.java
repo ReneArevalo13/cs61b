@@ -86,11 +86,14 @@ public class Commit implements Serializable {
         //metadata that must be tracked by SHA-1 ID
         this.message = message;
         this.timestamp = now.toString();
-        this.parent = pointerHEAD;
+        this.parent = setParent();
         this.blobsTracked = Repository.copyBlobMap();
         //generate sha id
         this.id = generateSHA();
     }
+    /**
+     * Specific commit constructor that is used for the first Commit, init. Sets the required fields to
+     * values that are specific to the init command requirements.*/
     public Commit(Integer initialize) {
         if (initialize == 0) {
             this.message = "initial commit";
@@ -144,6 +147,10 @@ public class Commit implements Serializable {
         // TODO (hint: look at the Utils file)
         File CommitFile = Utils.join(Repository.OBJECT_DIR, id);
         return Utils.readObject(CommitFile, Commit.class);
+    }
+    private String setParent() {
+        File headFilePath = Utils.join(Repository.REF_DIR);
+        return Utils.readContentsAsString(headFilePath);
     }
 
 

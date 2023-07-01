@@ -21,6 +21,12 @@ public class Main {
                 String fileArg = args[1];
                 Repository.add(fileArg);
                 break;
+            case "commit":
+                //java gitlet.Main commit [message]
+                // TODO: handle the `add [filename]` command
+                String commitMessage = args[1];
+                Commit.makeCommit(commitMessage);
+                break;
             // TODO: FILL THE REST IN
         }
     }
