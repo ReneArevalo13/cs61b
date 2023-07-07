@@ -1,5 +1,8 @@
 package gitlet;
 
+import net.sf.saxon.functions.ConstantFunction;
+import org.slf4j.helpers.Util;
+
 import java.io.File;
 import static gitlet.Utils.*;
 import java.time.Instant;
@@ -32,10 +35,11 @@ public class Repository {
     public static final File REF_DIR = join(CWD, ".gitlet", "refs", "head", "master");
     /** The object directory. Will hold the commit and blob objects. */
     public static final File OBJECT_DIR = join(CWD, ".gitlet", "objects");
+    public static final File HEAD_DIR = join(CWD, ".gitlet", "HEAD");
     /**
      Treat the BlobMap as the staging area. Hashmap of the blobs. {Key = SHA-1 id, Value = Filename}
      */
-    private static HashMap<String, String> BlobMap = new HashMap<>();
+    private static final HashMap<String, String> BlobMap = new HashMap<>();
 
     /* TODO: fill in the rest of this class. */
     /**
@@ -65,16 +69,6 @@ public class Repository {
         OBJECT_DIR.mkdir();
         Commit initialCommit = new Commit(0);
 
-
-
-
-//        initialCommit.makeEpoch();
-//        initialCommit.firstParent();
-//        initialCommit.firstBlob();
-
-//        File initialCommitFile = join(GITLET_DIR, "initialCommit");
-//        writeObject(initialCommitFile, initialCommit);
-
     }
 
     public static void add(String filename) {
@@ -87,22 +81,41 @@ public class Repository {
         //construct blob object of the given file
         Blob addBlob = new Blob(filename);
 /*
-        verify that this blob is new and not already tracked
+        verify that this blob is NEW and not already tracked
 */
-        /*if () {
-            *//*Remove file from staging area.
+        if (blobIsDifferent(addBlob.getID())) {
+           /* Remove file from staging area.
             * Make sure that the commit tracks the blob
             * just make sure that it isn't creating a new object
-            * on disk*//*
-        }*/
-        //add current blob to the blob hash map
-        BlobMap.put(addBlob.getID(), addBlob.getFilename());
-        //write current blob object to disk
-        File blobFile = join(OBJECT_DIR, addBlob.getID());
-        writeObject(blobFile, addBlob);
-        //write the blob hashmap to disk to maintain persistence
-        File blobHashMap = join(STAGING_DIR, "addstage");
-        writeObject(blobHashMap, BlobMap);
+            * on disk*/
+
+            //add current blob to staging hashmap
+            BlobMap.put(addBlob.getID(), addBlob.getFilename());
+
+            //write current blob object to disk
+            File blobFile = join(OBJECT_DIR, addBlob.getID());
+            writeObject(blobFile, addBlob);
+
+            //write the blob hashmap to disk to maintain persistence
+            File blobHashMap = join(STAGING_DIR, "addstage");
+            writeObject(blobHashMap, BlobMap);
+
+        } else {
+            /*this is when the blob is tracked by the previous commit
+            * and the file has NOT changed. We just add the blob id and
+            * filename to the hashmap to know what this commit is tracking*/
+
+            //add current blob to the blob hash map
+            BlobMap.put(addBlob.getID(), addBlob.getFilename());
+        }
+//        //add current blob to the blob hash map
+//        BlobMap.put(addBlob.getID(), addBlob.getFilename());
+//        //write current blob object to disk
+//        File blobFile = join(OBJECT_DIR, addBlob.getID());
+//        writeObject(blobFile, addBlob);
+//        //write the blob hashmap (staging) to disk to maintain persistence
+//        File blobHashMap = join(STAGING_DIR, "addstage");
+//        writeObject(blobHashMap, BlobMap);
     }
     public static HashMap<String, String> copyBlobMap() {
         return new HashMap<>(BlobMap);
@@ -113,10 +126,22 @@ public class Repository {
     public static void clearStaging() {
         File addstage = join(STAGING_DIR, "addstage");
         addstage.delete();
+        BlobMap.clear();
     }
-   /* public static String getHEAD() {
-        String HEAD  = Utils.readContentsAsString(REF_DIR, "")
-    }*/
+    /**
+     * Method to check whether the blob to be added is not already tracked by the current commit.
+     * Return True if this is a new blob.
+     * Return False if this is the same blob that is already being tracked.
+     * */
+    private static Boolean blobIsDifferent(String blobID) {
+        //get the SHAid from the HEAD commit
+        String headPointer = Utils.readContentsAsString(HEAD_DIR);
+        //read in the most current commit
+        Commit c = Commit.fromFile(headPointer);
 
+        //check the commit's blobMap and see if the blob of interest is already there
+        return !c.getBlobMap().containsKey(blobID);
+
+    }
 
 }
