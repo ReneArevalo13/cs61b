@@ -1,7 +1,6 @@
 package gitlet;
 
-import net.sf.saxon.functions.ConstantFunction;
-import org.slf4j.helpers.Util;
+
 
 import java.io.File;
 import static gitlet.Utils.*;
@@ -39,7 +38,7 @@ public class Repository {
     /**
      Treat the BlobMap as the staging area. Hashmap of the blobs. {Key = SHA-1 id, Value = Filename}
      */
-    private static final HashMap<String, String> BlobMap = new HashMap<>();
+    private static  HashMap<String, String> BlobMap = new HashMap<>();
 
     /* TODO: fill in the rest of this class. */
     /**
@@ -70,7 +69,7 @@ public class Repository {
         Commit initialCommit = new Commit(0);
 
     }
-
+    @SuppressWarnings("unchecked")
     public static void add(String filename) {
         File filenameCheck = join(CWD, filename);
 
@@ -80,14 +79,9 @@ public class Repository {
         }
         //construct blob object of the given file
         Blob addBlob = new Blob(filename);
-/*
-        verify that this blob is NEW and not already tracked
-*/
+        BlobMap = fromFile();
+        //verify that this blob is NEW and not already tracked
         if (blobIsDifferent(addBlob.getID())) {
-           /* Remove file from staging area.
-            * Make sure that the commit tracks the blob
-            * just make sure that it isn't creating a new object
-            * on disk*/
 
             //add current blob to staging hashmap
             BlobMap.put(addBlob.getID(), addBlob.getFilename());
@@ -98,6 +92,8 @@ public class Repository {
 
             //write the blob hashmap to disk to maintain persistence
             File blobHashMap = join(STAGING_DIR, "addstage");
+            // look at Utils.writecontents, might be better suited for what we're trying to do here.
+            //writeContents(blobHashMap, BlobMap);
             writeObject(blobHashMap, BlobMap);
 
         } else {
@@ -108,7 +104,7 @@ public class Repository {
             //add current blob to the blob hash map
             BlobMap.put(addBlob.getID(), addBlob.getFilename());
         }
-//        //add current blob to the blob hash map
+        //add current blob to the blob hash map
 //        BlobMap.put(addBlob.getID(), addBlob.getFilename());
 //        //write current blob object to disk
 //        File blobFile = join(OBJECT_DIR, addBlob.getID());
@@ -136,11 +132,34 @@ public class Repository {
     private static Boolean blobIsDifferent(String blobID) {
         //get the SHAid from the HEAD commit
         String headPointer = Utils.readContentsAsString(HEAD_DIR);
+
         //read in the most current commit
         Commit c = Commit.fromFile(headPointer);
-
         //check the commit's blobMap and see if the blob of interest is already there
-        return !c.getBlobMap().containsKey(blobID);
+        if (c.getBlobMap().containsKey(null)) {
+            return true;
+        } else {
+            return !c.getBlobMap().containsKey(blobID);
+        }
+    }
+    @SuppressWarnings("unchecked")
+    public static void readAddstage() {
+        File blobHashMap = join(STAGING_DIR, "addstage");
+        HashMap<String, String> map;
+        map = Utils.readObject(blobHashMap, HashMap.class);
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+
+    }
+
+    public static HashMap fromFile() {
+        File blobHashMap = join(STAGING_DIR, "addstage");
+        if (blobHashMap.isFile()) {
+            return Utils.readObject(blobHashMap, HashMap.class);
+        } else {
+            return new HashMap<String, String>();
+        }
 
     }
 

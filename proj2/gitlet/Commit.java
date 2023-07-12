@@ -1,6 +1,9 @@
 package gitlet;
 
 // TODO: any imports you need here
+
+
+
 import java.io.File;
 import java.io.Serializable;
 import java.time.Instant;
@@ -91,20 +94,23 @@ public class Commit implements Serializable {
         previousHeadFilePath.delete();
         //set new HEAD pointer file
         File headFilePath = Utils.join(Repository.HEAD_DIR);
-        Utils.writeObject(headFilePath, this.id);
+        Utils.writeContents(headFilePath, this.id);
     }
     private void setMaster() {
         File previousHeadFilePath = Utils.join(Repository.REF_DIR);
         previousHeadFilePath.delete();
         File headFilePath = Utils.join(Repository.REF_DIR);
-        Utils.writeObject(headFilePath, this.id);
+        Utils.writeContents(headFilePath, this.id);
     }
     /**
      * Method that processes all the commands that must be done in order to commit a file into the repo.
-     * Creates the commit object. Moves the head pointer to this latest commit object. Writes the commit
-     * object to disk. Lastly it clears the staging area.
+     * Checks to make sure a blob is staged for addition.Creates the commit object. Moves the head pointer
+     * to this latest commit object. Writes the commit object to disk. Lastly it clears the staging area.
      * */
     public static void makeCommit (String Message) {
+        /*If no files have been staged, abort. Print the message No changes added to the commit.*/
+
+
         //construct the commit object
         Commit c = new Commit(Message);
         //set the head pointer as the most current commit id
@@ -138,16 +144,19 @@ public class Commit implements Serializable {
      * */
     public static Commit fromFile(String id) {
         File CommitFile = Utils.join(Repository.OBJECT_DIR, id);
+
         return Utils.readObject(CommitFile, Commit.class);
+
     }
     /**
      * Method to set the parent of the newest commit. This is done by checking which commit the HEAD
      * pointer is referencing and using that as the parent to the commit.
      * */
     private String setParent() {
-        File headFilePath = Utils.join(Repository.REF_DIR);
+        File headFilePath = Utils.join(Repository.HEAD_DIR);
         return Utils.readContentsAsString(headFilePath);
     }
+
 
 
 

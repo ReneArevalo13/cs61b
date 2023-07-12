@@ -27,6 +27,11 @@ public class Main {
                 String commitMessage = args[1];
                 Commit.makeCommit(commitMessage);
                 break;
+            case "readAddstage":
+                //java gitlet.Main commit [message]
+                // TODO: handle the `add [filename]` command
+                Repository.readAddstage();
+                break;
             // TODO: FILL THE REST IN
         }
     }
