@@ -32,6 +32,12 @@ public class Main {
                 // TODO: handle the `add [filename]` command
                 Repository.readAddstage();
                 break;
+            case "readBlobstracked":
+                //java gitlet.Main commit [message]
+                // TODO: handle the `add [filename]` command
+                String commitID = args[1];
+                Commit.readBlobsTracked(commitID);
+                break;
             // TODO: FILL THE REST IN
         }
     }

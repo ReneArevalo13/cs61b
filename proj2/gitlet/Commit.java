@@ -4,10 +4,13 @@ package gitlet;
 
 
 
+
 import java.io.File;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.Map;
+
 import static gitlet.Utils.join;
 
 
@@ -52,7 +55,7 @@ public class Commit implements Serializable {
     public String getTimestamp() {
         return this.timestamp;
     }
-    public HashMap<String, String> getBlobMap() {return this.blobsTracked;}
+
 
     /**
      * Commit constructor. Takes in commit message as input. Sets the current commit time.
@@ -102,6 +105,9 @@ public class Commit implements Serializable {
         File headFilePath = Utils.join(Repository.REF_DIR);
         Utils.writeContents(headFilePath, this.id);
     }
+    public HashMap<String, String> getBlobMap() {
+        return this.blobsTracked;
+    }
     /**
      * Method that processes all the commands that must be done in order to commit a file into the repo.
      * Checks to make sure a blob is staged for addition.Creates the commit object. Moves the head pointer
@@ -142,8 +148,8 @@ public class Commit implements Serializable {
      * Method to read in the Commit object from disk.
      *
      * */
-    public static Commit fromFile(String id) {
-        File CommitFile = Utils.join(Repository.OBJECT_DIR, id);
+    public static Commit fromFileCommit(String CommitID) {
+        File CommitFile = Utils.join(Repository.OBJECT_DIR, CommitID);
 
         return Utils.readObject(CommitFile, Commit.class);
 
@@ -155,6 +161,14 @@ public class Commit implements Serializable {
     private String setParent() {
         File headFilePath = Utils.join(Repository.HEAD_DIR);
         return Utils.readContentsAsString(headFilePath);
+    }
+    public static void readBlobsTracked(String CommitID) {
+        Commit c = fromFileCommit(CommitID);
+        HashMap<String, String> map= c.getBlobMap();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+
     }
 
 

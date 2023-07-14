@@ -4,8 +4,10 @@ package gitlet;
 
 import java.io.File;
 import static gitlet.Utils.*;
-import java.time.Instant;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 // TODO: any imports you need here
 
@@ -39,6 +41,7 @@ public class Repository {
      Treat the BlobMap as the staging area. Hashmap of the blobs. {Key = SHA-1 id, Value = Filename}
      */
     private static  HashMap<String, String> BlobMap = new HashMap<>();
+    private static ArrayList<String> addList = new ArrayList<>();
 
     /* TODO: fill in the rest of this class. */
     /**
@@ -79,12 +82,16 @@ public class Repository {
         }
         //construct blob object of the given file
         Blob addBlob = new Blob(filename);
-        BlobMap = fromFile();
+        BlobMap = fromFileBlobMap();
+        addList = fromFileAddList();
         //verify that this blob is NEW and not already tracked
         if (blobIsDifferent(addBlob.getID())) {
+            System.out.println("THIS IS A NEW BLOB");
 
             //add current blob to staging hashmap
             BlobMap.put(addBlob.getID(), addBlob.getFilename());
+            //track filename for logging what is in staging area
+            addList.add(addBlob.getFilename());
 
             //write current blob object to disk
             File blobFile = join(OBJECT_DIR, addBlob.getID());
@@ -92,9 +99,9 @@ public class Repository {
 
             //write the blob hashmap to disk to maintain persistence
             File blobHashMap = join(STAGING_DIR, "addstage");
-            // look at Utils.writecontents, might be better suited for what we're trying to do here.
-            //writeContents(blobHashMap, BlobMap);
+            File addListDir = join(STAGING_DIR, "addlist");
             writeObject(blobHashMap, BlobMap);
+            writeObject(addListDir, addList);
 
         } else {
             /*this is when the blob is tracked by the previous commit
@@ -102,6 +109,7 @@ public class Repository {
             * filename to the hashmap to know what this commit is tracking*/
 
             //add current blob to the blob hash map
+            System.out.println("THIS BLOB IS NOT NEW");
             BlobMap.put(addBlob.getID(), addBlob.getFilename());
         }
         //add current blob to the blob hash map
@@ -113,16 +121,28 @@ public class Repository {
 //        File blobHashMap = join(STAGING_DIR, "addstage");
 //        writeObject(blobHashMap, BlobMap);
     }
+    @SuppressWarnings("unchecked")
     public static HashMap<String, String> copyBlobMap() {
+        BlobMap = fromFileBlobMap();
         return new HashMap<>(BlobMap);
     }
     /**
      * Clears the staging area by removing the file that holds what blobs are going to be staged
      * */
+    @SuppressWarnings("unchecked")
     public static void clearStaging() {
-        File addstage = join(STAGING_DIR, "addstage");
-        addstage.delete();
+        BlobMap = fromFileBlobMap();
+        addList = fromFileAddList();
         BlobMap.clear();
+        addList.clear();
+        File blobHashMap = join(STAGING_DIR, "addstage");
+        File addListDir = join(STAGING_DIR, "addlist");
+        writeObject(blobHashMap, BlobMap);
+        writeObject(addListDir, addList);
+//        File blobHashMap = join(STAGING_DIR, "addstage");
+//        File addListDir = join(STAGING_DIR, "addlist");
+//        blobHashMap.delete();
+//        addListDir.delete();
     }
     /**
      * Method to check whether the blob to be added is not already tracked by the current commit.
@@ -134,8 +154,8 @@ public class Repository {
         String headPointer = Utils.readContentsAsString(HEAD_DIR);
 
         //read in the most current commit
-        Commit c = Commit.fromFile(headPointer);
-        //check the commit's blobMap and see if the blob of interest is already there
+        Commit c = Commit.fromFileCommit(headPointer);
+        //check the previous commits blobMap and see if the blob of interest is already tracked
         if (c.getBlobMap().containsKey(null)) {
             return true;
         } else {
@@ -145,22 +165,33 @@ public class Repository {
     @SuppressWarnings("unchecked")
     public static void readAddstage() {
         File blobHashMap = join(STAGING_DIR, "addstage");
+        File addListDir = join(STAGING_DIR, "addlist");
         HashMap<String, String> map;
+        ArrayList<String> list;
         map = Utils.readObject(blobHashMap, HashMap.class);
+        list = Utils.readObject(addListDir, ArrayList.class);
         for (Map.Entry<String, String> entry : map.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
+        System.out.println("Files that are staged: " + list);
 
     }
 
-    public static HashMap fromFile() {
+    public static HashMap fromFileBlobMap() {
         File blobHashMap = join(STAGING_DIR, "addstage");
         if (blobHashMap.isFile()) {
             return Utils.readObject(blobHashMap, HashMap.class);
         } else {
             return new HashMap<String, String>();
         }
-
+    }
+    public static ArrayList fromFileAddList() {
+        File addListDir = join(STAGING_DIR, "addlist");
+        if (addListDir.isFile()) {
+            return Utils.readObject(addListDir, ArrayList.class);
+        } else {
+            return new ArrayList<String>();
+        }
     }
 
 }
