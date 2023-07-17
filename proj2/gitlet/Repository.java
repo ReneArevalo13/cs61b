@@ -5,10 +5,7 @@ package gitlet;
 import java.io.File;
 import static gitlet.Utils.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 // TODO: any imports you need here
 
 /** Represents a gitlet repository.
@@ -86,7 +83,7 @@ public class Repository {
         addList = fromFileAddList();
         //verify that this blob is NEW and not already tracked
         if (blobIsDifferent(addBlob.getID())) {
-            System.out.println("THIS IS A NEW BLOB");
+//            System.out.println("THIS IS A NEW BLOB");
 
             //add current blob to staging hashmap
             BlobMap.put(addBlob.getID(), addBlob.getFilename());
@@ -98,10 +95,12 @@ public class Repository {
             writeObject(blobFile, addBlob);
 
             //write the blob hashmap to disk to maintain persistence
-            File blobHashMap = join(STAGING_DIR, "addstage");
-            File addListDir = join(STAGING_DIR, "addlist");
-            writeObject(blobHashMap, BlobMap);
-            writeObject(addListDir, addList);
+//            File blobHashMap = join(STAGING_DIR, "addstage");
+//            File addListDir = join(STAGING_DIR, "addlist");
+//            writeObject(blobHashMap, BlobMap);
+//            writeObject(addListDir, addList);
+            saveAddList();
+            saveBlobMap();
 
         } else {
             /*this is when the blob is tracked by the previous commit
@@ -109,7 +108,7 @@ public class Repository {
             * filename to the hashmap to know what this commit is tracking*/
 
             //add current blob to the blob hash map
-            System.out.println("THIS BLOB IS NOT NEW");
+//            System.out.println("THIS BLOB IS NOT NEW");
             BlobMap.put(addBlob.getID(), addBlob.getFilename());
         }
         //add current blob to the blob hash map
@@ -120,6 +119,13 @@ public class Repository {
 //        //write the blob hashmap (staging) to disk to maintain persistence
 //        File blobHashMap = join(STAGING_DIR, "addstage");
 //        writeObject(blobHashMap, BlobMap);
+    }
+    @SuppressWarnings("unchecked")
+    public static void rm(String filename) {
+        //unstage the file if it is currently staged for addition
+        //check to see if file is currently in staging area
+        untrackFileFromAddStage(filename);
+
     }
     @SuppressWarnings("unchecked")
     public static HashMap<String, String> copyBlobMap() {
@@ -135,10 +141,12 @@ public class Repository {
         addList = fromFileAddList();
         BlobMap.clear();
         addList.clear();
-        File blobHashMap = join(STAGING_DIR, "addstage");
-        File addListDir = join(STAGING_DIR, "addlist");
-        writeObject(blobHashMap, BlobMap);
-        writeObject(addListDir, addList);
+//        File blobHashMap = join(STAGING_DIR, "addstage");
+//        File addListDir = join(STAGING_DIR, "addlist");
+//        writeObject(blobHashMap, BlobMap);
+//        writeObject(addListDir, addList);
+        saveBlobMap();
+        saveAddList();
 //        File blobHashMap = join(STAGING_DIR, "addstage");
 //        File addListDir = join(STAGING_DIR, "addlist");
 //        blobHashMap.delete();
@@ -177,7 +185,7 @@ public class Repository {
 
     }
 
-    public static HashMap fromFileBlobMap() {
+    private static HashMap fromFileBlobMap() {
         File blobHashMap = join(STAGING_DIR, "addstage");
         if (blobHashMap.isFile()) {
             return Utils.readObject(blobHashMap, HashMap.class);
@@ -185,7 +193,7 @@ public class Repository {
             return new HashMap<String, String>();
         }
     }
-    public static ArrayList fromFileAddList() {
+    private static ArrayList fromFileAddList() {
         File addListDir = join(STAGING_DIR, "addlist");
         if (addListDir.isFile()) {
             return Utils.readObject(addListDir, ArrayList.class);
@@ -193,5 +201,50 @@ public class Repository {
             return new ArrayList<String>();
         }
     }
+//    @SuppressWarnings("unchecked")
+//    private static boolean checkIfFileInAddstage(String filename) {
+//        addList = fromFileAddList();
+//        for(String file : addList) {
+//            if (filename.equals(file)){
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+    @SuppressWarnings("unchecked")
+    private static void untrackFileFromAddStage(String Filename) {
+        BlobMap = fromFileBlobMap();
+        addList = fromFileAddList();
+        if (BlobMap.containsValue(Filename)) {
+            //remove this entry from Blobmap and consequently addList.
+            BlobMap.remove(getKeyFromValue(BlobMap, Filename));
+            addList.remove(String.valueOf(Filename));
+            }
+        saveAddList();
+        saveBlobMap();
+        }
+
+
+    private static String getKeyFromValue(Map<String, String> map, String  value) {
+
+        String result = "";
+        if (map.containsValue(value)) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (Objects.equals(entry.getValue(), value)) {
+                    result = entry.getKey();
+                }
+            }
+        }
+        return result;
+    }
+    private static void saveBlobMap() {
+        File blobHashMap = join(STAGING_DIR, "addstage");
+        writeObject(blobHashMap, BlobMap);
+    }
+    private static void saveAddList() {
+        File addListDir = join(STAGING_DIR, "addlist");
+        writeObject(addListDir, addList);
+    }
+
 
 }

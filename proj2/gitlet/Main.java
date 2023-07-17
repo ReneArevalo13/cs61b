@@ -14,27 +14,26 @@ public class Main {
         switch(firstArg) {
             case "init":
                 Repository.init();
-                // TODO: handle the `init` command
                 break;
             case "add":
-                // TODO: handle the `add [filename]` command
                 String fileArg = args[1];
                 Repository.add(fileArg);
                 break;
             case "commit":
                 //java gitlet.Main commit [message]
-                // TODO: handle the `add [filename]` command
                 String commitMessage = args[1];
                 Commit.makeCommit(commitMessage);
                 break;
+            case "rm":
+                fileArg = args[1];
+                Repository.rm(fileArg);
+                break;
             case "readAddstage":
                 //java gitlet.Main commit [message]
-                // TODO: handle the `add [filename]` command
                 Repository.readAddstage();
                 break;
             case "readBlobstracked":
                 //java gitlet.Main commit [message]
-                // TODO: handle the `add [filename]` command
                 String commitID = args[1];
                 Commit.readBlobsTracked(commitID);
                 break;
