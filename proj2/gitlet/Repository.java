@@ -5,6 +5,7 @@ package gitlet;
 import java.io.File;
 import static gitlet.Utils.*;
 
+import java.io.Serializable;
 import java.util.*;
 // TODO: any imports you need here
 
@@ -38,7 +39,7 @@ public class Repository {
      Treat the BlobMap as the staging area. Hashmap of the blobs. {Key = SHA-1 id, Value = Filename}
      */
     private static  HashMap<String, String> BlobMap = new HashMap<>();
-    private static ArrayList<String> addList = new ArrayList<>();
+    private static ArrayList<String> rmList = new ArrayList<>();
 
     /* TODO: fill in the rest of this class. */
     /**
@@ -80,7 +81,7 @@ public class Repository {
         //construct blob object of the given file
         Blob addBlob = new Blob(filename);
         BlobMap = fromFileBlobMap();
-        addList = fromFileAddList();
+//        addList = fromFileAddList();
         //verify that this blob is NEW and not already tracked
         if (blobIsDifferent(addBlob.getID())) {
 //            System.out.println("THIS IS A NEW BLOB");
@@ -88,28 +89,28 @@ public class Repository {
             //add current blob to staging hashmap
             BlobMap.put(addBlob.getID(), addBlob.getFilename());
             //track filename for logging what is in staging area
-            addList.add(addBlob.getFilename());
+//            addList.add(addBlob.getFilename());
 
             //write current blob object to disk
             File blobFile = join(OBJECT_DIR, addBlob.getID());
             writeObject(blobFile, addBlob);
+            saveBlobMap(BlobMap);
 
             //write the blob hashmap to disk to maintain persistence
 //            File blobHashMap = join(STAGING_DIR, "addstage");
 //            File addListDir = join(STAGING_DIR, "addlist");
 //            writeObject(blobHashMap, BlobMap);
 //            writeObject(addListDir, addList);
-            saveAddList();
-            saveBlobMap();
+        }
 
-        } else {
+//        else {
             /*this is when the blob is tracked by the previous commit
             * and the file has NOT changed. We just add the blob id and
             * filename to the hashmap to know what this commit is tracking*/
 
             //add current blob to the blob hash map
 //            System.out.println("THIS BLOB IS NOT NEW");
-            BlobMap.put(addBlob.getID(), addBlob.getFilename());
+//            BlobMap.put(addBlob.getID(), addBlob.getFilename());
         }
         //add current blob to the blob hash map
 //        BlobMap.put(addBlob.getID(), addBlob.getFilename());
@@ -119,14 +120,31 @@ public class Repository {
 //        //write the blob hashmap (staging) to disk to maintain persistence
 //        File blobHashMap = join(STAGING_DIR, "addstage");
 //        writeObject(blobHashMap, BlobMap);
-    }
+
     @SuppressWarnings("unchecked")
     public static void rm(String filename) {
+        rmList = fromFileRmList();
         //unstage the file if it is currently staged for addition
         //check to see if file is currently in staging area
         untrackFileFromAddStage(filename);
-
+        //File is tracked by current commit and exists in current directory
+        File filenameCheck = join(CWD, filename);
+        if (fileTrackedByCommit(filename)) {
+            if (filenameCheck.isFile()) {
+                //add file to the rm stage
+                rmList.add(filename);
+                //delete file from working directory
+                Utils.restrictedDelete(filenameCheck);
+            } else {
+                rmList.add(filename);
+            }
+        } else {
+            System.out.println("No reason to remove the file.");
+        }
+        saveRemoveStage(rmList);
     }
+
+
     @SuppressWarnings("unchecked")
     public static HashMap<String, String> copyBlobMap() {
         BlobMap = fromFileBlobMap();
@@ -138,15 +156,15 @@ public class Repository {
     @SuppressWarnings("unchecked")
     public static void clearStaging() {
         BlobMap = fromFileBlobMap();
-        addList = fromFileAddList();
+        rmList = fromFileRmList();
         BlobMap.clear();
-        addList.clear();
+        rmList.clear();
 //        File blobHashMap = join(STAGING_DIR, "addstage");
 //        File addListDir = join(STAGING_DIR, "addlist");
 //        writeObject(blobHashMap, BlobMap);
 //        writeObject(addListDir, addList);
-        saveBlobMap();
-        saveAddList();
+        saveBlobMap(BlobMap);
+        saveRemoveStage(rmList);
 //        File blobHashMap = join(STAGING_DIR, "addstage");
 //        File addListDir = join(STAGING_DIR, "addlist");
 //        blobHashMap.delete();
@@ -170,33 +188,55 @@ public class Repository {
             return !c.getBlobMap().containsKey(blobID);
         }
     }
+    private static Boolean fileTrackedByCommit(String filename) {
+        //get the SHAid from the HEAD commit
+        String headPointer = Utils.readContentsAsString(HEAD_DIR);
+
+        //read in the most current commit
+        Commit c = Commit.fromFileCommit(headPointer);
+        //check the previous commits blobMap and see if the file of interest is already tracked
+        if (c.getBlobMap().containsValue(null)) {
+            return true;
+        } else {
+            return c.getBlobMap().containsValue(filename);
+        }
+    }
     @SuppressWarnings("unchecked")
-    public static void readAddstage() {
-        File blobHashMap = join(STAGING_DIR, "addstage");
-        File addListDir = join(STAGING_DIR, "addlist");
+    public static void readAddStage() {
+        File blobHashMap = join(STAGING_DIR, "addStage");
+//        File addListDir = join(STAGING_DIR, "addlist");
         HashMap<String, String> map;
-        ArrayList<String> list;
+//        ArrayList<String> list;
         map = Utils.readObject(blobHashMap, HashMap.class);
-        list = Utils.readObject(addListDir, ArrayList.class);
+//        list = Utils.readObject(addListDir, ArrayList.class);
         for (Map.Entry<String, String> entry : map.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
-        System.out.println("Files that are staged: " + list);
+//        System.out.println("Files that are staged: " + list);
 
     }
+    @SuppressWarnings("unchecked")
+    public static void readRemoveStage() {
+        File removeListDir = join(STAGING_DIR, "removeStage");
+        ArrayList<String > list;
+        list = Utils.readObject(removeListDir,ArrayList.class);
+        System.out.println("Files that are staged for removal : " + list);
+    }
 
-    private static HashMap fromFileBlobMap() {
-        File blobHashMap = join(STAGING_DIR, "addstage");
+    @SuppressWarnings("unchecked")
+    private static HashMap<String,String> fromFileBlobMap() {
+        File blobHashMap = join(STAGING_DIR, "addStage");
         if (blobHashMap.isFile()) {
             return Utils.readObject(blobHashMap, HashMap.class);
         } else {
             return new HashMap<String, String>();
         }
     }
-    private static ArrayList fromFileAddList() {
-        File addListDir = join(STAGING_DIR, "addlist");
-        if (addListDir.isFile()) {
-            return Utils.readObject(addListDir, ArrayList.class);
+    @SuppressWarnings("unchecked")
+    private static ArrayList<String> fromFileRmList() {
+        File RmListDir = join(STAGING_DIR, "removeStage");
+        if (RmListDir.isFile()) {
+            return Utils.readObject(RmListDir, ArrayList.class);
         } else {
             return new ArrayList<String>();
         }
@@ -214,19 +254,17 @@ public class Repository {
     @SuppressWarnings("unchecked")
     private static void untrackFileFromAddStage(String Filename) {
         BlobMap = fromFileBlobMap();
-        addList = fromFileAddList();
+//        addList = fromFileAddList();
         if (BlobMap.containsValue(Filename)) {
             //remove this entry from Blobmap and consequently addList.
             BlobMap.remove(getKeyFromValue(BlobMap, Filename));
-            addList.remove(String.valueOf(Filename));
+//            addList.remove(String.valueOf(Filename));
+            saveBlobMap(BlobMap);
             }
-        saveAddList();
-        saveBlobMap();
         }
 
 
-    private static String getKeyFromValue(Map<String, String> map, String  value) {
-
+    public static String getKeyFromValue(Map<String, String> map, String  value) {
         String result = "";
         if (map.containsValue(value)) {
             for (Map.Entry<String, String> entry : map.entrySet()) {
@@ -237,13 +275,21 @@ public class Repository {
         }
         return result;
     }
-    private static void saveBlobMap() {
-        File blobHashMap = join(STAGING_DIR, "addstage");
-        writeObject(blobHashMap, BlobMap);
+    private static void saveBlobMap(HashMap<String, String> BlobMap)  {
+        File blobHashMap = join(STAGING_DIR, "addStage");
+        writeObject(blobHashMap, Repository.BlobMap);
     }
-    private static void saveAddList() {
-        File addListDir = join(STAGING_DIR, "addlist");
-        writeObject(addListDir, addList);
+//    private static void saveAddList() {
+//        File addListDir = join(STAGING_DIR, "addlist");
+//        writeObject(addListDir, addList);
+//    }
+    private static void saveRemoveStage(List<String> rmList) {
+        File rmListDir = join(STAGING_DIR, "removeStage");
+        writeObject(rmListDir, (Serializable) rmList);
+    }
+    @SuppressWarnings("unchecked")
+    public static ArrayList<String> getRmList() {
+        return fromFileRmList();
     }
 
 

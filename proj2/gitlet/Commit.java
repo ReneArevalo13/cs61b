@@ -8,6 +8,7 @@ package gitlet;
 import java.io.File;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,10 +68,13 @@ public class Commit implements Serializable {
         this.message = message;
         this.timestamp = now.toString();
         this.parent = setParent();
-        this.blobsTracked = Repository.copyBlobMap();
+        this.blobsTracked = trackBlobs();
         //generate sha id
         this.id = generateSHA();
     }
+
+
+
     /**
      * Specific commit constructor that is used for the first Commit, init. Sets the required fields to
      * values that are specific to the init command requirements.*/
@@ -161,6 +165,30 @@ public class Commit implements Serializable {
     private String setParent() {
         File headFilePath = Utils.join(Repository.HEAD_DIR);
         return Utils.readContentsAsString(headFilePath);
+    }
+
+    private HashMap<String, String> trackBlobs() {
+        //bring in parent BlobMap as map
+        String headPointer = Utils.readContentsAsString(Repository.HEAD_DIR);
+        Commit c = fromFileCommit(headPointer);
+        HashMap<String, String> map= c.getBlobMap();
+        //bring in the addstage hashmap
+        HashMap<String, String> addMap= Repository.copyBlobMap();
+        //update map to refelct the added files, assumed that all these should be the updates to commit
+        for (Map.Entry<String,String> mapElement : addMap.entrySet()) {
+            String value = mapElement.getValue();
+            String keyToRemove = Repository.getKeyFromValue(map, value);
+            map.remove(keyToRemove);
+            map.put(mapElement.getKey(), mapElement.getValue());
+        }
+        //update map to reflect the files staged for removal.
+        ArrayList<String > removeList = Repository.getRmList();
+        for (String file : removeList) {
+            String keyToRemove = Repository.getKeyFromValue(map, file);
+            map.remove(keyToRemove);
+        }
+        return map;
+
     }
     public static void readBlobsTracked(String CommitID) {
         Commit c = fromFileCommit(CommitID);

@@ -30,12 +30,16 @@ public class Main {
                 break;
             case "readAddstage":
                 //java gitlet.Main commit [message]
-                Repository.readAddstage();
+                Repository.readAddStage();
                 break;
             case "readBlobstracked":
                 //java gitlet.Main commit [message]
                 String commitID = args[1];
                 Commit.readBlobsTracked(commitID);
+                break;
+            case "readRemovestage":
+                //java gitlet.Main commit [message]
+                Repository.readRemoveStage();
                 break;
             // TODO: FILL THE REST IN
         }
