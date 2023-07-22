@@ -8,9 +8,9 @@ package gitlet;
 import java.io.File;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import static gitlet.Utils.join;
 
@@ -56,6 +56,8 @@ public class Commit implements Serializable {
     public String getTimestamp() {
         return this.timestamp;
     }
+    public String getParent(){return this.parent;};
+    public String getId(){return this.id;};
 
 
     /**
@@ -66,22 +68,19 @@ public class Commit implements Serializable {
     public Commit(String message) {
         //metadata that must be tracked by SHA-1 ID
         this.message = message;
-        this.timestamp = now.toString();
+        this.timestamp = getTime();
         this.parent = setParent();
         this.blobsTracked = trackBlobs();
         //generate sha id
         this.id = generateSHA();
     }
-
-
-
     /**
      * Specific commit constructor that is used for the first Commit, init. Sets the required fields to
      * values that are specific to the init command requirements.*/
     public Commit(Integer initialize) {
         if (initialize == 0) {
             this.message = "initial commit";
-            this.timestamp = EPOCH.toString();
+            this.timestamp = getTimeEpoch();
             this.parent = "null";
             this.blobsTracked = emptyHashMap;
             this.id = generateSHA();
@@ -103,6 +102,9 @@ public class Commit implements Serializable {
         File headFilePath = Utils.join(Repository.HEAD_DIR);
         Utils.writeContents(headFilePath, this.id);
     }
+    /**
+     * Method to set the master branch pointer. It is the same as HEAD until a new branch is created.
+     * */
     private void setMaster() {
         File previousHeadFilePath = Utils.join(Repository.REF_DIR);
         previousHeadFilePath.delete();
@@ -119,6 +121,7 @@ public class Commit implements Serializable {
      * */
     public static void makeCommit (String Message) {
         /*If no files have been staged, abort. Print the message No changes added to the commit.*/
+        //TODO: what to do if no files staged.
 
 
         //construct the commit object
@@ -150,13 +153,10 @@ public class Commit implements Serializable {
     }
     /**
      * Method to read in the Commit object from disk.
-     *
      * */
     public static Commit fromFileCommit(String CommitID) {
         File CommitFile = Utils.join(Repository.OBJECT_DIR, CommitID);
-
         return Utils.readObject(CommitFile, Commit.class);
-
     }
     /**
      * Method to set the parent of the newest commit. This is done by checking which commit the HEAD
@@ -166,7 +166,10 @@ public class Commit implements Serializable {
         File headFilePath = Utils.join(Repository.HEAD_DIR);
         return Utils.readContentsAsString(headFilePath);
     }
-
+    /**
+     * Method that updates the blobs that the commit is tracking. Goes through the addstage and rm stage
+     * and changes the blobs tracked accordingly.
+     * */
     private HashMap<String, String> trackBlobs() {
         //bring in parent BlobMap as map
         String headPointer = Utils.readContentsAsString(Repository.HEAD_DIR);
@@ -188,18 +191,64 @@ public class Commit implements Serializable {
             map.remove(keyToRemove);
         }
         return map;
-
     }
+    /**
+     * Test method to see that blobs a specific commit is tracking.
+     * */
     public static void readBlobsTracked(String CommitID) {
         Commit c = fromFileCommit(CommitID);
         HashMap<String, String> map= c.getBlobMap();
         for (Map.Entry<String, String> entry : map.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
+    }
+    /**
+     * Method to recursively go through the commit tree and extract the id, timestamp,
+     * and message required for the log command. Starts at the most current commit, HEAD,
+     * and goes until the init commit.
+     * */
+    private static ArrayList<LogBlob> goThroughParents(String commitPointer, ArrayList<LogBlob> logList) {
+        //read in the commit
+        Commit c = fromFileCommit(commitPointer);
+//        ArrayList<LogBlob> logList = new ArrayList<>();
+        //base case when the commit is the initial commit
+        if (c.getParent().equals("null")) {
+            //place contents into LogBlob for
+            LogBlob L = new LogBlob(c.getId(), c.getTimestamp(), c.getMessage());
+            logList.add(L);
+            return logList;
+        } else {
+            LogBlob L = new LogBlob(c.getId(), c.getTimestamp(), c.getMessage());
+            logList.add(L);
+            //recursively go through the parents
+            goThroughParents(c.getParent(), logList);
+        }
+        return logList;
+    }
+    public static void log() {
+        String headPointer = Utils.readContentsAsString(Repository.HEAD_DIR);
+        ArrayList<LogBlob> logList = new ArrayList<>();
+        ArrayList<LogBlob> commitLog = goThroughParents(headPointer, logList);
+
+        for (LogBlob k : commitLog) {
+            System.out.println("===");
+            System.out.println("commit " + k.getId());
+            System.out.println("Date: " + k.getTimestamp());
+            System.out.println(k.getMessage());
+            System.out.printf("%n");
+        }
 
     }
-
-
+    public static String getTime() {
+        return DateTimeFormatter.RFC_1123_DATE_TIME
+               .withZone(ZoneId.systemDefault())
+               .format(Instant.now());
+    }
+    public static String getTimeEpoch() {
+        return DateTimeFormatter.RFC_1123_DATE_TIME
+                .withZone(ZoneId.systemDefault())
+                .format(Instant.EPOCH);
+    }
 
 
 }

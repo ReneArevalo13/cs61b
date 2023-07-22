@@ -28,6 +28,9 @@ public class Main {
                 fileArg = args[1];
                 Repository.rm(fileArg);
                 break;
+            case "log":
+                Commit.log();
+                break;
             case "readAddstage":
                 //java gitlet.Main commit [message]
                 Repository.readAddStage();

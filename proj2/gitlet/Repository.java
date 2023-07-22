@@ -116,19 +116,15 @@ public class Repository {
             System.out.println("No reason to remove the file.");
         }
         saveRemoveStage(rmList);
-//        untrackFileFromAddStage(filename);
-        //File is tracked by current commit and exists in current directory
 
     }
-
-
     @SuppressWarnings("unchecked")
     public static HashMap<String, String> copyBlobMap() {
         BlobMap = fromFileBlobMap();
         return new HashMap<>(BlobMap);
     }
     /**
-     * Clears the staging area by removing the file that holds what blobs are going to be staged
+     * Clears the staging area by clearing both the addstage and remove stage.
      * */
     @SuppressWarnings("unchecked")
     public static void clearStaging() {
@@ -157,6 +153,11 @@ public class Repository {
             return !c.getBlobMap().containsKey(blobID);
         }
     }
+    /**
+     * Method to check whether the file is already tracked by the current commit.
+     * Return True if this file is tracked by the most current commit.
+     * Return False otherwise.
+     * */
     private static Boolean fileTrackedByCommit(String filename) {
         //get the SHAid from the HEAD commit
         String headPointer = Utils.readContentsAsString(HEAD_DIR);
@@ -169,6 +170,9 @@ public class Repository {
             return c.getBlobMap().containsValue(filename);
         }
     }
+    /**
+     * Testing method to check what is currently in the add stage.
+     * */
     @SuppressWarnings("unchecked")
     public static void readAddStage() {
         File blobHashMap = join(STAGING_DIR, "addStage");
@@ -179,6 +183,9 @@ public class Repository {
         }
 
     }
+    /**
+     * Testing method to check what is currently in the remove stage.
+     * */
     @SuppressWarnings("unchecked")
     public static void readRemoveStage() {
         File removeListDir = join(STAGING_DIR, "removeStage");
@@ -186,7 +193,9 @@ public class Repository {
         list = Utils.readObject(removeListDir,ArrayList.class);
         System.out.println("Files that are staged for removal : " + list);
     }
-
+    /**
+     * Method to read in the BlobMap (addstage) from disk.
+     * */
     @SuppressWarnings("unchecked")
     private static HashMap<String,String> fromFileBlobMap() {
         File blobHashMap = join(STAGING_DIR, "addStage");
@@ -196,6 +205,9 @@ public class Repository {
             return new HashMap<String, String>();
         }
     }
+    /**
+     * Method to read in the remove stage list from disk.
+     * */
     @SuppressWarnings("unchecked")
     private static ArrayList<String> fromFileRmList() {
         File RmListDir = join(STAGING_DIR, "removeStage");
@@ -205,12 +217,9 @@ public class Repository {
             return new ArrayList<String>();
         }
     }
-
-    @SuppressWarnings("unchecked")
-    private static void untrackFileFromAddStage(String Filename) {
-
-        }
-
+    /**
+     * Method to get the key from a given value in a hashmap.
+     * */
     public static String getKeyFromValue(Map<String, String> map, String  value) {
         String result = "";
         if (map.containsValue(value)) {
