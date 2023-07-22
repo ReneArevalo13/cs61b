@@ -34,6 +34,10 @@ public class Repository {
     public static final File REF_DIR = join(CWD, ".gitlet", "refs", "head", "master");
     /** The object directory. Will hold the commit and blob objects. */
     public static final File OBJECT_DIR = join(CWD, ".gitlet", "objects");
+    public static final File COMMIT_DIR = join(CWD, ".gitlet", "objects", "commits");
+    public static final File BLOB_DIR = join(CWD, ".gitlet", "objects", "blobs");
+
+
     public static final File HEAD_DIR = join(CWD, ".gitlet", "HEAD");
     /**
      Treat the BlobMap as the staging area. Hashmap of the blobs. {Key = SHA-1 id, Value = Filename}
@@ -67,6 +71,8 @@ public class Repository {
         STAGING_DIR.mkdir();
         REF_DIR.mkdirs();
         OBJECT_DIR.mkdir();
+        COMMIT_DIR.mkdir();
+        BLOB_DIR.mkdir();
         Commit initialCommit = new Commit(0);
 
     }
@@ -85,7 +91,7 @@ public class Repository {
             //add current blob to staging hashmap
             BlobMap.put(addBlob.getID(), addBlob.getFilename());
             //write current blob object to disk
-            File blobFile = join(OBJECT_DIR, addBlob.getID());
+            File blobFile = join(BLOB_DIR, addBlob.getID());
             writeObject(blobFile, addBlob);
             saveBlobMap(BlobMap);
         }

@@ -31,6 +31,9 @@ public class Main {
             case "log":
                 Commit.log();
                 break;
+            case "global-log":
+                Commit.global_log();
+                break;
             case "readAddstage":
                 //java gitlet.Main commit [message]
                 Repository.readAddStage();

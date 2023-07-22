@@ -141,7 +141,7 @@ public class Commit implements Serializable {
      * */
     public void saveCommit()  {
         Commit c = this;
-        File commitFile = Utils.join(Repository.OBJECT_DIR, this.id);
+        File commitFile = Utils.join(Repository.COMMIT_DIR, this.id);
         Utils.writeObject(commitFile, c);
     }
     /**
@@ -155,7 +155,7 @@ public class Commit implements Serializable {
      * Method to read in the Commit object from disk.
      * */
     public static Commit fromFileCommit(String CommitID) {
-        File CommitFile = Utils.join(Repository.OBJECT_DIR, CommitID);
+        File CommitFile = Utils.join(Repository.COMMIT_DIR, CommitID);
         return Utils.readObject(CommitFile, Commit.class);
     }
     /**
@@ -237,9 +237,21 @@ public class Commit implements Serializable {
             System.out.println(k.getMessage());
             System.out.printf("%n");
         }
-
+    }
+    public static void global_log() {
+        List<String> commitList = Utils.plainFilenamesIn(Repository.COMMIT_DIR);
+        assert commitList != null;
+        for (String file : commitList) {
+            Commit c = fromFileCommit(file);
+            System.out.println("===");
+            System.out.println("commit " + c.getId());
+            System.out.println("Date: " + c.getTimestamp());
+            System.out.println(c.getMessage());
+            System.out.printf("%n");
+        }
     }
     public static String getTime() {
+        //closest time format to spec
         return DateTimeFormatter.RFC_1123_DATE_TIME
                .withZone(ZoneId.systemDefault())
                .format(Instant.now());
