@@ -34,6 +34,10 @@ public class Main {
             case "global-log":
                 Commit.global_log();
                 break;
+            case "find":
+                String findMessage = args[1];
+                Commit.find(findMessage);
+                break;
             case "readAddstage":
                 //java gitlet.Main commit [message]
                 Repository.readAddStage();

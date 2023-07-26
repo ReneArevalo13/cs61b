@@ -250,6 +250,20 @@ public class Commit implements Serializable {
             System.out.printf("%n");
         }
     }
+    public static void find(String commitMessage) {
+        List<String> commitList = Utils.plainFilenamesIn(Repository.COMMIT_DIR);
+        assert commitList != null;
+        boolean messageExists = false;
+        for (String file : commitList) {
+            Commit c = fromFileCommit(file);
+            if (commitMessage.equals(c.message)) {
+                System.out.println(c.getId());
+//                System.out.printf("%n");
+                messageExists = true;
+            }
+        }
+        if (!messageExists) System.out.println("Found no commit with that message.");
+    }
     public static String getTime() {
         //closest time format to spec
         return DateTimeFormatter.RFC_1123_DATE_TIME
