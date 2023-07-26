@@ -237,16 +237,36 @@ public class Repository {
         }
         return result;
     }
+    /**
+     * Method to save the BlobMap to disk
+     * */
     private static void saveBlobMap(HashMap<String, String> BlobMap)  {
         File blobHashMap = join(STAGING_DIR, "addStage");
         writeObject(blobHashMap, Repository.BlobMap);
     }
+    /**
+     * Method to save the RemoveStage to disk
+     * */
     private static void saveRemoveStage(List<String> rmList) {
         File rmListDir = join(STAGING_DIR, "removeStage");
         writeObject(rmListDir, (Serializable) rmList);
     }
+    /**
+     * Getter method for the RMList*/
     public static ArrayList<String> getRmList() {
         return fromFileRmList();
+    }
+    public static void checkoutFileOnly(String filename) {
+        //bring in the most current commit and get the file of interest
+        String headPointer = Utils.readContentsAsString(HEAD_DIR);
+        Commit c = Commit.fromFileCommit(headPointer);
+//        HashMap<String, String> map = c.getBlobMap();
+        String blobID = getKeyFromValue(c.getBlobMap(), filename);
+        File blobToRestore = Utils.join(BLOB_DIR, blobID);
+        Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
+        byte[] fileData = readInBlob.getContents();
+        File fileOfInterest = Utils.join(CWD, filename);
+        Utils.writeContents(fileOfInterest, fileData);
     }
 
 

@@ -38,6 +38,9 @@ public class Main {
                 String findMessage = args[1];
                 Commit.find(findMessage);
                 break;
+            case "checkout":
+                String filename = args[1];
+                Repository.checkoutFileOnly(filename);
             case "readAddstage":
                 //java gitlet.Main commit [message]
                 Repository.readAddStage();

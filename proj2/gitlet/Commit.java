@@ -258,7 +258,6 @@ public class Commit implements Serializable {
             Commit c = fromFileCommit(file);
             if (commitMessage.equals(c.message)) {
                 System.out.println(c.getId());
-//                System.out.printf("%n");
                 messageExists = true;
             }
         }
