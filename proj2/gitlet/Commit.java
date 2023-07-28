@@ -8,7 +8,9 @@ package gitlet;
 import java.io.File;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -265,14 +267,14 @@ public class Commit implements Serializable {
     }
     public static String getTime() {
         //closest time format to spec
-        return DateTimeFormatter.RFC_1123_DATE_TIME
-               .withZone(ZoneId.systemDefault())
-               .format(Instant.now());
+        LocalDateTime myDateObj = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E MMM dd HH:mm:ss yyyy -0800");
+        return myDateObj.format(myFormatObj);
     }
     public static String getTimeEpoch() {
-        return DateTimeFormatter.RFC_1123_DATE_TIME
-                .withZone(ZoneId.systemDefault())
-                .format(Instant.EPOCH);
+        LocalDateTime myDateObj = LocalDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC);
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E MMM dd HH:mm:ss yyyy -0800");
+        return myDateObj.format(myFormatObj);
     }
 
 

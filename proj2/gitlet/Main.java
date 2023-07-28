@@ -1,5 +1,8 @@
 package gitlet;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author TODO
  */
@@ -10,8 +13,7 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO: what if args is empty?
-        String firstArg = args[0];
-        switch(firstArg) {
+        switch(args[0]) {
             case "init":
                 Repository.init();
                 break;
@@ -39,8 +41,16 @@ public class Main {
                 Commit.find(findMessage);
                 break;
             case "checkout":
-                String filename = args[1];
-                Repository.checkoutFileOnly(filename);
+                if (args.length != 2 && args.length != 3 && args.length != 4) {
+                    System.out.println("Incorrect Operands");
+                } else if ((args.length == 4 && !args[2].equals("--"))
+                        || (args.length == 3 && !args[1].equals("--"))) {
+                    System.out.println("Incorrect Operands");
+                } else {
+//                    System.out.println("checking out");
+                    Repository.checkout(args);
+                }
+                break;
             case "readAddstage":
                 //java gitlet.Main commit [message]
                 Repository.readAddStage();

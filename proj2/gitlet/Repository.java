@@ -256,18 +256,45 @@ public class Repository {
     public static ArrayList<String> getRmList() {
         return fromFileRmList();
     }
-    public static void checkoutFileOnly(String filename) {
-        //bring in the most current commit and get the file of interest
-        String headPointer = Utils.readContentsAsString(HEAD_DIR);
-        Commit c = Commit.fromFileCommit(headPointer);
-//        HashMap<String, String> map = c.getBlobMap();
-        String blobID = getKeyFromValue(c.getBlobMap(), filename);
-        File blobToRestore = Utils.join(BLOB_DIR, blobID);
-        Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
-        byte[] fileData = readInBlob.getContents();
-        File fileOfInterest = Utils.join(CWD, filename);
-        Utils.writeContents(fileOfInterest, fileData);
+    public static void checkout(String[] args) {
+        int length = args.length;
+        if (length == 3) {
+            //            0     1    2
+            //FORMAT: checkout -- [file name] --> length should be 4
+//            System.out.println("Case1");
+            String filenameCase1 = args[2];
+            String headPointer = Utils.readContentsAsString(HEAD_DIR);
+            checkoutHelper(headPointer, filenameCase1);
+        } else if (length == 4) {
+//            System.out.println("Case2");
+            String commitPointer = args[1];
+            String filenameCase2 = args[3];
+            checkoutHelper(commitPointer, filenameCase2);
+
+        }
     }
+    private static void checkoutHelper(String commitPointer, String filename) {
+//        System.out.println("checkoutHelper");
+        List<String> commitList = Utils.plainFilenamesIn(COMMIT_DIR);
+        Commit c = Commit.fromFileCommit(commitPointer);
+        //check if commitID exists
+        assert commitList != null;
+        if (!commitList.contains(commitPointer)){
+            System.out.println("No commit with that id exists.");
+            return;
+        }
+        if (c.getBlobMap().containsValue(filename)){
+            String blobID = getKeyFromValue(c.getBlobMap(), filename);
+            File blobToRestore = Utils.join(BLOB_DIR, blobID);
+            Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
+            byte[] fileData = readInBlob.getContents();
+            File fileOfInterest = Utils.join(CWD, filename);
+            Utils.writeContents(fileOfInterest, fileData);
+        } else {
+            System.out.println("File does not exist in that commit.");
+        }
+    }
+
 
 
 }
