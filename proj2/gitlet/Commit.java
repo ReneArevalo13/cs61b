@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -107,11 +106,19 @@ public class Commit implements Serializable {
     /**
      * Method to set the master branch pointer. It is the same as HEAD until a new branch is created.
      * */
-    private void setMaster() {
-        File previousHeadFilePath = Utils.join(Repository.REF_DIR);
-        previousHeadFilePath.delete();
-        File headFilePath = Utils.join(Repository.REF_DIR);
-        Utils.writeContents(headFilePath, this.id);
+    private void setBranch() {
+        if (Repository.getActiveBranch().equals("master")) {
+            File previousHeadFilePath = Utils.join(Repository.REF_DIR_MASTER);
+            previousHeadFilePath.delete();
+            File headFilePath = Utils.join(Repository.REF_DIR_MASTER);
+            Utils.writeContents(headFilePath, this.id);
+        } else {
+            File newBranch = Utils.join(CWD, ".gitlet", "refs", "head", Repository.getActiveBranch());
+            newBranch.delete();
+            File newBranchHead = Utils.join(CWD, ".gitlet", "refs", "head", Repository.getActiveBranch());
+            Utils.writeContents(newBranchHead, this.id);
+        }
+
     }
     public HashMap<String, String> getBlobMap() {
         return this.blobsTracked;
@@ -131,7 +138,7 @@ public class Commit implements Serializable {
         //set the head pointer as the most current commit id
         c.setHead();
         //set the master pointer
-        c.setMaster();
+        c.setBranch();
         //save commit object to disk
         c.saveCommit();
         //clear the staging area

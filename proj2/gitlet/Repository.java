@@ -5,6 +5,7 @@ package gitlet;
 import java.io.File;
 import static gitlet.Utils.*;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 // TODO: any imports you need here
@@ -31,7 +32,7 @@ public class Repository {
     /** The staging directory. Will hold all the blobs staged for a commit. */
     public static final File STAGING_DIR = join(CWD, ".gitlet", "staging");
     /** The ref directory. Will hold the head and master refs */
-    public static final File REF_DIR = join(CWD, ".gitlet", "refs", "head", "master");
+    public static final File REF_DIR_MASTER = join(CWD, ".gitlet", "refs", "head", "master");
     /** The object directory. Will hold the commit and blob objects. */
     public static final File OBJECT_DIR = join(CWD, ".gitlet", "objects");
     public static final File COMMIT_DIR = join(CWD, ".gitlet", "objects", "commits");
@@ -44,6 +45,7 @@ public class Repository {
      */
     private static  HashMap<String, String> BlobMap = new HashMap<>();
     private static ArrayList<String> rmList = new ArrayList<>();
+    private static String activeBranch = "master";
 
     /* TODO: fill in the rest of this class. */
     /**
@@ -69,10 +71,11 @@ public class Repository {
         }
         GITLET_DIR.mkdir();
         STAGING_DIR.mkdir();
-        REF_DIR.mkdirs();
+        REF_DIR_MASTER.mkdirs();
         OBJECT_DIR.mkdir();
         COMMIT_DIR.mkdir();
         BLOB_DIR.mkdir();
+        setActiveBranch("master");
         Commit initialCommit = new Commit(0);
 
     }
@@ -109,7 +112,7 @@ public class Repository {
             BlobMap.remove(getKeyFromValue(BlobMap, filename));
 //            addList.remove(String.valueOf(Filename));
             saveBlobMap(BlobMap);
-        } else if (fileTrackedByCommit(filename)) {
+        } else if (fileTrackedByCurrentCommit(filename)) {
             if (filenameCheck.isFile()) {
                 //add file to the rm stage
                 rmList.add(filename);
@@ -164,11 +167,24 @@ public class Repository {
      * Return True if this file is tracked by the most current commit.
      * Return False otherwise.
      * */
-    private static Boolean fileTrackedByCommit(String filename) {
+    private static Boolean fileTrackedByCurrentCommit(String filename) {
         //get the SHAid from the HEAD commit
         String headPointer = Utils.readContentsAsString(HEAD_DIR);
         //read in the most current commit
         Commit c = Commit.fromFileCommit(headPointer);
+        //check the previous commits blobMap and see if the file of interest is already tracked
+        if (c.getBlobMap().containsValue(null)) {
+            return true;
+        } else {
+            return c.getBlobMap().containsValue(filename);
+        }
+    }
+    private static Boolean fileTrackedByCommit(String filename, String branchName) {
+        //get the SHAid from the HEAD commit
+        File newBranch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
+        String pointer = Utils.readContentsAsString(newBranch);
+        //read in the most current commit
+        Commit c = Commit.fromFileCommit(pointer);
         //check the previous commits blobMap and see if the file of interest is already tracked
         if (c.getBlobMap().containsValue(null)) {
             return true;
@@ -256,25 +272,49 @@ public class Repository {
     public static ArrayList<String> getRmList() {
         return fromFileRmList();
     }
-    public static void checkout(String[] args) {
+    public static void checkout(String[] args) throws IOException {
         int length = args.length;
         if (length == 3) {
-            //            0     1    2
-            //FORMAT: checkout -- [file name] --> length should be 4
-//            System.out.println("Case1");
             String filenameCase1 = args[2];
             String headPointer = Utils.readContentsAsString(HEAD_DIR);
             checkoutHelper(headPointer, filenameCase1);
         } else if (length == 4) {
-//            System.out.println("Case2");
             String commitPointer = args[1];
             String filenameCase2 = args[3];
             checkoutHelper(commitPointer, filenameCase2);
+        } else if (length == 2) {
+//            System.out.println("active branch is " + getActiveBranch());
+            String branchName = args[1];
+            File branch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
+            List<String> filesInWorkingDirectory = Utils.plainFilenamesIn(CWD);
+            if (!branch.exists()) {
+                System.out.println("No such branch exists.");
+            }else if (getActiveBranch().equals(branchName)) {
+                System.out.println("No need to checkout the current branch.");
+            } else {
+
+                assert filesInWorkingDirectory != null;
+                for (String file : filesInWorkingDirectory) {
+//                    System.out.println(file + " is tracked: " + fileTrackedByCurrentCommit(file).toString());
+                    if (!fileTrackedByCurrentCommit(file) && fileTrackedByCommit(file, branchName)) {
+                        System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                        System.exit(0);
+                    }
+                    if (fileTrackedByCurrentCommit(file) && !fileTrackedByCommit(file, branchName)) {
+//                        System.out.println("second case");
+                        Utils.restrictedDelete(file);
+                    }
+                }
+                checkoutBranchHelper(branchName);
+                setActiveBranch(branchName);
+                switchHEAD();
+                clearStaging();
+            }
+//            System.out.println("active branch is " + getActiveBranch());
 
         }
     }
     private static void checkoutHelper(String commitPointer, String filename) {
-//        System.out.println("checkoutHelper");
         List<String> commitList = Utils.plainFilenamesIn(COMMIT_DIR);
         Commit c = Commit.fromFileCommit(commitPointer);
         //check if commitID exists
@@ -285,14 +325,78 @@ public class Repository {
         }
         if (c.getBlobMap().containsValue(filename)){
             String blobID = getKeyFromValue(c.getBlobMap(), filename);
-            File blobToRestore = Utils.join(BLOB_DIR, blobID);
-            Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
-            byte[] fileData = readInBlob.getContents();
-            File fileOfInterest = Utils.join(CWD, filename);
-            Utils.writeContents(fileOfInterest, fileData);
+//            File blobToRestore = Utils.join(BLOB_DIR, blobID);
+//            Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
+//            byte[] fileData = readInBlob.getContents();
+//            File fileOfInterest = Utils.join(CWD, filename);
+//            Utils.writeContents(fileOfInterest, fileData);
+            readWriteBlobFromCommit(blobID, filename);
         } else {
             System.out.println("File does not exist in that commit.");
         }
+    }
+    private static void checkoutBranchHelper(String branchName) throws IOException {
+        File branch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
+
+        Commit c = Commit.fromFileCommit(Utils.readContentsAsString(branch));
+        //go through all the files tracked by last commit and update the CWD files
+
+        for (Map.Entry<String, String> entry : c.getBlobMap().entrySet()) {
+            String key = entry.getKey();//shaID
+            String value = entry.getValue();//filename
+            //check if the file is in the working directory
+            File file = Utils.join(CWD, value);
+            if (file.exists()) {
+                readWriteBlobFromCommit(key, value);
+            } else {
+                writeNewFileFromBlob(key, value);
+            }
+        }
+    }
+    private static void readWriteBlobFromCommit(String blobID, String filename) {
+//        String blobID = getKeyFromValue(map, filename);
+        File blobToRestore = Utils.join(BLOB_DIR, blobID);
+        Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
+        byte[] fileData = readInBlob.getContents();
+        File fileOfInterest = Utils.join(CWD, filename);
+        Utils.writeContents(fileOfInterest, fileData);
+    }
+    private static void writeNewFileFromBlob(String blobID, String filename) throws IOException {
+        File blobToRestore = Utils.join(BLOB_DIR, blobID);
+        Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
+        byte[] fileData = readInBlob.getContents();
+        File fileOfInterest = Utils.join(CWD, filename);
+        fileOfInterest.createNewFile();
+        Utils.writeContents(fileOfInterest, fileData);
+    }
+    public static void branch(String branchName) throws IOException {
+        File newBranch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
+        if (newBranch.isFile()) {
+            System.out.println("A branch with that name already exists.");
+        } else {
+            newBranch.createNewFile();
+            //copy in the most current commit and write to new branch
+            Utils.writeContents(newBranch, readContentsAsString(REF_DIR_MASTER));
+        }
+    }
+    private static void setActiveBranch(String branchName) {
+        File currentBranch = Utils.join(GITLET_DIR, "refs", "currentBranch");
+        currentBranch.delete();
+        File setBranch = Utils.join(GITLET_DIR, "refs", "currentBranch");
+        Utils.writeContents(setBranch, branchName);
+    }
+    public static String getActiveBranch() {
+        File currentBranch = Utils.join(GITLET_DIR, "refs", "currentBranch");
+        return Utils.readContentsAsString(currentBranch);
+    }
+    private static void switchHEAD() {
+        File previousHeadFilePath = Utils.join(HEAD_DIR);
+        previousHeadFilePath.delete();
+        File switchHead = Utils.join(HEAD_DIR);
+        File newHead = join(CWD, ".gitlet", "refs", "head", getActiveBranch());
+        String newHeadPointer = Utils.readContentsAsString(newHead);
+        Utils.writeContents(switchHead, newHeadPointer);
+
     }
 
 

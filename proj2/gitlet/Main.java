@@ -1,5 +1,6 @@
 package gitlet;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
@@ -11,7 +12,7 @@ public class Main {
     /** Usage: java gitlet.Main ARGS, where ARGS contains
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // TODO: what if args is empty?
         switch(args[0]) {
             case "init":
@@ -50,6 +51,10 @@ public class Main {
 //                    System.out.println("checking out");
                     Repository.checkout(args);
                 }
+                break;
+            case "branch":
+                String branchName = args[1];
+                Repository.branch(branchName);
                 break;
             case "readAddstage":
                 //java gitlet.Main commit [message]
