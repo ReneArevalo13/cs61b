@@ -107,15 +107,15 @@ public class Commit implements Serializable {
      * Method to set the master branch pointer. It is the same as HEAD until a new branch is created.
      * */
     private void setBranch() {
-        if (Repository.getActiveBranch().equals("master")) {
+        if (Helper.getActiveBranch().equals("master")) {
             File previousHeadFilePath = Utils.join(Repository.REF_DIR_MASTER);
             previousHeadFilePath.delete();
             File headFilePath = Utils.join(Repository.REF_DIR_MASTER);
             Utils.writeContents(headFilePath, this.id);
         } else {
-            File newBranch = Utils.join(CWD, ".gitlet", "refs", "head", Repository.getActiveBranch());
+            File newBranch = Utils.join(CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
             newBranch.delete();
-            File newBranchHead = Utils.join(CWD, ".gitlet", "refs", "head", Repository.getActiveBranch());
+            File newBranchHead = Utils.join(CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
             Utils.writeContents(newBranchHead, this.id);
         }
 
@@ -189,14 +189,14 @@ public class Commit implements Serializable {
         //update map to refelct the added files, assumed that all these should be the updates to commit
         for (Map.Entry<String,String> mapElement : addMap.entrySet()) {
             String value = mapElement.getValue();
-            String keyToRemove = Repository.getKeyFromValue(map, value);
+            String keyToRemove = Helper.getKeyFromValue(map, value);
             map.remove(keyToRemove);
             map.put(mapElement.getKey(), mapElement.getValue());
         }
         //update map to reflect the files staged for removal.
         ArrayList<String > removeList = Repository.getRmList();
         for (String file : removeList) {
-            String keyToRemove = Repository.getKeyFromValue(map, file);
+            String keyToRemove = Helper.getKeyFromValue(map, file);
             map.remove(keyToRemove);
         }
         return map;

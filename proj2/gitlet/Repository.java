@@ -75,7 +75,7 @@ public class Repository {
         OBJECT_DIR.mkdir();
         COMMIT_DIR.mkdir();
         BLOB_DIR.mkdir();
-        setActiveBranch("master");
+        Helper.setActiveBranch("master");
         Commit initialCommit = new Commit(0);
 
     }
@@ -89,8 +89,8 @@ public class Repository {
         }
         //construct blob object of the given file
         Blob addBlob = new Blob(filename);
-        BlobMap = fromFileBlobMap();
-        if (blobIsDifferent(addBlob.getID())) {
+        BlobMap = Helper.fromFileBlobMap();
+        if (Helper.blobIsDifferent(addBlob.getID())) {
             //add current blob to staging hashmap
             BlobMap.put(addBlob.getID(), addBlob.getFilename());
             //write current blob object to disk
@@ -102,17 +102,17 @@ public class Repository {
 
     @SuppressWarnings("unchecked")
     public static void rm(String filename) {
-        rmList = fromFileRmList();
-        BlobMap = fromFileBlobMap();
+        rmList = Helper.fromFileRmList();
+        BlobMap = Helper.fromFileBlobMap();
         File filenameCheck = join(CWD, filename);
         //unstage the file if it is currently staged for addition
         //check to see if file is currently in staging area
         if (BlobMap.containsValue(filename)) {
             //remove this entry from Blobmap and consequently addList.
-            BlobMap.remove(getKeyFromValue(BlobMap, filename));
+            BlobMap.remove(Helper.getKeyFromValue(BlobMap, filename));
 //            addList.remove(String.valueOf(Filename));
             saveBlobMap(BlobMap);
-        } else if (fileTrackedByCurrentCommit(filename)) {
+        } else if (Helper.fileTrackedByCurrentCommit(filename)) {
             if (filenameCheck.isFile()) {
                 //add file to the rm stage
                 rmList.add(filename);
@@ -129,7 +129,7 @@ public class Repository {
     }
     @SuppressWarnings("unchecked")
     public static HashMap<String, String> copyBlobMap() {
-        BlobMap = fromFileBlobMap();
+        BlobMap = Helper.fromFileBlobMap();
         return new HashMap<>(BlobMap);
     }
     /**
@@ -137,60 +137,13 @@ public class Repository {
      * */
     @SuppressWarnings("unchecked")
     public static void clearStaging() {
-        BlobMap = fromFileBlobMap();
-        rmList = fromFileRmList();
+        BlobMap = Helper.fromFileBlobMap();
+        rmList = Helper.fromFileRmList();
         BlobMap.clear();
         rmList.clear();
         saveBlobMap(BlobMap);
         saveRemoveStage(rmList);
 
-    }
-    /**
-     * Method to check whether the blob to be added is not already tracked by the current commit.
-     * Return True if this is a new blob.
-     * Return False if this is the same blob that is already being tracked.
-     * */
-    private static Boolean blobIsDifferent(String blobID) {
-        //get the SHAid from the HEAD commit
-        String headPointer = Utils.readContentsAsString(HEAD_DIR);
-        //read in the most current commit
-        Commit c = Commit.fromFileCommit(headPointer);
-        //check the previous commits blobMap and see if the blob of interest is already tracked
-        if (c.getBlobMap().containsKey(null)) {
-            return true;
-        } else {
-            return !c.getBlobMap().containsKey(blobID);
-        }
-    }
-    /**
-     * Method to check whether the file is already tracked by the current commit.
-     * Return True if this file is tracked by the most current commit.
-     * Return False otherwise.
-     * */
-    private static Boolean fileTrackedByCurrentCommit(String filename) {
-        //get the SHAid from the HEAD commit
-        String headPointer = Utils.readContentsAsString(HEAD_DIR);
-        //read in the most current commit
-        Commit c = Commit.fromFileCommit(headPointer);
-        //check the previous commits blobMap and see if the file of interest is already tracked
-        if (c.getBlobMap().containsValue(null)) {
-            return true;
-        } else {
-            return c.getBlobMap().containsValue(filename);
-        }
-    }
-    private static Boolean fileTrackedByCommit(String filename, String branchName) {
-        //get the SHAid from the HEAD commit
-        File newBranch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
-        String pointer = Utils.readContentsAsString(newBranch);
-        //read in the most current commit
-        Commit c = Commit.fromFileCommit(pointer);
-        //check the previous commits blobMap and see if the file of interest is already tracked
-        if (c.getBlobMap().containsValue(null)) {
-            return true;
-        } else {
-            return c.getBlobMap().containsValue(filename);
-        }
     }
     /**
      * Testing method to check what is currently in the add stage.
@@ -215,44 +168,8 @@ public class Repository {
         list = Utils.readObject(removeListDir,ArrayList.class);
         System.out.println("Files that are staged for removal : " + list);
     }
-    /**
-     * Method to read in the BlobMap (addstage) from disk.
-     * */
-    @SuppressWarnings("unchecked")
-    private static HashMap<String,String> fromFileBlobMap() {
-        File blobHashMap = join(STAGING_DIR, "addStage");
-        if (blobHashMap.isFile()) {
-            return Utils.readObject(blobHashMap, HashMap.class);
-        } else {
-            return new HashMap<String, String>();
-        }
-    }
-    /**
-     * Method to read in the remove stage list from disk.
-     * */
-    @SuppressWarnings("unchecked")
-    private static ArrayList<String> fromFileRmList() {
-        File RmListDir = join(STAGING_DIR, "removeStage");
-        if (RmListDir.isFile()) {
-            return Utils.readObject(RmListDir, ArrayList.class);
-        } else {
-            return new ArrayList<String>();
-        }
-    }
-    /**
-     * Method to get the key from a given value in a hashmap.
-     * */
-    public static String getKeyFromValue(Map<String, String> map, String  value) {
-        String result = "";
-        if (map.containsValue(value)) {
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                if (Objects.equals(entry.getValue(), value)) {
-                    result = entry.getKey();
-                }
-            }
-        }
-        return result;
-    }
+
+
     /**
      * Method to save the BlobMap to disk
      * */
@@ -270,7 +187,7 @@ public class Repository {
     /**
      * Getter method for the RMList*/
     public static ArrayList<String> getRmList() {
-        return fromFileRmList();
+        return Helper.fromFileRmList();
     }
     public static void checkout(String[] args) throws IOException {
         int length = args.length;
@@ -289,25 +206,25 @@ public class Repository {
             List<String> filesInWorkingDirectory = Utils.plainFilenamesIn(CWD);
             if (!branch.exists()) {
                 System.out.println("No such branch exists.");
-            }else if (getActiveBranch().equals(branchName)) {
+            }else if (Helper.getActiveBranch().equals(branchName)) {
                 System.out.println("No need to checkout the current branch.");
             } else {
 
                 assert filesInWorkingDirectory != null;
                 for (String file : filesInWorkingDirectory) {
 //                    System.out.println(file + " is tracked: " + fileTrackedByCurrentCommit(file).toString());
-                    if (!fileTrackedByCurrentCommit(file) && fileTrackedByCommit(file, branchName)) {
+                    if (!Helper.fileTrackedByCurrentCommit(file) && Helper.fileTrackedByCommit(file, branchName)) {
                         System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                         System.exit(0);
                     }
-                    if (fileTrackedByCurrentCommit(file) && !fileTrackedByCommit(file, branchName)) {
+                    if (Helper.fileTrackedByCurrentCommit(file) && !Helper.fileTrackedByCommit(file, branchName)) {
 //                        System.out.println("second case");
                         Utils.restrictedDelete(file);
                     }
                 }
                 checkoutBranchHelper(branchName);
-                setActiveBranch(branchName);
-                switchHEAD();
+                Helper.setActiveBranch(branchName);
+                Helper.switchHEAD();
                 clearStaging();
             }
 //            System.out.println("active branch is " + getActiveBranch());
@@ -324,13 +241,8 @@ public class Repository {
             return;
         }
         if (c.getBlobMap().containsValue(filename)){
-            String blobID = getKeyFromValue(c.getBlobMap(), filename);
-//            File blobToRestore = Utils.join(BLOB_DIR, blobID);
-//            Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
-//            byte[] fileData = readInBlob.getContents();
-//            File fileOfInterest = Utils.join(CWD, filename);
-//            Utils.writeContents(fileOfInterest, fileData);
-            readWriteBlobFromCommit(blobID, filename);
+            String blobID = Helper.getKeyFromValue(c.getBlobMap(), filename);
+            Helper.readWriteBlobFromCommit(blobID, filename);
         } else {
             System.out.println("File does not exist in that commit.");
         }
@@ -347,27 +259,11 @@ public class Repository {
             //check if the file is in the working directory
             File file = Utils.join(CWD, value);
             if (file.exists()) {
-                readWriteBlobFromCommit(key, value);
+                Helper.readWriteBlobFromCommit(key, value);
             } else {
-                writeNewFileFromBlob(key, value);
+                Helper.writeNewFileFromBlob(key, value);
             }
         }
-    }
-    private static void readWriteBlobFromCommit(String blobID, String filename) {
-//        String blobID = getKeyFromValue(map, filename);
-        File blobToRestore = Utils.join(BLOB_DIR, blobID);
-        Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
-        byte[] fileData = readInBlob.getContents();
-        File fileOfInterest = Utils.join(CWD, filename);
-        Utils.writeContents(fileOfInterest, fileData);
-    }
-    private static void writeNewFileFromBlob(String blobID, String filename) throws IOException {
-        File blobToRestore = Utils.join(BLOB_DIR, blobID);
-        Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
-        byte[] fileData = readInBlob.getContents();
-        File fileOfInterest = Utils.join(CWD, filename);
-        fileOfInterest.createNewFile();
-        Utils.writeContents(fileOfInterest, fileData);
     }
     public static void branch(String branchName) throws IOException {
         File newBranch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
@@ -379,26 +275,16 @@ public class Repository {
             Utils.writeContents(newBranch, readContentsAsString(REF_DIR_MASTER));
         }
     }
-    private static void setActiveBranch(String branchName) {
-        File currentBranch = Utils.join(GITLET_DIR, "refs", "currentBranch");
-        currentBranch.delete();
-        File setBranch = Utils.join(GITLET_DIR, "refs", "currentBranch");
-        Utils.writeContents(setBranch, branchName);
-    }
-    public static String getActiveBranch() {
-        File currentBranch = Utils.join(GITLET_DIR, "refs", "currentBranch");
-        return Utils.readContentsAsString(currentBranch);
-    }
-    private static void switchHEAD() {
-        File previousHeadFilePath = Utils.join(HEAD_DIR);
-        previousHeadFilePath.delete();
-        File switchHead = Utils.join(HEAD_DIR);
-        File newHead = join(CWD, ".gitlet", "refs", "head", getActiveBranch());
-        String newHeadPointer = Utils.readContentsAsString(newHead);
-        Utils.writeContents(switchHead, newHeadPointer);
+    public static void removeBranch(String branchName) {
+        File branch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
+        if (!branch.isFile()) {
+            System.out.println("A branch with that name does not exist.");
+        } else if (Helper.getActiveBranch().equals(branchName)) {
+            System.out.println("Cannot remove the current branch");
+        } else {
+            branch.delete();
+        }
 
     }
-
-
 
 }
