@@ -60,6 +60,8 @@ public class Main {
                 String rmBranchName = args[1];
                 Repository.removeBranch(rmBranchName);
                 break;
+            case "status":
+                Repository.status();
             case "readAddstage":
                 //java gitlet.Main commit [message]
                 Repository.readAddStage();

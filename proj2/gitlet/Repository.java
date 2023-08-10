@@ -37,8 +37,6 @@ public class Repository {
     public static final File OBJECT_DIR = join(CWD, ".gitlet", "objects");
     public static final File COMMIT_DIR = join(CWD, ".gitlet", "objects", "commits");
     public static final File BLOB_DIR = join(CWD, ".gitlet", "objects", "blobs");
-
-
     public static final File HEAD_DIR = join(CWD, ".gitlet", "HEAD");
     /**
      Treat the BlobMap as the staging area. Hashmap of the blobs. {Key = SHA-1 id, Value = Filename}
@@ -112,6 +110,7 @@ public class Repository {
             BlobMap.remove(Helper.getKeyFromValue(BlobMap, filename));
 //            addList.remove(String.valueOf(Filename));
             saveBlobMap(BlobMap);
+            rmList.add(filename);
         } else if (Helper.fileTrackedByCurrentCommit(filename)) {
             if (filenameCheck.isFile()) {
                 //add file to the rm stage
@@ -149,14 +148,16 @@ public class Repository {
      * Testing method to check what is currently in the add stage.
      * */
     @SuppressWarnings("unchecked")
-    public static void readAddStage() {
+    public static ArrayList<String> readAddStage() {
         File blobHashMap = join(STAGING_DIR, "addStage");
         HashMap<String, String> map;
         map = Utils.readObject(blobHashMap, HashMap.class);
+        ArrayList<String> addList = new ArrayList<>();
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
+//            System.out.println(entry.getKey() + ": " + entry.getValue());
+            addList.add(entry.getValue());
         }
-
+        return addList;
     }
     /**
      * Testing method to check what is currently in the remove stage.
@@ -200,7 +201,6 @@ public class Repository {
             String filenameCase2 = args[3];
             checkoutHelper(commitPointer, filenameCase2);
         } else if (length == 2) {
-//            System.out.println("active branch is " + getActiveBranch());
             String branchName = args[1];
             File branch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
             List<String> filesInWorkingDirectory = Utils.plainFilenamesIn(CWD);
@@ -212,13 +212,11 @@ public class Repository {
 
                 assert filesInWorkingDirectory != null;
                 for (String file : filesInWorkingDirectory) {
-//                    System.out.println(file + " is tracked: " + fileTrackedByCurrentCommit(file).toString());
                     if (!Helper.fileTrackedByCurrentCommit(file) && Helper.fileTrackedByCommit(file, branchName)) {
                         System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                         System.exit(0);
                     }
                     if (Helper.fileTrackedByCurrentCommit(file) && !Helper.fileTrackedByCommit(file, branchName)) {
-//                        System.out.println("second case");
                         Utils.restrictedDelete(file);
                     }
                 }
@@ -227,8 +225,6 @@ public class Repository {
                 Helper.switchHEAD();
                 clearStaging();
             }
-//            System.out.println("active branch is " + getActiveBranch());
-
         }
     }
     private static void checkoutHelper(String commitPointer, String filename) {
@@ -284,7 +280,40 @@ public class Repository {
         } else {
             branch.delete();
         }
+    }
+    public static void status() {
+        ArrayList<String> rmList = Helper.fromFileRmList();
+        ArrayList<String> addList = readAddStage();
+        Collections.sort(rmList);
+        Collections.sort(addList);
+        String activeBranch = Helper.getActiveBranch();
+        File headFiles = Utils.join(CWD, ".gitlet", "refs", "head");
 
+        System.out.println("=== Branches ===");
+        for (String branch : Objects.requireNonNull(headFiles.list())) {
+            if (branch.equals(activeBranch)) {
+                System.out.println("*" + branch);
+            } else {
+                System.out.println(branch);
+            }
+        }
+
+        System.out.printf("%n");
+        System.out.println("=== Staged Files ===");
+        for (String add : addList) {
+            System.out.println(add);
+        }
+
+        System.out.printf("%n");
+        System.out.println("=== Removed Files ===");
+        for (String rm : rmList) {
+            System.out.println(rm);
+        }
+
+        System.out.printf("%n");
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        System.out.println("=== Untracked Files ===");
+        System.out.printf("%n");
     }
 
 }
