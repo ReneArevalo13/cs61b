@@ -209,7 +209,6 @@ public class Repository {
             }else if (Helper.getActiveBranch().equals(branchName)) {
                 System.out.println("No need to checkout the current branch.");
             } else {
-
                 assert filesInWorkingDirectory != null;
                 for (String file : filesInWorkingDirectory) {
                     if (!Helper.fileTrackedByCurrentCommit(file) && Helper.fileTrackedByCommit(file, branchName)) {
@@ -314,6 +313,21 @@ public class Repository {
         System.out.println("=== Modifications Not Staged For Commit ===");
         System.out.println("=== Untracked Files ===");
         System.out.printf("%n");
+    }
+    public static void reset(String commitID) {
+        Commit c = Commit.fromFileCommit(commitID);
+        HashMap<String, String> map= c.getBlobMap();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (!Helper.fileTrackedByCurrentCommit(entry.getValue()) && Helper.fileTrackedByCommit(entry.getValue(),
+                    commitID)) {
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                System.exit(0);
+            }
+            checkoutHelper(commitID, entry.getValue());
+        }
+        Commit.setHead(commitID);
+        clearStaging();
+
     }
 
 }

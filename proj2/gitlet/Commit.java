@@ -103,6 +103,15 @@ public class Commit implements Serializable {
         File headFilePath = Utils.join(Repository.HEAD_DIR);
         Utils.writeContents(headFilePath, this.id);
     }
+    public static void setHead(String commitID) {
+        //delete previous HEAD pointer file
+        File previousHeadFilePath = Utils.join(Repository.HEAD_DIR);
+        previousHeadFilePath.delete();
+        //set new HEAD pointer file
+        File headFilePath = Utils.join(Repository.HEAD_DIR);
+        Utils.writeContents(headFilePath, commitID);
+    }
+
     /**
      * Method to set the master branch pointer. It is the same as HEAD until a new branch is created.
      * */
@@ -165,6 +174,9 @@ public class Commit implements Serializable {
      * */
     public static Commit fromFileCommit(String CommitID) {
         File CommitFile = Utils.join(Repository.COMMIT_DIR, CommitID);
+        if (!CommitFile.isFile()) {
+            System.out.println("No commit with that id exists.");
+        }
         return Utils.readObject(CommitFile, Commit.class);
     }
     /**

@@ -48,7 +48,6 @@ public class Main {
                         || (args.length == 3 && !args[1].equals("--"))) {
                     System.out.println("Incorrect Operands");
                 } else {
-//                    System.out.println("checking out");
                     Repository.checkout(args);
                 }
                 break;
@@ -62,6 +61,9 @@ public class Main {
                 break;
             case "status":
                 Repository.status();
+            case "reset":
+                String resetID = args[1];
+                Repository.reset(resetID);
             case "readAddstage":
                 //java gitlet.Main commit [message]
                 Repository.readAddStage();
