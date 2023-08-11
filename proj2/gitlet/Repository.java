@@ -242,7 +242,7 @@ public class Repository {
             System.out.println("File does not exist in that commit.");
         }
     }
-    private static void checkoutBranchHelper(String branchName) throws IOException {
+    private static void checkoutBranchHelper(String branchName) {
         File branch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
 
         Commit c = Commit.fromFileCommit(Utils.readContentsAsString(branch));
@@ -260,7 +260,7 @@ public class Repository {
             }
         }
     }
-    public static void branch(String branchName) throws IOException {
+    public static void branch(String branchName)  {
         File newBranch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
         if (newBranch.isFile()) {
             System.out.println("A branch with that name already exists.");
