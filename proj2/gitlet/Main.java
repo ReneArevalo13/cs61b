@@ -61,9 +61,11 @@ public class Main {
                 break;
             case "status":
                 Repository.status();
+                break;
             case "reset":
                 String resetID = args[1];
                 Repository.reset(resetID);
+                break;
             case "readAddstage":
                 //java gitlet.Main commit [message]
                 Repository.readAddStage();
