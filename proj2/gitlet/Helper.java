@@ -28,12 +28,12 @@ public class Helper {
         File setBranch = Utils.join(Repository.GITLET_DIR, "refs", "currentBranch");
         Utils.writeContents(setBranch, branchName);
     }
-    public static void writeNewFileFromBlob(String blobID, String filename) throws IOException {
+    public static void writeNewFileFromBlob(String blobID, String filename)  {
         File blobToRestore = Utils.join(Repository.BLOB_DIR, blobID);
         Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
         byte[] fileData = readInBlob.getContents();
         File fileOfInterest = Utils.join(Repository.CWD, filename);
-        fileOfInterest.createNewFile();
+//        fileOfInterest.createNewFile();
         Utils.writeContents(fileOfInterest, fileData);
     }
     public static void readWriteBlobFromCommit(String blobID, String filename) {

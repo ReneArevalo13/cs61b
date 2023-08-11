@@ -190,7 +190,7 @@ public class Repository {
     public static ArrayList<String> getRmList() {
         return Helper.fromFileRmList();
     }
-    public static void checkout(String[] args) throws IOException {
+    public static void checkout(String[] args)  {
         int length = args.length;
         if (length == 3) {
             String filenameCase1 = args[2];
@@ -265,7 +265,7 @@ public class Repository {
         if (newBranch.isFile()) {
             System.out.println("A branch with that name already exists.");
         } else {
-            newBranch.createNewFile();
+//            newBranch.createNewFile();
             //copy in the most current commit and write to new branch
             Utils.writeContents(newBranch, readContentsAsString(REF_DIR_MASTER));
         }
@@ -327,7 +327,6 @@ public class Repository {
         }
         Commit.setHead(commitID);
         clearStaging();
-
     }
 
 }
