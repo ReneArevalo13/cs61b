@@ -117,7 +117,7 @@ public class Repository {
         } else if (Helper.fileTrackedByCurrentCommit(filename)) {
             if (filenameCheck.isFile()) {
                 //add file to the rm stage
-                rmList.add(filename);
+//                rmList.add(filename);
                 //delete file from working directory
                 Utils.restrictedDelete(filenameCheck);
             } else {
