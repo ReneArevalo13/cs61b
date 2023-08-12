@@ -113,7 +113,7 @@ public class Repository {
             blobMap.remove(Helper.getKeyFromValue(blobMap, filename));
 //            addList.remove(String.valueOf(Filename));
             saveBlobMap(blobMap);
-            rmList.add(filename);
+//            rmList.add(filename);
         } else if (Helper.fileTrackedByCurrentCommit(filename)) {
             if (filenameCheck.isFile()) {
                 //add file to the rm stage

@@ -144,6 +144,10 @@ public class Commit implements Serializable {
 
         //construct the commit object
         Commit c = new Commit(Message);
+        if (c.message.isEmpty()) {
+            System.out.println("Please enter a commit message.");
+            System.exit(0);
+        }
         //set the head pointer as the most current commit id
         c.setHead();
         //set the master pointer
@@ -198,6 +202,10 @@ public class Commit implements Serializable {
         HashMap<String, String> map= c.getBlobMap();
         //bring in the addstage hashmap
         HashMap<String, String> addMap= Repository.copyBlobMap();
+        if (addMap.isEmpty()){
+            System.out.println("No changes added to the commit.");
+            System.exit(0);
+        }
         //update map to refelct the added files, assumed that all these should be the updates to commit
         for (Map.Entry<String,String> mapElement : addMap.entrySet()) {
             String value = mapElement.getValue();
