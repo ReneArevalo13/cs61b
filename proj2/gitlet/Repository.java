@@ -91,6 +91,10 @@ public class Repository {
         //construct blob object of the given file
         Blob addBlob = new Blob(filename);
         blobMap = Helper.fromFileBlobMap();
+        rmList = Helper.fromFileRmList();
+        rmList.remove(filename);
+        saveRemoveStage(rmList);
+
         if (Helper.blobIsDifferent(addBlob.getID())) {
             //add current blob to staging hashmap
             blobMap.put(addBlob.getID(), addBlob.getFilename());
