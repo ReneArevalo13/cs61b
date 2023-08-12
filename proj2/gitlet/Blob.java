@@ -31,7 +31,7 @@ public class Blob implements Serializable {
         this.filename = filename;
         File filepath = join(CWD, this.filename);
         this.contents = Utils.readContents(filepath);
-        this.id = Utils.sha1(contents);
+        this.id = Utils.sha1(filename, contents);
     }
     public String getID() {
         return this.id;
