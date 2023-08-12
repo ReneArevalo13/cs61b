@@ -202,7 +202,9 @@ public class Commit implements Serializable {
         HashMap<String, String> map= c.getBlobMap();
         //bring in the addstage hashmap
         HashMap<String, String> addMap= Repository.copyBlobMap();
-        if (addMap.isEmpty()){
+        ArrayList<String > removeList = Repository.getRmList();
+
+        if (addMap.isEmpty() && removeList.isEmpty()){
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
@@ -214,7 +216,6 @@ public class Commit implements Serializable {
             map.put(mapElement.getKey(), mapElement.getValue());
         }
         //update map to reflect the files staged for removal.
-        ArrayList<String > removeList = Repository.getRmList();
         for (String file : removeList) {
             String keyToRemove = Helper.getKeyFromValue(map, file);
             map.remove(keyToRemove);
