@@ -76,6 +76,8 @@ public class Repository {
         BLOB_DIR.mkdir();
         Helper.setActiveBranch("master");
         Commit initialCommit = new Commit(0);
+        initialCommit.setHead();
+        initialCommit.setBranch();
         saveBlobMap(blobMap);
         saveRemoveStage(rmList);
 

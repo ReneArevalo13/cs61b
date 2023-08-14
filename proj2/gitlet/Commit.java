@@ -95,7 +95,7 @@ public class Commit implements Serializable {
     * Method to set the HEAD pointer to the most recent commit. Will be held in the refs/HEAD folder.
     * Should only have the most recent commit ID saved.
     * */
-    private void setHead() {
+    public void setHead() {
         //delete previous HEAD pointer file
         File previousHeadFilePath = Utils.join(Repository.HEAD_DIR);
         previousHeadFilePath.delete();
@@ -115,7 +115,7 @@ public class Commit implements Serializable {
     /**
      * Method to set the master branch pointer. It is the same as HEAD until a new branch is created.
      * */
-    private void setBranch() {
+    public void setBranch() {
         if (Helper.getActiveBranch().equals("master")) {
             File previousHeadFilePath = Utils.join(Repository.REF_DIR_MASTER);
             previousHeadFilePath.delete();
