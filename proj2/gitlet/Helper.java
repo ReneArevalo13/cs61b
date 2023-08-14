@@ -72,7 +72,7 @@ public class Helper {
     }
     public static Boolean fileTrackedByCommitOnly(String filename, String commitID) {
         //get the SHAid from the HEAD commit
-        File newBranch = Utils.join(Repository.COMMIT_DIR);
+        File newBranch = Utils.join(Repository.COMMIT_DIR, commitID);
         String pointer = Utils.readContentsAsString(newBranch);
         //read in the most current commit
         Commit c = Commit.fromFileCommit(pointer);
