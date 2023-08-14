@@ -325,12 +325,16 @@ public class Repository {
     public static void reset(String commitID) {
         Commit c = Commit.fromFileCommit(commitID);
         HashMap<String, String> map= c.getBlobMap();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            if (!Helper.fileTrackedByCurrentCommit(entry.getValue()) && Helper.fileTrackedByCommitOnly(entry.getValue(),
-                    commitID)) {
+        List<String> filesInWorkingDirectory = Utils.plainFilenamesIn(CWD);
+
+        assert filesInWorkingDirectory != null;
+        for (String file : filesInWorkingDirectory) {
+            if (!Helper.fileTrackedByCurrentCommit(file) && Helper.fileTrackedByCommitOnly(file, commitID)) {
                 System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                 System.exit(0);
             }
+        }
+        for (Map.Entry<String, String> entry : map.entrySet()) {
             checkoutHelper(commitID, entry.getValue());
         }
         Commit.setHead(commitID);

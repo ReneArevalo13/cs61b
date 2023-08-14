@@ -71,9 +71,6 @@ public class Helper {
         }
     }
     public static Boolean fileTrackedByCommitOnly(String filename, String commitID) {
-        //get the SHAid from the HEAD commit
-//        File newBranch = Utils.join(Repository.COMMIT_DIR, commitID);
-//        String pointer = Utils.readContentsAsString(newBranch);
         //read in the most current commit
         Commit c = Commit.fromFileCommit(commitID);
         //check the previous commits blobMap and see if the file of interest is already tracked
