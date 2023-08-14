@@ -233,7 +233,7 @@ public class Commit implements Serializable {
         }
     }
     /**
-     * Method to recursively go through the commit tree and extract the id, timestamp,
+     * Method to recursively go th        rmList = Helper.fromFileRmList();rough the commit tree and extract the id, timestamp,
      * and message required for the log command. Starts at the most current commit, HEAD,
      * and goes until the init commit.
      * */

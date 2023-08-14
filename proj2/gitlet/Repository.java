@@ -218,11 +218,11 @@ public class Repository {
             } else {
                 assert filesInWorkingDirectory != null;
                 for (String file : filesInWorkingDirectory) {
-                    if (!Helper.fileTrackedByCurrentCommit(file) && Helper.fileTrackedByCommit(file, branchName)) {
+                    if (!Helper.fileTrackedByCurrentCommit(file) && Helper.fileTrackedByCommitBranch(file, branchName)) {
                         System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                         System.exit(0);
                     }
-                    if (Helper.fileTrackedByCurrentCommit(file) && !Helper.fileTrackedByCommit(file, branchName)) {
+                    if (Helper.fileTrackedByCurrentCommit(file) && !Helper.fileTrackedByCommitBranch(file, branchName)) {
                         Utils.restrictedDelete(file);
                     }
                 }
@@ -326,7 +326,7 @@ public class Repository {
         Commit c = Commit.fromFileCommit(commitID);
         HashMap<String, String> map= c.getBlobMap();
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            if (!Helper.fileTrackedByCurrentCommit(entry.getValue()) && Helper.fileTrackedByCommit(entry.getValue(),
+            if (!Helper.fileTrackedByCurrentCommit(entry.getValue()) && Helper.fileTrackedByCommitOnly(entry.getValue(),
                     commitID)) {
                 System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                 System.exit(0);

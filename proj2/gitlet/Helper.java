@@ -1,7 +1,6 @@
 package gitlet;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +57,7 @@ public class Helper {
         }
         return result;
     }
-    public static Boolean fileTrackedByCommit(String filename, String branchName) {
+    public static Boolean fileTrackedByCommitBranch(String filename, String branchName) {
         //get the SHAid from the HEAD commit
         File newBranch = Utils.join(Repository.CWD, ".gitlet", "refs", "head", branchName);
         String pointer = Utils.readContentsAsString(newBranch);
@@ -71,6 +70,21 @@ public class Helper {
             return c.getBlobMap().containsValue(filename);
         }
     }
+    public static Boolean fileTrackedByCommitOnly(String filename, String commitID) {
+        //get the SHAid from the HEAD commit
+        File newBranch = Utils.join(Repository.COMMIT_DIR);
+        String pointer = Utils.readContentsAsString(newBranch);
+        //read in the most current commit
+        Commit c = Commit.fromFileCommit(pointer);
+        //check the previous commits blobMap and see if the file of interest is already tracked
+        if (c.getBlobMap().containsValue(null)) {
+            return true;
+        } else {
+            return c.getBlobMap().containsValue(filename);
+        }
+    }
+
+
     /**
      * Method to check whether the file is already tracked by the current commit.
      * Return True if this file is tracked by the most current commit.
