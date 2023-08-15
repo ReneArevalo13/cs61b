@@ -235,13 +235,12 @@ public class Repository {
     }
     private static void checkoutHelper(String commitPointer, String filename) {
         List<String> commitList = Utils.plainFilenamesIn(COMMIT_DIR);
-        Commit c = Commit.fromFileCommit(commitPointer);
-        //check if commitID exists
         assert commitList != null;
         if (!commitList.contains(commitPointer)){
             System.out.println("No commit with that id exists.");
             return;
         }
+        Commit c = Commit.fromFileCommit(commitPointer);
         if (c.getBlobMap().containsValue(filename)){
             String blobID = Helper.getKeyFromValue(c.getBlobMap(), filename);
             Helper.readWriteBlobFromCommit(blobID, filename);
