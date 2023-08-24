@@ -1,11 +1,7 @@
 package gitlet;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-
 /** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
+ *  @author RENE AREVALO
  */
 public class Main {
 
@@ -14,7 +10,7 @@ public class Main {
      */
     public static void main(String[] args)  {
         // TODO: what if args is empty?
-        switch(args[0]) {
+        switch (args[0]) {
             case "init":
                 Repository.init();
                 break;
@@ -35,7 +31,7 @@ public class Main {
                 Commit.log();
                 break;
             case "global-log":
-                Commit.global_log();
+                Commit.globalLog();
                 break;
             case "find":
                 String findMessage = args[1];
@@ -78,6 +74,10 @@ public class Main {
             case "readRemovestage":
                 //java gitlet.Main commit [message]
                 Repository.readRemoveStage();
+                break;
+            case "splitPoint":
+                String mergingBranch = args[1];
+                Merge.splitPoint(mergingBranch);
                 break;
             // TODO: FILL THE REST IN
         }

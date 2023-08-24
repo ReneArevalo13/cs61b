@@ -1,10 +1,4 @@
 package gitlet;
-
-// TODO: any imports you need here
-
-
-
-
 import java.io.File;
 import java.io.Serializable;
 import java.time.Instant;
@@ -13,18 +7,15 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static gitlet.Utils.join;
 
 
 /** Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
- *
- *  @author TODO
+ * Holds the metadata of the commit object. Time, Message,
+ * parent commit id, and its own unique sha-id.
+ *  @author RENE AREVALO
  */
 public class Commit implements Serializable {
     /**
-     * TODO: add instance variables here.
      * message: the message given by user when a commit is made
      * timestamp: the time that the commit was made
      * parent: pointer to the parent commit of this commit
@@ -37,30 +28,35 @@ public class Commit implements Serializable {
 
     /** The message of this Commit. */
     private String message;
+    /** The timestamp of this Commit. */
     private String timestamp;
+    /** The parent id of this Commit. */
     private String parent;
+    /** The unique SHA-1 id of this Commit. */
     private String id;
+    /** The hashmap of the blobs tracked by this Commit. */
     private HashMap<String, String> blobsTracked;
+    /** Empty hashmap for initialization. */
     private HashMap<String, String> emptyHashMap = new HashMap<>();
 
-
-
-//    represents the current working directory of the user
+    /** The current working directory */
     public static final File CWD = new File(System.getProperty("user.dir"));
-    public static final File STAGING_DIR = join(CWD, ".gitlet", "staging");
-    private static final Instant EPOCH = Instant.EPOCH;
-    private final Instant now = Instant.now();
-
+    /** Retrieve the message of this Commit. */
     public String getMessage() {
         return this.message;
     }
+    /** Retrieve the timestamp of this Commit. */
     public String getTimestamp() {
         return this.timestamp;
     }
-    public String getParent(){return this.parent;};
-    public String getId(){return this.id;};
-
-
+    /** Retrieve the parent of this Commit. */
+    public String getParent() {
+        return this.parent;
+    }
+    /** Retrieve the ID of this Commit. */
+    public String getId() {
+        return this.id;
+    }
     /**
      * Commit constructor. Takes in commit message as input. Sets the current commit time.
      * Sets the parent of this commit, which is the previous HEAD pointer. Tracks the blobs that are
@@ -137,26 +133,16 @@ public class Commit implements Serializable {
      * Checks to make sure a blob is staged for addition.Creates the commit object. Moves the head pointer
      * to this latest commit object. Writes the commit object to disk. Lastly it clears the staging area.
      * */
-    public static void makeCommit (String Message) {
-        /*If no files have been staged, abort. Print the message No changes added to the commit.*/
-        //TODO: what to do if no files staged.
-
-
-        //construct the commit object
-        Commit c = new Commit(Message);
+    public static void makeCommit(String message) {
+        Commit c = new Commit(message);
         if (c.message.isEmpty()) {
             System.out.println("Please enter a commit message.");
             System.exit(0);
         }
-        //set the head pointer as the most current commit id
         c.setHead();
-        //set the master pointer
         c.setBranch();
-        //save commit object to disk
         c.saveCommit();
-        //clear the staging area
         Repository.clearStaging();
-
     }
     /**
      * Method to save the commit object to disk.
@@ -176,12 +162,12 @@ public class Commit implements Serializable {
     /**
      * Method to read in the Commit object from disk.
      * */
-    public static Commit fromFileCommit(String CommitID) {
-        File CommitFile = Utils.join(Repository.COMMIT_DIR, CommitID);
-        if (!CommitFile.isFile()) {
+    public static Commit fromFileCommit(String commitID) {
+        File commitFile = Utils.join(Repository.COMMIT_DIR, commitID);
+        if (!commitFile.isFile()) {
             System.out.println("No commit with that id exists.");
         }
-        return Utils.readObject(CommitFile, Commit.class);
+        return Utils.readObject(commitFile, Commit.class);
     }
     /**
      * Method to set the parent of the newest commit. This is done by checking which commit the HEAD
@@ -199,17 +185,17 @@ public class Commit implements Serializable {
         //bring in parent BlobMap as map
         String headPointer = Utils.readContentsAsString(Repository.HEAD_DIR);
         Commit c = fromFileCommit(headPointer);
-        HashMap<String, String> map= c.getBlobMap();
+        HashMap<String, String> map = c.getBlobMap();
         //bring in the addstage hashmap
-        HashMap<String, String> addMap= Repository.copyBlobMap();
-        ArrayList<String > removeList = Repository.getRmList();
+        HashMap<String, String> addMap = Repository.copyBlobMap();
+        ArrayList<String> removeList = Repository.getRmList();
 
-        if (addMap.isEmpty() && removeList.isEmpty()){
+        if (addMap.isEmpty() && removeList.isEmpty()) {
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
         //update map to refelct the added files, assumed that all these should be the updates to commit
-        for (Map.Entry<String,String> mapElement : addMap.entrySet()) {
+        for (Map.Entry<String, String> mapElement : addMap.entrySet()) {
             String value = mapElement.getValue();
             String keyToRemove = Helper.getKeyFromValue(map, value);
             map.remove(keyToRemove);
@@ -225,32 +211,28 @@ public class Commit implements Serializable {
     /**
      * Test method to see that blobs a specific commit is tracking.
      * */
-    public static void readBlobsTracked(String CommitID) {
-        Commit c = fromFileCommit(CommitID);
-        HashMap<String, String> map= c.getBlobMap();
+    public static void readBlobsTracked(String commitID) {
+        Commit c = fromFileCommit(commitID);
+        HashMap<String, String> map = c.getBlobMap();
         for (Map.Entry<String, String> entry : map.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
     }
     /**
-     * Method to recursively go th        rmList = Helper.fromFileRmList();rough the commit tree and extract the id, timestamp,
-     * and message required for the log command. Starts at the most current commit, HEAD,
-     * and goes until the init commit.
+     * Method to recursively go the rmList = Helper.fromFileRmList();rough the commit
+     * tree and extract the id, timestamp and message required for the log command.
+     * Starts at the most current commit, HEAD, and goes until the init commit.
      * */
     private static ArrayList<LogBlob> goThroughParents(String commitPointer, ArrayList<LogBlob> logList) {
-        //read in the commit
         Commit c = fromFileCommit(commitPointer);
-//        ArrayList<LogBlob> logList = new ArrayList<>();
-        //base case when the commit is the initial commit
+
         if (c.getParent().equals("null")) {
-            //place contents into LogBlob for
             LogBlob L = new LogBlob(c.getId(), c.getTimestamp(), c.getMessage());
             logList.add(L);
             return logList;
         } else {
             LogBlob L = new LogBlob(c.getId(), c.getTimestamp(), c.getMessage());
             logList.add(L);
-            //recursively go through the parents
             goThroughParents(c.getParent(), logList);
         }
         return logList;
@@ -268,7 +250,7 @@ public class Commit implements Serializable {
             System.out.printf("%n");
         }
     }
-    public static void global_log() {
+    public static void globalLog() {
         List<String> commitList = Utils.plainFilenamesIn(Repository.COMMIT_DIR);
         assert commitList != null;
         for (String file : commitList) {
@@ -291,7 +273,9 @@ public class Commit implements Serializable {
                 messageExists = true;
             }
         }
-        if (!messageExists) System.out.println("Found no commit with that message.");
+        if (!messageExists) {
+            System.out.println("Found no commit with that message.");
+        }
     }
     public static String getTime() {
         //closest time format to spec

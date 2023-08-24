@@ -7,17 +7,14 @@ import static gitlet.Utils.*;
 
 import java.io.Serializable;
 import java.util.*;
-// TODO: any imports you need here
 
 /** Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
+ *  Holds all the functions of the repository.
  *
  *  @author RENE AREVALO
  */
 public class Repository {
     /**
-     * TODO: add instance variables here.
      *
      * List all instance variables of the Repository class here with a useful
      * comment above them describing what that variable represents and how that
@@ -31,7 +28,7 @@ public class Repository {
     /** The staging directory. Will hold all the blobs staged for a commit. */
     public static final File STAGING_DIR = join(CWD, ".gitlet", "staging");
     public static final File ADD_DIR = join(CWD, ".gitlet", "staging", "addStage");
-    public static final File RM_DIR = join(CWD, ".gitlet", "staging", "rmStage" );
+    public static final File RM_DIR = join(CWD, ".gitlet", "staging", "rmStage");
     /** The ref directory. Will hold the head and master refs */
     public static final File REF_DIR_MASTER = join(CWD, ".gitlet", "refs", "head", "master");
     /** The object directory. Will hold the commit and blob objects. */
@@ -45,23 +42,6 @@ public class Repository {
     private static  HashMap<String, String> blobMap = new HashMap<>();
     private static ArrayList<String> rmList = new ArrayList<>();
     private static String activeBranch = "master";
-
-    /* TODO: fill in the rest of this class. */
-    /**
-     * TODO: make branch pointer point to MASTER and HEAD
-     * TODO: add SHA id
-     * TODO: create other directories that will be used inside of gitlet
-     * TODO: creat the rest of the infrastructure for
-
-     * Creates a new Gitlet version-control system in the current directory. This system will automatically start with
-     * one commit: a commit that contains no files and has the commit message initial commit (just like that, with
-     * no punctuation). It will have a single branch: master, which initially points to this initial commit,
-     * and master will be the current branch. The timestamp for this initial commit will be 00:00:00 UTC, Thursday, 1
-     * January 1970 in whatever format you choose for dates (this is called “The (Unix) Epoch”, represented internally
-     * by the time 0.) Since the initial commit in all repositories created by Gitlet will have exactly the
-     * same content, it follows that all repositories will automatically share this commit (they will all have the same
-     * UID) and all commits in all repositories will trace back to it.
-     */
     public static void init() {
 
         if (GITLET_DIR.isDirectory()) {
@@ -78,7 +58,7 @@ public class Repository {
         Commit initialCommit = new Commit(0);
         initialCommit.setHead();
         initialCommit.setBranch();
-        saveBlobMap(blobMap);
+        saveBlobMap();
         saveRemoveStage(rmList);
 
     }
@@ -103,7 +83,7 @@ public class Repository {
             //write current blob object to disk
             File blobFile = join(BLOB_DIR, addBlob.getID());
             writeObject(blobFile, addBlob);
-            saveBlobMap(blobMap);
+            saveBlobMap();
         }
     }
 
@@ -112,19 +92,12 @@ public class Repository {
         rmList = Helper.fromFileRmList();
         blobMap = Helper.fromFileBlobMap();
         File filenameCheck = join(CWD, filename);
-        //unstage the file if it is currently staged for addition
-        //check to see if file is currently in staging area
         if (blobMap.containsValue(filename)) {
-            //remove this entry from Blobmap and consequently addList.
             blobMap.remove(Helper.getKeyFromValue(blobMap, filename));
-//            addList.remove(String.valueOf(Filename));
-            saveBlobMap(blobMap);
-//            rmList.add(filename);
+            saveBlobMap();
         } else if (Helper.fileTrackedByCurrentCommit(filename)) {
             if (filenameCheck.isFile()) {
-                //add file to the rm stage
                 rmList.add(filename);
-                //delete file from working directory
                 Utils.restrictedDelete(filenameCheck);
             } else {
                 rmList.add(filename);
@@ -149,7 +122,7 @@ public class Repository {
         rmList = Helper.fromFileRmList();
         blobMap.clear();
         rmList.clear();
-        saveBlobMap(blobMap);
+        saveBlobMap();
         saveRemoveStage(rmList);
 
     }
@@ -162,7 +135,6 @@ public class Repository {
         map = Utils.readObject(ADD_DIR, HashMap.class);
         ArrayList<String> addList = new ArrayList<>();
         for (Map.Entry<String, String> entry : map.entrySet()) {
-//            System.out.println(entry.getKey() + ": " + entry.getValue());
             addList.add(entry.getValue());
         }
         return addList;
@@ -172,8 +144,8 @@ public class Repository {
      * */
     @SuppressWarnings("unchecked")
     public static void readRemoveStage() {
-        ArrayList<String > list;
-        list = Utils.readObject(RM_DIR,ArrayList.class);
+        ArrayList<String> list;
+        list = Utils.readObject(RM_DIR, ArrayList.class);
         System.out.println("Files that are staged for removal : " + list);
     }
 
@@ -181,16 +153,16 @@ public class Repository {
     /**
      * Method to save the blobMap to disk
      * */
-    private static void saveBlobMap(HashMap<String, String> BlobMap)  {
+    private static void saveBlobMap()  {
         File blobHashMap = join(STAGING_DIR, "addStage");
         writeObject(blobHashMap, Repository.blobMap);
     }
     /**
      * Method to save the RemoveStage to disk
      * */
-    private static void saveRemoveStage(List<String> rmList) {
-        File rmListDir = join(STAGING_DIR, "removeStage");
-        writeObject(rmListDir, (Serializable) rmList);
+    private static void saveRemoveStage(List<String> removeList) {
+        File removeListDir = join(STAGING_DIR, "removeStage");
+        writeObject(removeListDir, (Serializable) removeList);
     }
     /**
      * Getter method for the RMList*/
@@ -199,30 +171,36 @@ public class Repository {
     }
     public static void checkout(String[] args)  {
         int length = args.length;
-        if (length == 3) {
+        final int lengthOfFirstCase = 3;
+        final int lengthOfSecondCase = 4;
+        final int lengthOfThirdCase = 2;
+        if (length == lengthOfFirstCase) {
             String filenameCase1 = args[2];
             String headPointer = Utils.readContentsAsString(HEAD_DIR);
             checkoutHelper(headPointer, filenameCase1);
-        } else if (length == 4) {
+        } else if (length == lengthOfSecondCase) {
             String commitPointer = args[1];
             String filenameCase2 = args[3];
             checkoutHelper(commitPointer, filenameCase2);
-        } else if (length == 2) {
+        } else if (length == lengthOfThirdCase) {
             String branchName = args[1];
             File branch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
             List<String> filesInWorkingDirectory = Utils.plainFilenamesIn(CWD);
             if (!branch.exists()) {
                 System.out.println("No such branch exists.");
-            }else if (Helper.getActiveBranch().equals(branchName)) {
+            } else if (Helper.getActiveBranch().equals(branchName)) {
                 System.out.println("No need to checkout the current branch.");
             } else {
                 assert filesInWorkingDirectory != null;
                 for (String file : filesInWorkingDirectory) {
-                    if (!Helper.fileTrackedByCurrentCommit(file) && Helper.fileTrackedByCommitBranch(file, branchName)) {
-                        System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                    if (!Helper.fileTrackedByCurrentCommit(file)
+                            && Helper.fileTrackedByCommitBranch(file, branchName)) {
+                        System.out.println("There is an untracked file in the way; delete it, "
+                                + "or add and commit it first.");
                         System.exit(0);
                     }
-                    if (Helper.fileTrackedByCurrentCommit(file) && !Helper.fileTrackedByCommitBranch(file, branchName)) {
+                    if (Helper.fileTrackedByCurrentCommit(file)
+                            && !Helper.fileTrackedByCommitBranch(file, branchName)) {
                         Utils.restrictedDelete(file);
                     }
                 }
@@ -236,12 +214,12 @@ public class Repository {
     private static void checkoutHelper(String commitPointer, String filename) {
         List<String> commitList = Utils.plainFilenamesIn(COMMIT_DIR);
         assert commitList != null;
-        if (!commitList.contains(commitPointer)){
+        if (!commitList.contains(commitPointer)) {
             System.out.println("No commit with that id exists.");
             return;
         }
         Commit c = Commit.fromFileCommit(commitPointer);
-        if (c.getBlobMap().containsValue(filename)){
+        if (c.getBlobMap().containsValue(filename)) {
             String blobID = Helper.getKeyFromValue(c.getBlobMap(), filename);
             Helper.readWriteBlobFromCommit(blobID, filename);
         } else {
@@ -252,12 +230,10 @@ public class Repository {
         File branch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
 
         Commit c = Commit.fromFileCommit(Utils.readContentsAsString(branch));
-        //go through all the files tracked by last commit and update the CWD files
 
         for (Map.Entry<String, String> entry : c.getBlobMap().entrySet()) {
-            String key = entry.getKey();//shaID
-            String value = entry.getValue();//filename
-            //check if the file is in the working directory
+            String key = entry.getKey();
+            String value = entry.getValue();
             File file = Utils.join(CWD, value);
             if (file.exists()) {
                 Helper.readWriteBlobFromCommit(key, value);
@@ -271,8 +247,6 @@ public class Repository {
         if (newBranch.isFile()) {
             System.out.println("A branch with that name already exists.");
         } else {
-//            newBranch.createNewFile();
-            //copy in the most current commit and write to new branch
             Utils.writeContents(newBranch, readContentsAsString(REF_DIR_MASTER));
         }
     }
@@ -287,16 +261,16 @@ public class Repository {
         }
     }
     public static void status() {
-        ArrayList<String> rmList = Helper.fromFileRmList();
+        ArrayList<String> removeList = Helper.fromFileRmList();
         ArrayList<String> addList = readAddStage();
-        Collections.sort(rmList);
+        Collections.sort(removeList);
         Collections.sort(addList);
-        String activeBranch = Helper.getActiveBranch();
+        String currentActiveBranch = Helper.getActiveBranch();
         File headFiles = Utils.join(CWD, ".gitlet", "refs", "head");
 
         System.out.println("=== Branches ===");
         for (String branch : Objects.requireNonNull(headFiles.list())) {
-            if (branch.equals(activeBranch)) {
+            if (branch.equals(currentActiveBranch)) {
                 System.out.println("*" + branch);
             } else {
                 System.out.println(branch);
@@ -311,7 +285,7 @@ public class Repository {
 
         System.out.printf("%n");
         System.out.println("=== Removed Files ===");
-        for (String rm : rmList) {
+        for (String rm : removeList) {
             System.out.println(rm);
         }
 
@@ -323,7 +297,7 @@ public class Repository {
     }
     public static void reset(String commitID) {
         Commit c = Commit.fromFileCommit(commitID);
-        HashMap<String, String> map= c.getBlobMap();
+        HashMap<String, String> map = c.getBlobMap();
         List<String> filesInWorkingDirectory = Utils.plainFilenamesIn(CWD);
 
         assert filesInWorkingDirectory != null;

@@ -7,8 +7,6 @@ import java.io.Serializable;
 import static gitlet.Utils.join;
 
 /** Represents a gitlet Blob.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
  *  Blobs are the type of object in gitlet that track the version of the file.
  *  They are identified by their SHA-1 id
  *  Hold the saved contents of a file
@@ -39,6 +37,8 @@ public class Blob implements Serializable {
     public String getFilename() {
         return this.filename;
     }
-    public byte[] getContents() { return this.contents;}
+    public byte[] getContents() {
+        return this.contents;
+    }
 
 }

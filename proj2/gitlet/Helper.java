@@ -32,11 +32,9 @@ public class Helper {
         Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
         byte[] fileData = readInBlob.getContents();
         File fileOfInterest = Utils.join(Repository.CWD, filename);
-//        fileOfInterest.createNewFile();
         Utils.writeContents(fileOfInterest, fileData);
     }
     public static void readWriteBlobFromCommit(String blobID, String filename) {
-//        String blobID = getKeyFromValue(map, filename);
         File blobToRestore = Utils.join(Repository.BLOB_DIR, blobID);
         Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
         byte[] fileData = readInBlob.getContents();
@@ -120,7 +118,7 @@ public class Helper {
      * Method to read in the BlobMap (addstage) from disk.
      * */
     @SuppressWarnings("unchecked")
-    public static HashMap<String,String> fromFileBlobMap() {
+    public static HashMap<String, String> fromFileBlobMap() {
         File blobHashMap = join(Repository.STAGING_DIR, "addStage");
         if (blobHashMap.isFile()) {
             return Utils.readObject(blobHashMap, HashMap.class);
@@ -133,9 +131,9 @@ public class Helper {
      * */
     @SuppressWarnings("unchecked")
     public static ArrayList<String> fromFileRmList() {
-        File RmListDir = join(Repository.STAGING_DIR, "removeStage");
-        if (RmListDir.isFile()) {
-            return Utils.readObject(RmListDir, ArrayList.class);
+        File rmListDir = join(Repository.STAGING_DIR, "removeStage");
+        if (rmListDir.isFile()) {
+            return Utils.readObject(rmListDir, ArrayList.class);
         } else {
             return new ArrayList<String>();
         }
