@@ -10,6 +10,9 @@ public class Main {
      */
     public static void main(String[] args)  {
         // TODO: what if args is empty?
+        if (args.length == 0) {
+            System.out.println("Please enter a command. ");
+        }
         switch (args[0]) {
             case "init":
                 Repository.init();
@@ -62,6 +65,10 @@ public class Main {
                 String resetID = args[1];
                 Repository.reset(resetID);
                 break;
+            case "merge":
+                String mergingBranch = args[1];
+                Merge.merge(mergingBranch);
+                break;
             case "readAddstage":
                 //java gitlet.Main commit [message]
                 Repository.readAddStage();
@@ -71,13 +78,10 @@ public class Main {
                 String commitID = args[1];
                 Commit.readBlobsTracked(commitID);
                 break;
-            case "readRemovestage":
-                //java gitlet.Main commit [message]
-                Repository.readRemoveStage();
-                break;
+
             case "splitPoint":
-                String mergingBranch = args[1];
-                Merge.splitPoint(mergingBranch);
+                String otherBranch = args[1];
+                Merge.splitPoint(otherBranch);
                 break;
             // TODO: FILL THE REST IN
         }

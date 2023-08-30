@@ -194,7 +194,7 @@ public class Commit implements Serializable {
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
-        //update map to refelct the added files, assumed that all these should be the updates to commit
+        //update map to reflect the added files, assumed that all these should be the updates to commit
         for (Map.Entry<String, String> mapElement : addMap.entrySet()) {
             String value = mapElement.getValue();
             String keyToRemove = Helper.getKeyFromValue(map, value);
