@@ -52,7 +52,7 @@ public class Helper {
                     result = entry.getKey();
                 }
             }
-            System.exit(0);
+//            System.exit(0);
         }
         return result;
     }
