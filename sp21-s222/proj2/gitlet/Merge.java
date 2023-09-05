@@ -95,7 +95,6 @@ public class Merge {
         /*List to hold the state of the file wrt the commit
         * [splitMap, headMap, mergingMap]
         * */
-        System.out.println("CHECKING MODIFIED STATUS");
         /*Variables to hold states of the commits*/
         String splitState = "";
         String headState = "";
@@ -106,8 +105,7 @@ public class Merge {
 
 //        go through each of the files that will be seen in the merge
         for (String file : filesSeen) {
-            System.out.println(file);
-            /*ArrayList that will hold the state of the of all three commits in a list for a given file.*/
+             /*ArrayList that will hold the state of the of all three commits in a list for a given file.*/
             List<String> thruple = new ArrayList<>(3);
 
 
@@ -119,12 +117,12 @@ public class Merge {
                 splitSHA = "null";
             }
             if (headMap.containsValue(file)) {
-                headSHA = Helper.getKeyFromValue(splitMap, file);
+                headSHA = Helper.getKeyFromValue(headMap, file);
             } else {
                 headSHA = "null";
             }
             if (mergingMap.containsValue(file)) {
-                mergingSHA = Helper.getKeyFromValue(splitMap, file);
+                mergingSHA = Helper.getKeyFromValue(mergingMap, file);
             } else {
                 mergingSHA = "null";
             }
@@ -140,20 +138,20 @@ public class Merge {
                 splitState = "present";
             }
 
-            if (splitSHA.equals(headSHA)){
-                headState = "unmodified";
-            } else if (headSHA.equals("null")) {
+            if (headSHA.equals("null")) {
                 headState = "null";
+            } else if (splitSHA.equals(headSHA)) {
+                headState = "unmodified";
             } else if (splitSHA.equals("null") && !headSHA.equals("null")) {
                 headState = "present";
             } else {
                 headState = "modified";
             }
 
-            if (splitSHA.equals(mergingSHA)){
-                mergingState = "unmodified";
-            } else if (mergingSHA.equals("null")) {
+            if (mergingSHA.equals("null")) {
                 mergingState = "null";
+            } else if (splitSHA.equals(mergingSHA)) {
+                mergingState = "unmodified";
             } else if (splitSHA.equals("null") && !mergingSHA.equals("null")) {
                 mergingState = "present";
             } else {
@@ -167,7 +165,6 @@ public class Merge {
             modifiedState.put(file, thruple);
 
         }
-        System.out.println("Modified states now known");
         return modifiedState;
     }
 }

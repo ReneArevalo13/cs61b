@@ -226,6 +226,7 @@ public class Repository {
             System.out.println("File does not exist in that commit.");
         }
     }
+
     private static void checkoutBranchHelper(String branchName) {
         File branch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
 
