@@ -106,7 +106,6 @@ public class Repository {
             System.out.println("No reason to remove the file.");
         }
         saveRemoveStage(rmList);
-
     }
     @SuppressWarnings("unchecked")
     public static HashMap<String, String> copyBlobMap() {
