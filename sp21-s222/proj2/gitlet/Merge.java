@@ -193,10 +193,14 @@ public class Merge {
             String other = modifiedStatus.get(2);
 
             if (head.equals("unmodified") && other.equals("modified")) {
-                //CASE 1: Modified in OTHER, Unmodified in HEAD: KEEP OTHER
-                keepFileWithStage(filename, mergingMap);
+                if (!mergingMap.containsValue(filename)) {
+                    //CASE 6: Unmodified in HEAD but NOT PRESENT in OTHER: REMOVE
+                    Repository.rm(filename);
+                } else {
+                    //CASE 1: Modified in OTHER, Unmodified in HEAD: KEEP OTHER
+                    keepFileWithStage(filename, mergingMap);
+                }
             } else if (head.equals("modified") && other.equals("unmodified")) {
-                //CASE 2: Modified in HEAD, Unmodified in OTHER: KEEP HEAD
                 continue;
             } else if (head.equals("modified") && other.equals("modified")) {
                 //CASE 3: Modified in OTHER and HEAD: {in same way : keep either, in diff ways : conflict}
@@ -208,13 +212,7 @@ public class Merge {
             } else if (split.equals("null")&& head.equals("unmodified") && other.equals("modified")) {
                 //CASE 5: Not in SPLIT nor HEAD but in OTHER: KEEP OTHER
                 keepFileWithStage(filename, mergingMap);
-            } else if (head.equals("unmodified") && other.equals("modified")) {
-                //CASE 6: Unmodified in HEAD but NOT PRESENT in OTHER: REMOVE
-                Repository.rm(filename);
-            } else if (head.equals("modified") && other.equals("unmodified")) {
-                //CASE 7: Unmodified in OTHER but NOT PRESENT in HEAD: remained   REMOVE
-                continue;
-            }  else {
+            } else {
                 continue;
             }
         }
