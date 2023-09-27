@@ -31,7 +31,7 @@ public class Merge {
                 minvalue = entry1.getValue();
             }
         }
-        System.out.println("This is the split point id: " + minkey);
+//        System.out.println("This is the split point id: " + minkey);
         return minkey;
     }
 
@@ -74,7 +74,9 @@ public class Merge {
         Set<String>  filesSeen = filesInCommits(headMap, splitMap, mergingMap, uniqueValues);
 
         HashMap<String, List<String>> modifiedState = new HashMap<>();
-        HashMap<String, List<String>> modified = modifiedStatus(filesSeen, headMap, splitMap, mergingMap, modifiedState);
+        HashMap<String, List<String>> modified = modifiedStatus(filesSeen, headMap, splitMap, mergingMap,
+                modifiedState);
+        mergeLogic(modified, headMap, mergingMap);
 
 
     }
@@ -147,22 +149,22 @@ public class Merge {
                 splitState = "present";
             }
 
-            if (headSHA.equals("null")) {
-                headState = "null";
-            } else if (splitSHA.equals(headSHA)) {
+            if (splitSHA.equals(headSHA)) {
+                headState = "unmodified";
+            } else if (splitSHA.equals("null") && headSHA.equals("null")) {
                 headState = "unmodified";
             } else if (splitSHA.equals("null") && !headSHA.equals("null")) {
-                headState = "present";
+                headState = "modified";
             } else {
                 headState = "modified";
             }
 
-            if (mergingSHA.equals("null")) {
-                mergingState = "null";
-            } else if (splitSHA.equals(mergingSHA)) {
+            if (splitSHA.equals(mergingSHA)) {
+                mergingState = "unmodified";
+            } else if (splitSHA.equals("null") && mergingSHA.equals("null")) {
                 mergingState = "unmodified";
             } else if (splitSHA.equals("null") && !mergingSHA.equals("null")) {
-                mergingState = "present";
+                mergingState = "modified";
             } else {
                 mergingState = "modified";
             }
@@ -199,21 +201,20 @@ public class Merge {
             } else if (head.equals("modified") && other.equals("modified")) {
                 //CASE 3: Modified in OTHER and HEAD: {in same way : keep either, in diff ways : conflict}
                 //TODO: figure out how to manage this case with the modifications
-            } else if (split.equals("null")&& head.equals("present") && other.equals("null")) {
+                checkFileContents(filename, headMap, mergingMap);
+            } else if (split.equals("null")&& head.equals("modified") && other.equals("unmodified")) {
                 //CASE 4: Not in SPLIT nor OTHER but in HEAD: KEEP HEAD
                 continue;
-            } else if (split.equals("null")&& head.equals("null") && other.equals("present")) {
+            } else if (split.equals("null")&& head.equals("unmodified") && other.equals("modified")) {
                 //CASE 5: Not in SPLIT nor HEAD but in OTHER: KEEP OTHER
                 keepFileWithStage(filename, mergingMap);
-            } else if (head.equals("unmodified") && other.equals("null")) {
+            } else if (head.equals("unmodified") && other.equals("modified")) {
                 //CASE 6: Unmodified in HEAD but NOT PRESENT in OTHER: REMOVE
                 Repository.rm(filename);
-            } else if (head.equals("null") && other.equals("unmodified")) {
-                //CASE 7: Unmodified in OTHER but NOT PRESENT in HEAD: REMOVE
+            } else if (head.equals("modified") && other.equals("unmodified")) {
+                //CASE 7: Unmodified in OTHER but NOT PRESENT in HEAD: remained   REMOVE
                 continue;
-            } else if (split.equals("null")&& head.equals("present") && other.equals("present")) {
-                //last case with conflict: not at split but present at head and merging
-            } else {
+            }  else {
                 continue;
             }
         }
@@ -228,46 +229,62 @@ public class Merge {
         String blobID = Helper.getKeyFromValue(map, filename);
         Helper.readWriteBlobFromCommit(blobID, filename);
     }
+    /**
+     * Method to check the file contents of the file of interest at both the head commit and given branch.
+     * This is when both the files are "Modified" in reference to the split point.
+     * This is where the logic for conflicts is determined and handled.
+     * */
     private static void checkFileContents (String filename, HashMap<String, String> headMap,
-                                           HashMap<String, String> meringMap ) {
+                                           HashMap<String, String> mergingMap ) {
 
-        String blobIDHead = Helper.getKeyFromValue(headMap, filename);
-        String blobIDMerging = Helper.getKeyFromValue(meringMap, filename);
+//        String blobIDHead = Helper.getKeyFromValue(headMap, filename);
+//        String blobIDMerging = Helper.getKeyFromValue(mergingMap, filename);
 
-        byte[] contentHead = Helper.readInBlob(blobIDHead, filename);
-        byte[] contentMerging = Helper.readInBlob(blobIDMerging, filename);
 
-        if (!headMap.containsValue(filename) && !meringMap.containsValue(filename)) {
+        if (!headMap.containsValue(filename) && !mergingMap.containsValue(filename)) {
             //both removed: so leave as is
-        } else if (!headMap.containsValue(filename) && meringMap.containsValue(filename)) {
-            //case when file is not present in head commit but present in merging
+        } else if (!headMap.containsValue(filename) && mergingMap.containsValue(filename)) {
+            //case when file is NOT PRESENT in head commit but PRESENT in merging
             //conflict
-            handleConflict(filename, blobIDHead, blobIDMerging);
-        } else if (!meringMap.containsValue(filename) && headMap.containsValue(filename)) {
+            String blobIDMerging = Helper.getKeyFromValue(mergingMap, filename);
+            String mergingContent = Helper.readInBlobToString(blobIDMerging);
+            String headContent = "";
+            handleConflict(filename, headContent, mergingContent);
+        } else if (!mergingMap.containsValue(filename) && headMap.containsValue(filename)) {
             //case when file is not present in merging commit but present in head
             //conflict
-            handleConflict(filename, blobIDHead, blobIDMerging);
+            String blobIDHead = Helper.getKeyFromValue(headMap, filename);
+            String headContent = Helper.readInBlobToString(blobIDHead);
+            String mergingContent = "";
+            handleConflict(filename, headContent, mergingContent);
+        } else if (headMap.containsValue(filename) && mergingMap.containsValue(filename)) {
+            String blobIDHead = Helper.getKeyFromValue(headMap, filename);
+            String blobIDMerging = Helper.getKeyFromValue(mergingMap, filename);
+            byte[] contentHead = Helper.readInBlob(blobIDHead);
+            byte[] contentMerging = Helper.readInBlob(blobIDMerging);
+            if (Arrays.equals(contentHead, contentMerging)) {
+                //same contents: so pick one of the files doesn't matter
+//            String blobIDHead = Helper.getKeyFromValue(headMap, filename);
+                Helper.readWriteBlobFromCommit(blobIDHead, filename);
+                Repository.add(filename);
+            }
+            else {
+                // different contents: Conflict
+                String mergingContent = Helper.readInBlobToString(blobIDMerging);
+                String headContent = Helper.readInBlobToString(blobIDHead);
+                handleConflict(filename, headContent, mergingContent);
+            }
         }
-
-        if (Arrays.equals(contentHead, contentMerging)) {
-            //same contents: so pick one of the files doesn't matter
-            Helper.readWriteBlobFromCommit(blobIDHead, filename);
-            Repository.add(filename);
-        } else {
-            // different contents: Conflict
-            handleConflict(filename, blobIDHead, blobIDMerging);
-
-        }
-
     }
-    private static void handleConflict(String filename, String blobIDHead, String blobIDMerging) {
-        String headContents = Helper.readInBlobToString(blobIDHead, filename);
-        String mergingContents = Helper.readInBlobToString(blobIDMerging, filename);
-        String combinedContents = "<<<<<<< HEAD\n" + headContents + "\n" + "=======\n" + mergingContents + "\n"
+    private static void handleConflict(String filename, String headContents, String mergingContents) {
+        //TODO: handle if the file isn't present AKA treat as an empty file
+        String combinedContents = "<<<<<<< HEAD\n" + headContents + "=======\n" + mergingContents + "\n"
                 + ">>>>>>>";
         writeFile(filename, combinedContents);
         Repository.add(filename);
-        System.out.println(combinedContents);
+
+
+//        System.out.println(combinedContents);
 
     }
     private static void writeFile (String filename, String newContents) {

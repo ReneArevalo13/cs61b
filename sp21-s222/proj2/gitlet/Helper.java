@@ -139,14 +139,16 @@ public class Helper {
             return new ArrayList<String>();
         }
     }
-    public static byte[] readInBlob(String blobID, String filename) {
+    public static byte[] readInBlob(String blobID) {
         File blobToRead = Utils.join(Repository.BLOB_DIR, blobID);
         Blob readInBlob = Utils.readObject(blobToRead, Blob.class);
         return readInBlob.getContents();
     }
-    public static String readInBlobToString(String blobID, String filename) {
-        File blobToRead = Utils.join(Repository.BLOB_DIR, blobID);
-        return Utils.readContentsAsString(blobToRead);
+    public static String readInBlobToString(String blobID) {
+        File blobToRestore = Utils.join(Repository.BLOB_DIR, blobID);
+        Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
+        byte[] fileData = readInBlob.getContents();
+        return new String(fileData);
     }
 
 }
