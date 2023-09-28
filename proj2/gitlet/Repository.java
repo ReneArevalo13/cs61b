@@ -106,7 +106,6 @@ public class Repository {
             System.out.println("No reason to remove the file.");
         }
         saveRemoveStage(rmList);
-
     }
     @SuppressWarnings("unchecked")
     public static HashMap<String, String> copyBlobMap() {
@@ -226,6 +225,7 @@ public class Repository {
             System.out.println("File does not exist in that commit.");
         }
     }
+
     private static void checkoutBranchHelper(String branchName) {
         File branch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
 
@@ -312,6 +312,14 @@ public class Repository {
         }
         Commit.setHead(commitID);
         clearStaging();
+    }
+    public static void checkStagingAreas() {
+        blobMap = Helper.fromFileBlobMap();
+        rmList = Helper.fromFileRmList();
+        if (!blobMap.isEmpty() || !rmList.isEmpty()) {
+            System.out.println("You hava uncommitted changes.");
+            System.exit(0);
+        }
     }
 
 }

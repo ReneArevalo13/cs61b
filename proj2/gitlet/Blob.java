@@ -19,7 +19,7 @@ public class Blob implements Serializable {
     private String id;
     private final String filename;
     private byte[] contents;
-    public static final File CWD = new File(System.getProperty("user.dir"));
+   // public static final File CWD = new File(System.getProperty("user.dir"));
 
 
     /**
@@ -27,7 +27,7 @@ public class Blob implements Serializable {
      */
     public Blob(String filename) {
         this.filename = filename;
-        File filepath = join(CWD, this.filename);
+        File filepath = join(Repository.CWD, this.filename);
         this.contents = Utils.readContents(filepath);
         this.id = Utils.sha1(filename, contents);
     }

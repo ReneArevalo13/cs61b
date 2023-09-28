@@ -31,7 +31,7 @@ public class Commit implements Serializable {
     /** The timestamp of this Commit. */
     private String timestamp;
     /** The parent id of this Commit. */
-    private String parent;
+    private String [] parent = new String[2];
     /** The unique SHA-1 id of this Commit. */
     private String id;
     /** The hashmap of the blobs tracked by this Commit. */
@@ -50,7 +50,7 @@ public class Commit implements Serializable {
         return this.timestamp;
     }
     /** Retrieve the parent of this Commit. */
-    public String getParent() {
+    public String[] getParent() {
         return this.parent;
     }
     /** Retrieve the ID of this Commit. */
@@ -66,7 +66,7 @@ public class Commit implements Serializable {
         //metadata that must be tracked by SHA-1 ID
         this.message = message;
         this.timestamp = getTime();
-        this.parent = setParent();
+        this.parent[0] = setParent();
         this.blobsTracked = trackBlobs();
         //generate sha id
         this.id = generateSHA();
@@ -78,7 +78,7 @@ public class Commit implements Serializable {
         if (initialize == 0) {
             this.message = "initial commit";
             this.timestamp = getTimeEpoch();
-            this.parent = "null";
+            this.parent[0] = "null";
             this.blobsTracked = emptyHashMap;
             this.id = generateSHA();
             setHead();
@@ -86,6 +86,16 @@ public class Commit implements Serializable {
         } else {
             System.exit(0);
         }
+    }
+    public Commit(String message, String headSHA, String mergeSHA) {
+        //metadata that must be tracked by SHA-1 ID
+        this.message = message;
+        this.timestamp = getTime();
+        this.parent[0] = headSHA;
+        this.parent[1] = mergeSHA;
+        this.blobsTracked = trackBlobs();
+        //generate sha id
+        this.id = Utils.sha1(this.message, this.timestamp, this.parent[0], this.parent[1], this.blobsTracked.toString());
     }
     /**
     * Method to set the HEAD pointer to the most recent commit. Will be held in the refs/HEAD folder.
@@ -144,6 +154,13 @@ public class Commit implements Serializable {
         c.saveCommit();
         Repository.clearStaging();
     }
+    public static void makeCommit(String message, String headSHA, String mergeSHA) {
+        Commit c = new Commit(message, headSHA, mergeSHA);
+        c.setHead();
+        c.setBranch();
+        c.saveCommit();
+        Repository.clearStaging();
+    }
     /**
      * Method to save the commit object to disk.
      * */
@@ -157,7 +174,7 @@ public class Commit implements Serializable {
      *timestamp, parentID, and the blobs/files that the commit is tracking.
     * */
     private String generateSHA() {
-        return Utils.sha1(this.message, this.timestamp, this.parent, this.blobsTracked.toString());
+        return Utils.sha1(this.message, this.timestamp, this.parent[0], this.blobsTracked.toString());
     }
     /**
      * Method to read in the Commit object from disk.
@@ -226,14 +243,14 @@ public class Commit implements Serializable {
     private static ArrayList<LogBlob> goThroughParents(String commitPointer, ArrayList<LogBlob> logList) {
         Commit c = fromFileCommit(commitPointer);
 
-        if (c.getParent().equals("null")) {
+        if (c.getParent()[0].equals("null")) {
             LogBlob L = new LogBlob(c.getId(), c.getTimestamp(), c.getMessage());
             logList.add(L);
             return logList;
         } else {
             LogBlob L = new LogBlob(c.getId(), c.getTimestamp(), c.getMessage());
             logList.add(L);
-            goThroughParents(c.getParent(), logList);
+            goThroughParents(c.getParent()[0], logList);
         }
         return logList;
     }

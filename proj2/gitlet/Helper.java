@@ -52,7 +52,7 @@ public class Helper {
                     result = entry.getKey();
                 }
             }
-            System.exit(0);
+//            System.exit(0);
         }
         return result;
     }
@@ -138,6 +138,17 @@ public class Helper {
         } else {
             return new ArrayList<String>();
         }
+    }
+    public static byte[] readInBlob(String blobID) {
+        File blobToRead = Utils.join(Repository.BLOB_DIR, blobID);
+        Blob readInBlob = Utils.readObject(blobToRead, Blob.class);
+        return readInBlob.getContents();
+    }
+    public static String readInBlobToString(String blobID) {
+        File blobToRestore = Utils.join(Repository.BLOB_DIR, blobID);
+        Blob readInBlob = Utils.readObject(blobToRestore, Blob.class);
+        byte[] fileData = readInBlob.getContents();
+        return new String(fileData);
     }
 
 }
