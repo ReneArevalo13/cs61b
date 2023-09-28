@@ -7,6 +7,7 @@ import java.util.*;
 
 public class Merge {
     public static Set<String>  filesSeen;
+    public static boolean conflict = false;
     /**
      * Method to find the split point between the current working branch and the merging branch.
      * Return the SHAid of the split point commit.
@@ -52,14 +53,14 @@ public class Merge {
     private static HashMap<String, Integer> goThroughCommits(String commitPointer, HashMap<String, Integer> commitMap,
                                                              Integer counter) {
         Commit c = Commit.fromFileCommit(commitPointer);
-        if (c.getParent().equals("null")) {
+        if (c.getParent()[0].equals("null")) {
             counter++;
             commitMap.put(c.getId(), counter);
             return commitMap;
         } else {
             commitMap.put(c.getId(), counter);
             counter++;
-            goThroughCommits(c.getParent(), commitMap, counter);
+            goThroughCommits(c.getParent()[0], commitMap, counter);
         }
         return commitMap;
     }
@@ -97,7 +98,15 @@ public class Merge {
         HashMap<String, List<String>> modifiedState = new HashMap<>();
         HashMap<String, List<String>> modified = modifiedStatus(filesSeen, headMap, splitMap, mergingMap,
                 modifiedState);
+
         mergeLogic(modified, headMap, mergingMap);
+
+        String mergeLogMessage = "Merged " + Helper.getActiveBranch() + " into " + mergingBranch + ".";
+        Commit.makeCommit(mergeLogMessage, workingBranchPointer, mergeLogMessage);
+        if (conflict) {
+            System.out.println("Encountered a merge conflict.");
+        }
+
 
 
     }
@@ -300,6 +309,7 @@ public class Merge {
         String combinedContents = "<<<<<<< HEAD\n" + headContents + "=======\n" + mergingContents + "\n"
                 + ">>>>>>>";
         writeFile(filename, combinedContents);
+        conflict = true;
         Repository.add(filename);
     }
     private static void writeFile (String filename, String newContents) {
