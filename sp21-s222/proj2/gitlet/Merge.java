@@ -17,6 +17,9 @@ public class Merge {
         //bring in current HEAD commit from working branch and merging branch
         File currentHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
         File mergingHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", mergingBranch);
+        String [] currentBranchArray = new String[2];
+        currentBranchArray[0] = "checkout";
+        currentBranchArray[1] = Helper.getActiveBranch();
         String workingBranchPointer = Utils.readContentsAsString(currentHead);
         String mergingBranchPointer = Utils.readContentsAsString(mergingHead);
         //create commit maps to then compare against each other
@@ -31,7 +34,15 @@ public class Merge {
                 minvalue = entry1.getValue();
             }
         }
-//        System.out.println("This is the split point id: " + minkey);
+        //Check splitpoint with the other branches
+        assert minkey != null;
+        if (minkey.equals(mergingBranch)) {
+            System.out.println("Given branch is an ancestor of the current branch.");
+        } else if (minkey.equals(currentHead)) {
+            Repository.checkout(currentBranchArray);
+            System.out.println("Current branch fast-forwarded.");
+        }
+
         return minkey;
     }
 
@@ -55,14 +66,24 @@ public class Merge {
     /**
      * Driver method to execute the Merge command from spec.*/
     public static void merge(String mergingBranch) {
+
+        Repository.checkStagingAreas();
         File currentHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
         File mergingHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", mergingBranch);
 
+        if (!mergingHead.isFile()){
+            System.out.println("A branch with that name does not exist.");
+            System.exit(0);
+        } else if (mergingBranch.equals(Helper.getActiveBranch())) {
+            System.out.println("Cannot merge a branch with itself.");
+        }
+
         String workingBranchPointer = Utils.readContentsAsString(currentHead);
         String mergingBranchPointer = Utils.readContentsAsString(mergingHead);
-        String splitPointID = splitPoint(mergingBranch);
+        String splitPointPointer = splitPoint(mergingBranch);
+        checkFileConflicts(mergingBranchPointer);
 
-        Commit splitPointCommit = Commit.fromFileCommit(splitPointID);
+        Commit splitPointCommit = Commit.fromFileCommit(splitPointPointer);
         Commit headCommit = Commit.fromFileCommit(workingBranchPointer);
         Commit mergingCommit = Commit.fromFileCommit(mergingBranchPointer);
 
@@ -280,16 +301,24 @@ public class Merge {
                 + ">>>>>>>";
         writeFile(filename, combinedContents);
         Repository.add(filename);
-
-
-//        System.out.println(combinedContents);
-
     }
     private static void writeFile (String filename, String newContents) {
         File fileOfInterest = Utils.join(Repository.CWD, filename);
         Utils.writeContents(fileOfInterest, newContents);
     }
+    private static void checkFileConflicts (String mergingBranchID) {
+        Commit c = Commit.fromFileCommit(mergingBranchID);
+        HashMap<String, String> map = c.getBlobMap();
+        List<String> filesInWorkingDirectory = Utils.plainFilenamesIn(Repository.CWD);
 
+        assert filesInWorkingDirectory != null;
+        for (String file : filesInWorkingDirectory) {
+            if (!Helper.fileTrackedByCurrentCommit(file) && Helper.fileTrackedByCommitOnly(file, mergingBranchID)) {
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                System.exit(0);
+            }
+        }
+    }
 
 }
 

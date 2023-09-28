@@ -313,5 +313,13 @@ public class Repository {
         Commit.setHead(commitID);
         clearStaging();
     }
+    public static void checkStagingAreas() {
+        blobMap = Helper.fromFileBlobMap();
+        rmList = Helper.fromFileRmList();
+        if (!blobMap.isEmpty() || !rmList.isEmpty()) {
+            System.out.println("You hava uncommitted changes.");
+            System.exit(0);
+        }
+    }
 
 }
