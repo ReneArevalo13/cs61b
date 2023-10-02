@@ -269,9 +269,10 @@ public class Repository {
         File headFiles = Utils.join(CWD, ".gitlet", "refs", "head");
 
         System.out.println("=== Branches ===");
+        System.out.println("*" + currentActiveBranch);
         for (String branch : Objects.requireNonNull(headFiles.list())) {
             if (branch.equals(currentActiveBranch)) {
-                System.out.println("*" + branch);
+                continue;
             } else {
                 System.out.println(branch);
             }
