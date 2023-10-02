@@ -101,14 +101,11 @@ public class Merge {
 
         mergeLogic(modified, headMap, mergingMap);
 
-        String mergeLogMessage = "Merged " + Helper.getActiveBranch() + " into " + mergingBranch + ".";
+        String mergeLogMessage = "Merged " + mergingBranch + " into " + Helper.getActiveBranch() + ".";
         Commit.makeCommit(mergeLogMessage, workingBranchPointer, mergeLogMessage);
         if (conflict) {
             System.out.println("Encountered a merge conflict.");
         }
-
-
-
     }
 
     /**
