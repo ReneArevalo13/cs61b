@@ -306,7 +306,7 @@ public class Merge {
             combinedContent = "<<<<<<< HEAD\n" + headContent + "\n" +  "=======\n" + mergingContent
                     + ">>>>>>>";
         } else {
-            combinedContent = "<<<<<<< HEAD\n" + headContent + "\n" +  "=======\n" + mergingContent + "\n"
+            combinedContent = "<<<<<<< HEAD\n" + headContent +  "=======\n" + mergingContent
                     + ">>>>>>>";
         }
 
