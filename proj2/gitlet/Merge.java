@@ -303,7 +303,7 @@ public class Merge {
     }
     private static void handleConflict(String filename, String headContents, String mergingContents) {
         //TODO: handle if the file isn't present AKA treat as an empty file
-        String combinedContents = "<<<<<<< HEAD\n" + headContents + "=======\n" + mergingContents + ">>>>>>>";
+        String combinedContents = "<<<<<<< HEAD\n" + headContents + "\n" + "=======\n" + mergingContents + ">>>>>>>";
         writeFile(filename, combinedContents);
         conflict = true;
         Repository.add(filename);
