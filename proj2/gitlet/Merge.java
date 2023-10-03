@@ -262,10 +262,6 @@ public class Merge {
     private static void checkFileContents (String filename, HashMap<String, String> headMap,
                                            HashMap<String, String> mergingMap ) {
 
-//        String blobIDHead = Helper.getKeyFromValue(headMap, filename);
-//        String blobIDMerging = Helper.getKeyFromValue(mergingMap, filename);
-
-
         if (!headMap.containsValue(filename) && !mergingMap.containsValue(filename)) {
             //both removed: so leave as is
         } else if (!headMap.containsValue(filename) && mergingMap.containsValue(filename)) {
@@ -320,6 +316,7 @@ public class Merge {
     }
     private static void writeFile (String filename, String newContents) {
         File fileOfInterest = Utils.join(Repository.CWD, filename);
+        fileOfInterest.delete();
         Utils.writeContents(fileOfInterest, newContents);
     }
     private static void checkFileConflicts (String mergingBranchID) {
