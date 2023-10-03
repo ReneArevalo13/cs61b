@@ -300,10 +300,9 @@ public class Merge {
     private static void handleConflict(String filename, String headContent, String mergingContent) {
         String combinedContent;
         if (headContent.isEmpty()) {
-            combinedContent = "<<<<<<< HEAD\n" + headContent +  "=======\n" + mergingContent + "\n"
-                    + ">>>>>>>";
+            combinedContent = "<<<<<<< HEAD\n" + headContent +  "=======\n" + mergingContent + ">>>>>>>";
         } else if (mergingContent.isEmpty()) {
-            combinedContent = "<<<<<<< HEAD\n" + headContent + "\n" +  "=======\n" + mergingContent
+            combinedContent = "<<<<<<< HEAD\n" + headContent + "=======\n" + mergingContent
                     + ">>>>>>>";
         } else {
             combinedContent = "<<<<<<< HEAD\n" + headContent +  "=======\n" + mergingContent
@@ -312,7 +311,7 @@ public class Merge {
 
         writeFile(filename, combinedContent);
         conflict = true;
-        System.out.println(combinedContent);
+//        System.out.println(combinedContent);
         Repository.add(filename);
     }
     private static void writeFile (String filename, String newContents) {
