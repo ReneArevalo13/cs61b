@@ -301,10 +301,20 @@ public class Merge {
             }
         }
     }
-    private static void handleConflict(String filename, String headContents, String mergingContents) {
-        //TODO: handle if the file isn't present AKA treat as an empty file
-        String combinedContents = "<<<<<<< HEAD\n" + headContents + "\n" + "=======\n" + mergingContents + ">>>>>>>";
-        writeFile(filename, combinedContents);
+    private static void handleConflict(String filename, String headContent, String mergingContent) {
+        String combinedContent;
+        if (headContent.isEmpty()) {
+            combinedContent = "<<<<<<< HEAD\n" + headContent +  "=======\n" + mergingContent + "\n"
+                    + ">>>>>>>";
+        } else if (mergingContent.isEmpty()) {
+            combinedContent = "<<<<<<< HEAD\n" + headContent + "\n" +  "=======\n" + mergingContent
+                    + ">>>>>>>";
+        } else {
+            combinedContent = "<<<<<<< HEAD\n" + headContent + "\n" +  "=======\n" + mergingContent + "\n"
+                    + ">>>>>>>";
+        }
+
+        writeFile(filename, combinedContent);
         conflict = true;
         Repository.add(filename);
     }
