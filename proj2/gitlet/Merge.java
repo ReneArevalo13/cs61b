@@ -242,6 +242,7 @@ public class Merge {
             } else {
                 continue;
             }
+            //System.out.println(Utils.readContentsAsString(Utils.join(Repository.CWD, filename)));
         }
 
     }
@@ -311,7 +312,7 @@ public class Merge {
 
         writeFile(filename, combinedContent);
         conflict = true;
-//        System.out.println(combinedContent);
+        System.out.println(combinedContent);
         Repository.add(filename);
     }
     private static void writeFile (String filename, String newContents) {
