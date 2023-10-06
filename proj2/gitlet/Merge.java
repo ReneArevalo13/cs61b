@@ -77,6 +77,7 @@ public class Merge {
             System.exit(0);
         } else if (mergingBranch.equals(Helper.getActiveBranch())) {
             System.out.println("Cannot merge a branch with itself.");
+            System.exit(0);
         }
 
         String workingBranchPointer = Utils.readContentsAsString(currentHead);
