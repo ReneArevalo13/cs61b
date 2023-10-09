@@ -1,6 +1,8 @@
 package gitlet;
 
 
+import jh61b.junit.In;
+
 import java.io.File;
 import java.util.*;
 
@@ -19,23 +21,59 @@ public class Merge {
         File currentHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
         File mergingHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", mergingBranch);
         String [] currentBranchArray = new String[2];
+
         currentBranchArray[0] = "checkout";
         currentBranchArray[1] = Helper.getActiveBranch();
+
         String workingBranchPointer = Utils.readContentsAsString(currentHead);
         String mergingBranchPointer = Utils.readContentsAsString(mergingHead);
-        //create commit maps to then compare against each other
-        HashMap<String, Integer> workingMap = goThroughCommits(workingBranchPointer, new HashMap<>(), 0);
-        HashMap<String, Integer> mergingMap = goThroughCommits(mergingBranchPointer, new HashMap<>(), 0);
+        Commit workingBranchCommit = Commit.fromFileCommit(workingBranchPointer);
+        Commit mergingBranchCommit = Commit.fromFileCommit(mergingBranchPointer);
 
-        for (Map.Entry<String, Integer> entry1 : workingMap.entrySet()) {
-            String key = entry1.getKey();
-            Integer value = entry1.getValue();
-            if (mergingMap.containsKey(key) && value < minvalue) {
-                minkey = key;
-                minvalue = entry1.getValue();
-            }
+        HashMap<String, Integer> workingMap1;
+        HashMap<String, Integer> workingMap2 = null;
+        HashMap<String, Integer> mergingMap1;
+        HashMap<String, Integer> mergingMap2 = null;
+
+
+        /*Check if commit is a merge commit and subsequently go through both branches*/
+        if (workingBranchCommit.commitHasTwoParents()) {
+            workingMap1 = goThroughFirstParentCommits(workingBranchCommit, new HashMap<>(), 0);
+            workingMap2 = goThroughSecondParentCommits(workingBranchCommit, new HashMap<>(), 0);
+        } else {
+            workingMap1 = goThroughFirstParentCommits(workingBranchCommit, new HashMap<>(), 0);
         }
+        if (mergingBranchCommit.commitHasTwoParents()) {
+            mergingMap1 = goThroughFirstParentCommits(mergingBranchCommit, new HashMap<>(), 0);
+            mergingMap2 = goThroughSecondParentCommits(mergingBranchCommit, new HashMap<>(), 0);
+        } else {
+            mergingMap1 = goThroughFirstParentCommits(mergingBranchCommit, new HashMap<>(), 0);
+        }
+
+        if (workingBranchCommit.commitHasTwoParents() && mergingBranchCommit.commitHasTwoParents()) {
+
+        } else if (workingBranchCommit.commitHasTwoParents()) {
+            minkey = searchForSplitPoint1(workingMap1, workingMap2, mergingMap1);
+
+        } else if (mergingBranchCommit.commitHasTwoParents()) {
+            minkey = searchForSplitPoint2(workingMap1, mergingMap1, mergingMap2);
+
+        } else {
+            minkey = searchForSplitPoint0(workingMap1, mergingMap1);
+        }
+
+
+//        for (Map.Entry<String, Integer> entry1 : workingMap1.entrySet()) {
+//            String key = entry1.getKey();
+//            Integer value = entry1.getValue();
+//            if (mergingMap1.containsKey(key) && value < minvalue) {
+//                minkey = key;
+//                minvalue = entry1.getValue();
+//            }
+//        }
+
         //Check splitpoint with the other branches
+
         assert minkey != null;
         if (minkey.equals(mergingBranch)) {
             System.out.println("Given branch is an ancestor of the current branch.");
@@ -50,9 +88,9 @@ public class Merge {
     /**
      * Recursive method to iterate through the commits following the parent and get a total mapping of a "branch".
      * */
-    private static HashMap<String, Integer> goThroughCommits(String commitPointer, HashMap<String, Integer> commitMap,
-                                                             Integer counter) {
-        Commit c = Commit.fromFileCommit(commitPointer);
+    private static HashMap<String, Integer> goThroughFirstParentCommits(Commit c, HashMap<String, Integer> commitMap,
+                                                                        Integer counter) {
+
         if (c.getParent()[0].equals("null")) {
             counter++;
             commitMap.put(c.getId(), counter);
@@ -60,7 +98,23 @@ public class Merge {
         } else {
             commitMap.put(c.getId(), counter);
             counter++;
-            goThroughCommits(c.getParent()[0], commitMap, counter);
+            Commit parentCommit = Commit.fromFileCommit(c.getParent()[0]);
+            goThroughFirstParentCommits(parentCommit, commitMap, counter);
+        }
+        return commitMap;
+    }
+    private static HashMap<String, Integer> goThroughSecondParentCommits(Commit c, HashMap<String, Integer> commitMap,
+                                                                        Integer counter) {
+
+        if (c.getParent()[1].equals("null")) {
+            counter++;
+            commitMap.put(c.getId(), counter);
+            return commitMap;
+        } else {
+            commitMap.put(c.getId(), counter);
+            counter++;
+            Commit parentCommit = Commit.fromFileCommit(c.getParent()[1]);
+            goThroughFirstParentCommits(parentCommit, commitMap, counter);
         }
         return commitMap;
     }
@@ -103,7 +157,7 @@ public class Merge {
         mergeLogic(modified, headMap, mergingMap);
 
         String mergeLogMessage = "Merged " + mergingBranch + " into " + Helper.getActiveBranch() + ".";
-        Commit.makeCommit(mergeLogMessage, workingBranchPointer, mergeLogMessage);
+        Commit.makeCommit(mergeLogMessage, workingBranchPointer, mergingBranchPointer);
         if (conflict) {
             System.out.println("Encountered a merge conflict.");
         }
@@ -334,6 +388,90 @@ public class Merge {
             }
         }
     }
+    private static String searchForSplitPoint0 (HashMap<String, Integer> workingMap,
+                                                HashMap<String, Integer> mergingMap) {
+        String minkey = null;
+        Integer minvalue = 1000000;
+
+        for (Map.Entry<String, Integer> entry1 : workingMap.entrySet()) {
+            String key = entry1.getKey();
+            Integer value = entry1.getValue();
+            if (mergingMap.containsKey(key) && value < minvalue) {
+                minkey = key;
+                minvalue = entry1.getValue();
+            }
+        }
+
+        return minkey;
+
+    }
+    private static String searchForSplitPoint1 (HashMap<String, Integer> workingMap1,
+                                                HashMap<String, Integer> workingMap2,
+                                                HashMap<String, Integer> mergingMap) {
+        String minkey1 = null;
+        String minkey2 = null;
+        Integer minvalue1 = 1000000;
+        Integer minvalue2 = 1000000;
+
+        /*Go through the first parent map*/
+        for (Map.Entry<String, Integer> entry1 : workingMap1.entrySet()) {
+            String key = entry1.getKey();
+            Integer value = entry1.getValue();
+            if (mergingMap.containsKey(key) && value < minvalue1) {
+                minkey1 = key;
+                minvalue1 = entry1.getValue();
+            }
+        }
+        /*Go through the second parent map*/
+        for (Map.Entry<String, Integer> entry1 : workingMap2.entrySet()) {
+            String key = entry1.getKey();
+            Integer value = entry1.getValue();
+            if (mergingMap.containsKey(key) && value < minvalue2) {
+                minkey2 = key;
+                minvalue2 = entry1.getValue();
+            }
+        }
+
+        if (minvalue1 < minvalue2) {
+            return minkey1;
+        } else {
+            return minkey2;
+        }
+    }
+    private static String searchForSplitPoint2 (HashMap<String, Integer> workingMap1,
+                                                HashMap<String, Integer> mergingMap1,
+                                                HashMap<String, Integer> mergingMap2) {
+        String minkey1 = null;
+        String minkey2 = null;
+        Integer minvalue1 = 1000000;
+        Integer minvalue2 = 1000000;
+
+        /*Go through the first parent map*/
+        for (Map.Entry<String, Integer> entry1 : workingMap1.entrySet()) {
+            String key = entry1.getKey();
+            Integer value = entry1.getValue();
+            if (mergingMap1.containsKey(key) && value < minvalue1) {
+                minkey1 = key;
+                minvalue1 = entry1.getValue();
+            }
+        }
+        /*Go through the second parent map*/
+        for (Map.Entry<String, Integer> entry1 : workingMap1.entrySet()) {
+            String key = entry1.getKey();
+            Integer value = entry1.getValue();
+            if (mergingMap2.containsKey(key) && value < minvalue2) {
+                minkey2 = key;
+                minvalue2 = entry1.getValue();
+            }
+        }
+
+        if (minvalue1 < minvalue2) {
+            return minkey1;
+        } else {
+            return minkey2;
+        }
+    }
+
 
 }
 

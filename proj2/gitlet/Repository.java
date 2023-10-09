@@ -244,10 +244,11 @@ public class Repository {
     }
     public static void branch(String branchName)  {
         File newBranch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
+        File currentHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
         if (newBranch.isFile()) {
             System.out.println("A branch with that name already exists.");
         } else {
-            Utils.writeContents(newBranch, readContentsAsString(REF_DIR_MASTER));
+            Utils.writeContents(newBranch, readContentsAsString(currentHead));
         }
     }
     public static void removeBranch(String branchName) {

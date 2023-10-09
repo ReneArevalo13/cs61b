@@ -305,6 +305,8 @@ public class Commit implements Serializable {
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E MMM dd HH:mm:ss yyyy -0800");
         return myDateObj.format(myFormatObj);
     }
-
+    public boolean commitHasTwoParents() {
+        return this.parent[1] != null;
+    }
 
 }
