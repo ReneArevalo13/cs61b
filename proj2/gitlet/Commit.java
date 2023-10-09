@@ -31,7 +31,7 @@ public class Commit implements Serializable {
     /** The timestamp of this Commit. */
     private String timestamp;
     /** The parent id of this Commit. */
-    private String [] parent = new String[2];
+    private String[] parent = new String[2];
     /** The unique SHA-1 id of this Commit. */
     private String id;
     /** The hashmap of the blobs tracked by this Commit. */
@@ -72,8 +72,8 @@ public class Commit implements Serializable {
         this.id = generateSHA();
     }
     /**
-     * Specific commit constructor that is used for the first Commit, init. Sets the required fields to
-     * values that are specific to the init command requirements.*/
+     * Specific commit constructor that is used for the first Commit, init.
+     * Sets the required fields to values that are specific to the init command requirements.*/
     public Commit(Integer initialize) {
         if (initialize == 0) {
             this.message = "initial commit";
@@ -95,11 +95,12 @@ public class Commit implements Serializable {
         this.parent[1] = mergeSHA;
         this.blobsTracked = trackBlobs();
         //generate sha id
-        this.id = Utils.sha1(this.message, this.timestamp, this.parent[0], this.parent[1], this.blobsTracked.toString());
+        this.id = Utils.sha1(this.message, this.timestamp, this.parent[0],
+                this.parent[1], this.blobsTracked.toString());
     }
     /**
-    * Method to set the HEAD pointer to the most recent commit. Will be held in the refs/HEAD folder.
-    * Should only have the most recent commit ID saved.
+    * Method to set the HEAD pointer to the most recent commit. Will be held
+     * in the refs/HEAD folder. Should only have the most recent commit ID saved.
     * */
     public void setHead() {
         //delete previous HEAD pointer file
@@ -119,7 +120,8 @@ public class Commit implements Serializable {
     }
 
     /**
-     * Method to set the master branch pointer. It is the same as HEAD until a new branch is created.
+     * Method to set the master branch pointer. It is the same as HEAD until a new
+     * branch is created.
      * */
     public void setBranch() {
         if (Helper.getActiveBranch().equals("master")) {
@@ -128,9 +130,11 @@ public class Commit implements Serializable {
             File headFilePath = Utils.join(Repository.REF_DIR_MASTER);
             Utils.writeContents(headFilePath, this.id);
         } else {
-            File newBranch = Utils.join(CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
+            File newBranch = Utils.join(CWD, ".gitlet", "refs", "head",
+                    Helper.getActiveBranch());
             newBranch.delete();
-            File newBranchHead = Utils.join(CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
+            File newBranchHead = Utils.join(CWD, ".gitlet", "refs", "head",
+                    Helper.getActiveBranch());
             Utils.writeContents(newBranchHead, this.id);
         }
 
@@ -139,9 +143,10 @@ public class Commit implements Serializable {
         return this.blobsTracked;
     }
     /**
-     * Method that processes all the commands that must be done in order to commit a file into the repo.
-     * Checks to make sure a blob is staged for addition.Creates the commit object. Moves the head pointer
-     * to this latest commit object. Writes the commit object to disk. Lastly it clears the staging area.
+     * Method that processes all the commands that must be done in order to commit a file into
+     * the repo. Checks to make sure a blob is staged for addition.Creates the commit object.
+     * Moves the head pointer to this latest commit object. Writes the commit object to disk.
+     * Lastly it clears the staging area.
      * */
     public static void makeCommit(String message) {
         Commit c = new Commit(message);
@@ -170,11 +175,12 @@ public class Commit implements Serializable {
         Utils.writeObject(commitFile, c);
     }
     /**
-     * Method to generate teh SHA hash for the commit. Tracks the necessary fields including: message,
-     *timestamp, parentID, and the blobs/files that the commit is tracking.
+     * Method to generate teh SHA hash for the commit. Tracks the necessary fields
+     * including: message, timestamp, parentID, and the blobs/files that the commit is tracking.
     * */
     private String generateSHA() {
-        return Utils.sha1(this.message, this.timestamp, this.parent[0], this.blobsTracked.toString());
+        return Utils.sha1(this.message, this.timestamp, this.parent[0],
+                this.blobsTracked.toString());
     }
     /**
      * Method to read in the Commit object from disk.
@@ -195,8 +201,8 @@ public class Commit implements Serializable {
         return Utils.readContentsAsString(headFilePath);
     }
     /**
-     * Method that updates the blobs that the commit is tracking. Goes through the addstage and rm stage
-     * and changes the blobs tracked accordingly.
+     * Method that updates the blobs that the commit is tracking. Goes through the addstage
+     * and rm stage and changes the blobs tracked accordingly.
      * */
     private HashMap<String, String> trackBlobs() {
         //bring in parent BlobMap as map
@@ -211,7 +217,6 @@ public class Commit implements Serializable {
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
-        //update map to reflect the added files, assumed that all these should be the updates to commit
         for (Map.Entry<String, String> mapElement : addMap.entrySet()) {
             String value = mapElement.getValue();
             String keyToRemove = Helper.getKeyFromValue(map, value);
@@ -240,7 +245,8 @@ public class Commit implements Serializable {
      * tree and extract the id, timestamp and message required for the log command.
      * Starts at the most current commit, HEAD, and goes until the init commit.
      * */
-    private static ArrayList<LogBlob> goThroughParents(String commitPointer, ArrayList<LogBlob> logList) {
+    private static ArrayList<LogBlob> goThroughParents(String commitPointer,
+                                                       ArrayList<LogBlob> logList) {
         Commit c = fromFileCommit(commitPointer);
 
         if (c.getParent()[0].equals("null")) {

@@ -30,7 +30,8 @@ public class Repository {
     public static final File ADD_DIR = join(CWD, ".gitlet", "staging", "addStage");
     public static final File RM_DIR = join(CWD, ".gitlet", "staging", "rmStage");
     /** The ref directory. Will hold the head and master refs */
-    public static final File REF_DIR_MASTER = join(CWD, ".gitlet", "refs", "head", "master");
+    public static final File REF_DIR_MASTER = join(CWD, ".gitlet", "refs", "head",
+            "master");
     /** The object directory. Will hold the commit and blob objects. */
     public static final File OBJECT_DIR = join(CWD, ".gitlet", "objects");
     public static final File COMMIT_DIR = join(CWD, ".gitlet", "objects", "commits");
@@ -45,7 +46,9 @@ public class Repository {
     public static void init() {
 
         if (GITLET_DIR.isDirectory()) {
-            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            String message = "A Gitlet version-control system already exists in" +
+                    " the current directory.";
+            System.out.println(message);
             System.exit(0);
         }
         GITLET_DIR.mkdir();
@@ -244,7 +247,8 @@ public class Repository {
     }
     public static void branch(String branchName)  {
         File newBranch = Utils.join(CWD, ".gitlet", "refs", "head", branchName);
-        File currentHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
+        File currentHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head",
+                Helper.getActiveBranch());
         if (newBranch.isFile()) {
             System.out.println("A branch with that name already exists.");
         } else {
@@ -304,8 +308,10 @@ public class Repository {
 
         assert filesInWorkingDirectory != null;
         for (String file : filesInWorkingDirectory) {
-            if (!Helper.fileTrackedByCurrentCommit(file) && Helper.fileTrackedByCommitOnly(file, commitID)) {
-                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+            if (!Helper.fileTrackedByCurrentCommit(file) && Helper.fileTrackedByCommitOnly(file,
+                    commitID)) {
+                System.out.println("There is an untracked file in the way; delete it, " +
+                        "or add and commit it first.");
                 System.exit(0);
             }
         }

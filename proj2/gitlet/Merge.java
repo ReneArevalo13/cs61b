@@ -1,26 +1,23 @@
 package gitlet;
 
-
-import jh61b.junit.In;
-
 import java.io.File;
 import java.util.*;
 
 
 public class Merge {
-    public static Set<String>  filesSeen;
-    public static boolean conflict = false;
+
+    private static boolean conflict = false;
     /**
      * Method to find the split point between the current working branch and the merging branch.
      * Return the SHAid of the split point commit.
      * */
-    public static String splitPoint (String mergingBranch) {
+    public static String splitPoint(String mergingBranch) {
         String minkey = null;
         Integer minvalue = 1000000;
         //bring in current HEAD commit from working branch and merging branch
         File currentHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
         File mergingHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", mergingBranch);
-        String [] currentBranchArray = new String[2];
+        String[] currentBranchArray = new String[2];
 
         currentBranchArray[0] = "checkout";
         currentBranchArray[1] = Helper.getActiveBranch();
@@ -50,11 +47,8 @@ public class Merge {
             mergingMap1 = goThroughFirstParentCommits(mergingBranchCommit, new HashMap<>(), 0);
         }
 
-        if (workingBranchCommit.commitHasTwoParents() && mergingBranchCommit.commitHasTwoParents()) {
-
-        } else if (workingBranchCommit.commitHasTwoParents()) {
+        if (workingBranchCommit.commitHasTwoParents()) {
             minkey = searchForSplitPoint1(workingMap1, workingMap2, mergingMap1);
-
         } else if (mergingBranchCommit.commitHasTwoParents()) {
             minkey = searchForSplitPoint2(workingMap1, mergingMap1, mergingMap2);
 
@@ -62,15 +56,6 @@ public class Merge {
             minkey = searchForSplitPoint0(workingMap1, mergingMap1);
         }
 
-
-//        for (Map.Entry<String, Integer> entry1 : workingMap1.entrySet()) {
-//            String key = entry1.getKey();
-//            Integer value = entry1.getValue();
-//            if (mergingMap1.containsKey(key) && value < minvalue) {
-//                minkey = key;
-//                minvalue = entry1.getValue();
-//            }
-//        }
 
         //Check splitpoint with the other branches
 
@@ -126,7 +111,7 @@ public class Merge {
         File currentHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
         File mergingHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head", mergingBranch);
 
-        if (!mergingHead.isFile()){
+        if (!mergingHead.isFile()) {
             System.out.println("A branch with that name does not exist.");
             System.exit(0);
         } else if (mergingBranch.equals(Helper.getActiveBranch())) {
@@ -166,7 +151,7 @@ public class Merge {
     /**
      * Helper method to list all the unique files in a commit branch. Returned as a set.
      * */
-    private static Set<String> filesInCommits(HashMap<String, String> headMap,HashMap<String, String> splitMap,
+    private static Set<String> filesInCommits(HashMap<String, String> headMap, HashMap<String, String> splitMap,
                                      HashMap<String, String> mergingMap, Set<String> uniqueValues) {
         Collection<String> headFiles = headMap.values();
         Collection<String> splitFiles = splitMap.values();
@@ -182,7 +167,7 @@ public class Merge {
      * Returns a hashmap with the file as the key and a list of the modified state for each of the three points of
      * interest.
      * */
-    private static HashMap<String, List<String>> modifiedStatus (Set<String> filesSeen, HashMap<String, String> headMap,
+    private static HashMap<String, List<String>> modifiedStatus(Set<String> filesSeen, HashMap<String, String> headMap,
                                                 HashMap<String, String> splitMap, HashMap<String, String> mergingMap,
                                                                  HashMap<String, List<String>> modifiedState) {
         /*Go through commits as follows: Split, head, merging*/
@@ -197,14 +182,14 @@ public class Merge {
         String headSHA = "";
         String mergingSHA = "";
 
-//        go through each of the files that will be seen in the merge
+        /*go through each of the files that will be seen in the merge*/
         for (String file : filesSeen) {
-             /*ArrayList that will hold the state of the of all three commits in a list for a given file.*/
+            /*ArrayList that will hold the state of the of all three commits in a list for a given file.*/
             List<String> thruple = new ArrayList<>(3);
 
             /*check if the file is tracked by the commits in question. If so get the associated SHA id.
              * If not tracked in the commit, put null.*/
-            if (splitMap.containsValue(file)){
+            if (splitMap.containsValue(file)) {
                 splitSHA = Helper.getKeyFromValue(splitMap, file);
             } else {
                 splitSHA = "null";
@@ -264,7 +249,7 @@ public class Merge {
      * Method that will handle all the logic of merge. Each of the cases detailed in the spec are here as well as
      * the changes to the working directory.
      * */
-    private static void mergeLogic (HashMap<String, List<String>> modifiedState, HashMap<String, String> headMap,
+    private static void mergeLogic(HashMap<String, List<String>> modifiedState, HashMap<String, String> headMap,
                                     HashMap<String, String> mergingMap) {
         for (Map.Entry<String, List<String>> entry : modifiedState.entrySet()) {
             String filename = entry.getKey();
@@ -286,12 +271,11 @@ public class Merge {
                 continue;
             } else if (head.equals("modified") && other.equals("modified")) {
                 //CASE 3: Modified in OTHER and HEAD: {in same way : keep either, in diff ways : conflict}
-                //TODO: figure out how to manage this case with the modifications
                 checkFileContents(filename, headMap, mergingMap);
-            } else if (split.equals("null")&& head.equals("modified") && other.equals("unmodified")) {
+            } else if (split.equals("null") && head.equals("modified") && other.equals("unmodified")) {
                 //CASE 4: Not in SPLIT nor OTHER but in HEAD: KEEP HEAD
                 continue;
-            } else if (split.equals("null")&& head.equals("unmodified") && other.equals("modified")) {
+            } else if (split.equals("null") && head.equals("unmodified") && other.equals("modified")) {
                 //CASE 5: Not in SPLIT nor HEAD but in OTHER: KEEP OTHER
                 keepFileWithStage(filename, mergingMap);
             } else {
@@ -301,26 +285,21 @@ public class Merge {
         }
 
     }
-    private static void keepFileWithStage (String filename, HashMap<String, String> map) {
+    private static void keepFileWithStage(String filename, HashMap<String, String> map) {
         String blobID = Helper.getKeyFromValue(map, filename);
         Helper.readWriteBlobFromCommit(blobID, filename);
         Repository.add(filename);
     }
-    private static void keepFileNoStage (String filename, HashMap<String, String> map) {
-        String blobID = Helper.getKeyFromValue(map, filename);
-        Helper.readWriteBlobFromCommit(blobID, filename);
-    }
+
     /**
      * Method to check the file contents of the file of interest at both the head commit and given branch.
      * This is when both the files are "Modified" in reference to the split point.
      * This is where the logic for conflicts is determined and handled.
      * */
-    private static void checkFileContents (String filename, HashMap<String, String> headMap,
-                                           HashMap<String, String> mergingMap ) {
+    private static void checkFileContents(String filename, HashMap<String, String> headMap,
+                                           HashMap<String, String> mergingMap) {
 
-        if (!headMap.containsValue(filename) && !mergingMap.containsValue(filename)) {
-            //both removed: so leave as is
-        } else if (!headMap.containsValue(filename) && mergingMap.containsValue(filename)) {
+        if (!headMap.containsValue(filename) && mergingMap.containsValue(filename)) {
             //case when file is NOT PRESENT in head commit but PRESENT in merging
             //conflict
             String blobIDMerging = Helper.getKeyFromValue(mergingMap, filename);
@@ -341,11 +320,9 @@ public class Merge {
             byte[] contentMerging = Helper.readInBlob(blobIDMerging);
             if (Arrays.equals(contentHead, contentMerging)) {
                 //same contents: so pick one of the files doesn't matter
-//            String blobIDHead = Helper.getKeyFromValue(headMap, filename);
                 Helper.readWriteBlobFromCommit(blobIDHead, filename);
                 Repository.add(filename);
-            }
-            else {
+            } else {
                 // different contents: Conflict
                 String mergingContent = Helper.readInBlobToString(blobIDMerging);
                 String headContent = Helper.readInBlobToString(blobIDHead);
@@ -367,15 +344,14 @@ public class Merge {
 
         writeFile(filename, combinedContent);
         conflict = true;
-//        System.out.println(combinedContent);
         Repository.add(filename);
     }
-    private static void writeFile (String filename, String newContents) {
+    private static void writeFile(String filename, String newContents) {
         File fileOfInterest = Utils.join(Repository.CWD, filename);
         fileOfInterest.delete();
         Utils.writeContents(fileOfInterest, newContents);
     }
-    private static void checkFileConflicts (String mergingBranchID) {
+    private static void checkFileConflicts(String mergingBranchID) {
         Commit c = Commit.fromFileCommit(mergingBranchID);
         HashMap<String, String> map = c.getBlobMap();
         List<String> filesInWorkingDirectory = Utils.plainFilenamesIn(Repository.CWD);
@@ -388,7 +364,7 @@ public class Merge {
             }
         }
     }
-    private static String searchForSplitPoint0 (HashMap<String, Integer> workingMap,
+    private static String searchForSplitPoint0(HashMap<String, Integer> workingMap,
                                                 HashMap<String, Integer> mergingMap) {
         String minkey = null;
         Integer minvalue = 1000000;
@@ -405,7 +381,7 @@ public class Merge {
         return minkey;
 
     }
-    private static String searchForSplitPoint1 (HashMap<String, Integer> workingMap1,
+    private static String searchForSplitPoint1(HashMap<String, Integer> workingMap1,
                                                 HashMap<String, Integer> workingMap2,
                                                 HashMap<String, Integer> mergingMap) {
         String minkey1 = null;
@@ -438,7 +414,7 @@ public class Merge {
             return minkey2;
         }
     }
-    private static String searchForSplitPoint2 (HashMap<String, Integer> workingMap1,
+    private static String searchForSplitPoint2(HashMap<String, Integer> workingMap1,
                                                 HashMap<String, Integer> mergingMap1,
                                                 HashMap<String, Integer> mergingMap2) {
         String minkey1 = null;
