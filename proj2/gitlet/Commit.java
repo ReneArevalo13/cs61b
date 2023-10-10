@@ -199,7 +199,7 @@ public class Commit implements Serializable {
      * */
     public static Commit fromFileCommit(String commitID) {
         File commitFile;
-        if (commitID.length() < 10 ) {
+        if (commitID.length() < 10) {
             String firstTwoCharacters = commitID.substring(0, 2);
             String lastCharacters = commitID.substring(2);
             commitFile = Utils.join(Repository.COMMIT_DIR, firstTwoCharacters);

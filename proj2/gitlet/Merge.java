@@ -20,9 +20,13 @@ public class Merge {
         File mergingHead = Utils.join(Repository.CWD, ".gitlet", "refs", "head",
                 mergingBranch);
         String[] currentBranchArray = new String[2];
-
         currentBranchArray[0] = "checkout";
         currentBranchArray[1] = Helper.getActiveBranch();
+        String[] meringBranchArray = new String[2];
+        meringBranchArray[0] = "checkout";
+        meringBranchArray[1] = mergingBranch;
+
+
 
         String workingBranchPointer = Utils.readContentsAsString(currentHead);
         String mergingBranchPointer = Utils.readContentsAsString(mergingHead);
@@ -66,13 +70,17 @@ public class Merge {
 
 
         //Check splitpoint with the other branches
+        String mergingBranchID = Utils.readContentsAsString(mergingHead);
+        String headID = Utils.readContentsAsString(currentHead);
 
         assert minkey != null;
-        if (minkey.equals(mergingBranch)) {
+        if (minkey.equals(mergingBranchID)) {
             System.out.println("Given branch is an ancestor of the current branch.");
-        } else if (minkey.equals(currentHead)) {
-            Repository.checkout(currentBranchArray);
+            System.exit(0);
+        } else if (minkey.equals(headID)) {
+            Repository.checkout(meringBranchArray);
             System.out.println("Current branch fast-forwarded.");
+            System.exit(0);
         }
 
         return minkey;
@@ -292,12 +300,12 @@ public class Merge {
             } else if (head.equals("modified") && other.equals("modified")) {
                 //CASE 3: Modified in OTHER and HEAD
                 checkFileContents(filename, headMap, mergingMap);
-            } else if (split.equals("null") && head.equals("modified") &&
-                    other.equals("unmodified")) {
+            } else if (split.equals("null") && head.equals("modified")
+                    && other.equals("unmodified")) {
                 //CASE 4: Not in SPLIT nor OTHER but in HEAD: KEEP HEAD
                 continue;
-            } else if (split.equals("null") && head.equals("unmodified") &&
-                    other.equals("modified")) {
+            } else if (split.equals("null") && head.equals("unmodified")
+                    && other.equals("modified")) {
                 //CASE 5: Not in SPLIT nor HEAD but in OTHER: KEEP OTHER
                 keepFileWithStage(filename, mergingMap);
             } else {
@@ -381,10 +389,10 @@ public class Merge {
 
         assert filesInWorkingDirectory != null;
         for (String file : filesInWorkingDirectory) {
-            if (!Helper.fileTrackedByCurrentCommit(file) &&
-                    Helper.fileTrackedByCommitOnly(file, mergingBranchID)) {
-                System.out.println("There is an untracked file in the way; " +
-                        "delete it, or add and commit it first.");
+            if (!Helper.fileTrackedByCurrentCommit(file)
+                    && Helper.fileTrackedByCommitOnly(file, mergingBranchID)) {
+                System.out.println("There is an untracked file in the way; "
+                        + "delete it, or add and commit it first.");
                 System.exit(0);
             }
         }

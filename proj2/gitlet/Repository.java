@@ -210,11 +210,6 @@ public class Repository {
             List<String> commitList = Utils.plainFilenamesIn(commitLocation);
             String item = commitList.get(0);
 
-
-//            System.out.println(commitPointer.length());
-//            System.out.println(lastCharacters);
-//            System.out.println(commitList);
-//            System.out.println(item.substring(0, lastCharacters.length()));
             assert commitList != null;
             if (!lastCharacters.equals(item.substring(0, lastCharacters.length()))) {
                 System.out.println("No commit with that id exists.");
@@ -283,6 +278,10 @@ public class Repository {
         }
     }
     public static void status() {
+        if (!GITLET_DIR.isDirectory()) {
+            System.out.println("Not in an initialized Gitlet directory.");
+            System.exit(0);
+        }
         ArrayList<String> removeList = Helper.fromFileRmList();
         ArrayList<String> addList = readAddStage();
         Collections.sort(removeList);
