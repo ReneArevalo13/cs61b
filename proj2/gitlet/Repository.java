@@ -141,16 +141,6 @@ public class Repository {
         }
         return addList;
     }
-    /**
-     * Testing method to check what is currently in the remove stage.
-     * */
-    @SuppressWarnings("unchecked")
-    public static void readRemoveStage() {
-        ArrayList<String> list;
-        list = Utils.readObject(RM_DIR, ArrayList.class);
-        System.out.println("Files that are staged for removal : " + list);
-    }
-
 
     /**
      * Method to save the blobMap to disk
@@ -314,12 +304,24 @@ public class Repository {
                         "or add and commit it first.");
                 System.exit(0);
             }
+            if (!map.containsValue(file)) {
+                Utils.restrictedDelete(file);
+            }
         }
         for (Map.Entry<String, String> entry : map.entrySet()) {
             checkoutHelper(commitID, entry.getValue());
         }
         Commit.setHead(commitID);
+        resetBranchHead(commitID);
         clearStaging();
+    }
+    private static void resetBranchHead(String commitID) {
+        File branch = Utils.join(CWD, ".gitlet", "refs", "head", Helper.getActiveBranch());
+        branch.delete();
+        //set new HEAD pointer file
+        File headFilePath = Utils.join(CWD, ".gitlet", "refs", "head",
+                Helper.getActiveBranch());
+        Utils.writeContents(headFilePath, commitID);
     }
     public static void checkStagingAreas() {
         blobMap = Helper.fromFileBlobMap();
