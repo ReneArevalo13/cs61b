@@ -172,7 +172,19 @@ public class Commit implements Serializable {
     public void saveCommit()  {
         Commit c = this;
         File commitFile = Utils.join(Repository.COMMIT_DIR, this.id);
+        shortenID(this.id, c);
         Utils.writeObject(commitFile, c);
+    }
+    private void shortenID(String commitID, Commit c) {
+        String firstTwoCharacters = commitID.substring(0, 2);
+        String lastCharacters = commitID.substring(2);
+        File twoCharFile = Utils.join(Repository.COMMIT_DIR, firstTwoCharacters);
+        if (!twoCharFile.isDirectory()) {
+            twoCharFile.mkdir();
+        }
+        File restOfCharacters = Utils.join(Repository.COMMIT_DIR, firstTwoCharacters,
+                lastCharacters);
+        Utils.writeObject(restOfCharacters, c);
     }
     /**
      * Method to generate teh SHA hash for the commit. Tracks the necessary fields
@@ -186,11 +198,24 @@ public class Commit implements Serializable {
      * Method to read in the Commit object from disk.
      * */
     public static Commit fromFileCommit(String commitID) {
-        File commitFile = Utils.join(Repository.COMMIT_DIR, commitID);
-        if (!commitFile.isFile()) {
-            System.out.println("No commit with that id exists.");
+        File commitFile;
+        if (commitID.length() < 10 ) {
+            String firstTwoCharacters = commitID.substring(0, 2);
+            String lastCharacters = commitID.substring(2);
+            commitFile = Utils.join(Repository.COMMIT_DIR, firstTwoCharacters);
+            List<String> commitList = Utils.plainFilenamesIn(commitFile);
+            assert commitList != null;
+            String item = commitList.get(0);
+            commitFile = Utils.join(Repository.COMMIT_DIR, firstTwoCharacters, item);
+            return Utils.readObject(commitFile, Commit.class);
+        } else {
+            commitFile = Utils.join(Repository.COMMIT_DIR, commitID);
+            if (!commitFile.isFile()) {
+                System.out.println("No commit with that id exists.");
+            }
+            return Utils.readObject(commitFile, Commit.class);
         }
-        return Utils.readObject(commitFile, Commit.class);
+
     }
     /**
      * Method to set the parent of the newest commit. This is done by checking which commit the HEAD

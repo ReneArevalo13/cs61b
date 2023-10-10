@@ -42,12 +42,11 @@ public class Repository {
      */
     private static  HashMap<String, String> blobMap = new HashMap<>();
     private static ArrayList<String> rmList = new ArrayList<>();
-    private static String activeBranch = "master";
     public static void init() {
 
         if (GITLET_DIR.isDirectory()) {
-            String message = "A Gitlet version-control system already exists in" +
-                    " the current directory.";
+            String message = "A Gitlet version-control system already exists in"
+                    + " the current directory.";
             System.out.println(message);
             System.exit(0);
         }
@@ -204,19 +203,47 @@ public class Repository {
         }
     }
     private static void checkoutHelper(String commitPointer, String filename) {
-        List<String> commitList = Utils.plainFilenamesIn(COMMIT_DIR);
-        assert commitList != null;
-        if (!commitList.contains(commitPointer)) {
-            System.out.println("No commit with that id exists.");
-            return;
-        }
-        Commit c = Commit.fromFileCommit(commitPointer);
-        if (c.getBlobMap().containsValue(filename)) {
-            String blobID = Helper.getKeyFromValue(c.getBlobMap(), filename);
-            Helper.readWriteBlobFromCommit(blobID, filename);
+        if (commitPointer.length() < 10) {
+            String firstTwoCharacters = commitPointer.substring(0, 2);
+            String lastCharacters = commitPointer.substring(2);
+            File commitLocation = Utils.join(COMMIT_DIR, firstTwoCharacters);
+            List<String> commitList = Utils.plainFilenamesIn(commitLocation);
+            String item = commitList.get(0);
+
+
+//            System.out.println(commitPointer.length());
+//            System.out.println(lastCharacters);
+//            System.out.println(commitList);
+//            System.out.println(item.substring(0, lastCharacters.length()));
+            assert commitList != null;
+            if (!lastCharacters.equals(item.substring(0, lastCharacters.length()))) {
+                System.out.println("No commit with that id exists.");
+                return;
+            }
+            Commit c = Commit.fromFileCommit(commitPointer);
+            if (c.getBlobMap().containsValue(filename)) {
+                String blobID = Helper.getKeyFromValue(c.getBlobMap(), filename);
+                Helper.readWriteBlobFromCommit(blobID, filename);
+            } else {
+                System.out.println("File does not exist in that commit.");
+            }
+
         } else {
-            System.out.println("File does not exist in that commit.");
+            List<String> commitList = Utils.plainFilenamesIn(COMMIT_DIR);
+            assert commitList != null;
+            if (!commitList.contains(commitPointer)) {
+                System.out.println("No commit with that id exists.");
+                return;
+            }
+            Commit c = Commit.fromFileCommit(commitPointer);
+            if (c.getBlobMap().containsValue(filename)) {
+                String blobID = Helper.getKeyFromValue(c.getBlobMap(), filename);
+                Helper.readWriteBlobFromCommit(blobID, filename);
+            } else {
+                System.out.println("File does not exist in that commit.");
+            }
         }
+
     }
 
     private static void checkoutBranchHelper(String branchName) {
@@ -306,8 +333,8 @@ public class Repository {
         for (String file : filesInWorkingDirectory) {
             if (!Helper.fileTrackedByCurrentCommit(file) && Helper.fileTrackedByCommitOnly(file,
                     commitID)) {
-                System.out.println("There is an untracked file in the way; delete it, " +
-                        "or add and commit it first.");
+                System.out.println("There is an untracked file in the way; delete it, "
+                        + "or add and commit it first.");
                 System.exit(0);
             }
             if (!map.containsValue(file)) {
