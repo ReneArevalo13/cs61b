@@ -292,6 +292,12 @@ public class Repository {
         System.out.printf("%n");
     }
     public static void reset(String commitID) {
+        List<String> commits = Utils.plainFilenamesIn(Repository.COMMIT_DIR);
+        assert commits != null;
+        if (!commits.contains(commitID)) {
+            System.out.println("No commit with that id exists.");
+            System.exit(0);
+        }
         Commit c = Commit.fromFileCommit(commitID);
         HashMap<String, String> map = c.getBlobMap();
         List<String> filesInWorkingDirectory = Utils.plainFilenamesIn(CWD);
