@@ -83,6 +83,20 @@ public class TestMyHashMap {
         }
         assertEquals(456, b.size());
     }
+    @Test
+    public void sanitySizeTest2() {
+        sanitySizeTest2(new MyHashMap<>());
+    }
+
+    public static void sanitySizeTest2(MyHashMap<String, Integer> b) {
+        assertEquals(0, b.size());
+        b.put("hi", 1);
+        assertEquals(1, b.size());
+        for (int i = 0; i < 31; i++) {
+            b.put("hi" + i, 1);
+        }
+        assertEquals(32, b.size());
+    }
 
     //assumes get/containskey work
     @Test
